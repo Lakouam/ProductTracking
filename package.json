@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Lakouam/ProductTracking/issues"
   },
-  "homepage": "https://github.com/Lakouam/ProductTracking#readme"
+  "homepage": "https://github.com/Lakouam/ProductTracking#readme",
+  "dependencies": {
+    "electron": "^36.1.0"
+  }
 }
