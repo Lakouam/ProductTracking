@@ -50,6 +50,21 @@ function createWindow() {
 
 
 
+
+    // a menu that pop up when we right click
+    let templateRightClick = [
+        {label: 'Reload', role: 'reload'},
+        {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
+    ];
+    let contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
+
+    win.webContents.on('context-menu', () =>{
+        contextMenuRightClick.popup();
+    })
+
+
+
+
 };
 
 
