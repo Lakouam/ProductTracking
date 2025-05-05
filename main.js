@@ -1,5 +1,5 @@
 // import Electron properties
-const {app, BrowserWindow, nativeImage} = require('electron');
+const {app, BrowserWindow, nativeImage, Menu} = require('electron');
 
 // to use path
 const path = require('path');
@@ -44,7 +44,14 @@ function createWindow() {
 
 
 
+
+    // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
+    Menu.setApplicationMenu(null);
+
+
+
 };
+
 
 
 // when app is ready open this window "createWindow"
