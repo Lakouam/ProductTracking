@@ -19,6 +19,21 @@ function createWindow() {
     // what content that we want to load in this window
     win.loadFile('page.html');
 
+
+
+
+
+    // use webContents as wc
+    let wc = win.webContents;
+
+
+    // you can use this event whenever our complete html and dom is ready 
+    wc.on("did-finish-load", () => {
+        console.warn("app loading is finished!");
+    });
+
+
+
 };
 
 
