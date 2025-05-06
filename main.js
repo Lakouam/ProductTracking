@@ -1,5 +1,5 @@
 // import Electron properties
-const {app, BrowserWindow, nativeImage, Menu} = require('electron');
+const {app, BrowserWindow, nativeImage, Menu, ipcMain} = require('electron');
 
 // to use path
 const path = require('path');
@@ -33,35 +33,38 @@ function createWindow() {
 
 
 
-    // use webContents as wc
-    let wc = win.webContents;
-
-
-    // you can use this event whenever our complete html and dom is ready 
-    wc.on("did-finish-load", () => {
-        console.warn("app loading is finished!");
-    });
-
-
-
-
-    // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
-    Menu.setApplicationMenu(null);
+    // Notification in the prompt when loading the page
+    {
+        // you can use this event whenever our complete html and dom is ready 
+        win.webContents.on("did-finish-load", () => {
+            console.warn("app loading is finished!");
+        });
+    }
 
 
 
 
-    // a menu that pop up when we right click
-    let templateRightClick = [
-        {label: 'Reload', role: 'reload'},
-        {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
-    ];
-    let contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
 
-    win.webContents.on('context-menu', () =>{
-        contextMenuRightClick.popup();
-    })
+    // Menu
+    {
+        // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
+        Menu.setApplicationMenu(null);
 
+
+
+
+        // a menu that pop up when we right click
+        let templateRightClick = [
+            {label: 'Reload', role: 'reload'},
+            {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
+        ];
+        let contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
+
+        win.webContents.on('context-menu', () =>{
+            contextMenuRightClick.popup();
+        });
+    }
+    
 
 
 
@@ -73,3 +76,9 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 });
+
+
+
+
+
+
