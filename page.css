@@ -3,6 +3,8 @@
 } 
 
 
+/* Main App Design */
+
 body {
     background-color: #1e1e2f;
     color: #e0e0e0;
@@ -80,3 +82,25 @@ tr:nth-child(odd) {
 tr:hover {
     background-color: #3a3a4f;
 }
+
+
+
+
+/* class */
+
+    /* Flexbox container for centering elements */
+    .flexContainerCenter {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* right flex item */
+    .flexItemRight {
+        align-self: flex-end;
+    }
+
+    /* 320px width */
+    .width320 {
+        width: 320px;
+    }
