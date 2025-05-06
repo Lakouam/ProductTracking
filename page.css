@@ -21,6 +21,10 @@ select, input[type="text"], input[type="checkbox"] {
     background-color: #2b2b3d;
 }
 
+select, input[type="text"], input[type="checkbox"]:focus {
+    outline: none;
+}
+
 select {
     width: 120px;
     height: 35px;
