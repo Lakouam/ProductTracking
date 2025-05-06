@@ -17,16 +17,22 @@ const {ipcRenderer} = require('electron');
 
 
 
-// send the scanInput value to main process when the user presses enter
+// send the scanInput value with other informations (post, etat, comment) to main process when the user presses enter
 {
     document.getElementById("scanInput").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             // get the scanInput value, and make it empty
             const scanInput = document.getElementById("scanInput").value;
-            document.getElementById("scanInput").value = "";
+
+            // add with scanInput other information (post, etat, comment)
+            const postSelect = document.getElementById("postSelect").value;
+            const etatInput = document.getElementById("etatInput").checked ? "true" : "false";
+            const commentInput = document.getElementById("commentInput").value;
+
+            const allInput = scanInput + "/" + postSelect + "/" + etatInput + "/" + commentInput;
     
             // send the scanInput value to main process
-            ipcRenderer.send("Scan Input", scanInput);
+            ipcRenderer.send("Scan Input", allInput);
         }
     });
 }
