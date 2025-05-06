@@ -68,6 +68,18 @@ function createWindow() {
 
 
 
+    
+    // receive scan input data
+    {
+        ipcMain.on("Scan Input", (event, data) => {
+            // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
+            console.warn(data);
+        })
+    }
+
+
+
+
 };
 
 
