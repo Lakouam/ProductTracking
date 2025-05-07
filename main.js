@@ -71,6 +71,7 @@ function createWindow() {
     
     // receive data from render process
     let postActuel = null;
+    let scanCount = 0;
     {
         // receive scan input data
         {
@@ -78,6 +79,8 @@ function createWindow() {
                 // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
                 console.warn(data);
                 win.reload(); // reload the page to clear the input fields
+
+                scanCount++;
             })
         }
 
@@ -100,6 +103,13 @@ function createWindow() {
         // send the post actuel whenever we load the page
         win.webContents.on("did-finish-load", () => {
             win.webContents.send("Post Actuel", postActuel);
+        });
+
+
+        // send a message about the scan whenever we load the page
+        win.webContents.on("did-finish-load", () => {
+            if (scanCount % 2 === 0) win.webContents.send("Message About Scan", "Scan Initial");
+            else win.webContents.send("Message About Scan", "Scan Finale");
         });
     }
 
