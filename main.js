@@ -70,6 +70,7 @@ function createWindow() {
 
     
     // receive data from render process
+    let postActuel = null;
     {
         // receive scan input data
         {
@@ -77,6 +78,16 @@ function createWindow() {
                 // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
                 console.warn(data);
                 win.reload(); // reload the page to clear the input fields
+            })
+        }
+
+
+        // receive post select data
+        {
+            ipcMain.on("Post Select", (event, data) => {
+                // Read the selected post that we send from the render process (page.html) (write it in command prompt)
+                postActuel = data;
+                console.warn(postActuel);
             })
         }
     }

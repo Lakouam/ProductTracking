@@ -36,3 +36,15 @@ const {ipcRenderer} = require('electron');
         }
     });
 }
+
+
+
+// when selecting a post, send the post name to main process
+{
+    document.getElementById("postSelect").addEventListener("change", function(event) {
+        // get the postSelect value
+        const postSelect = document.getElementById("postSelect").value;
+        // send the postSelect value to main process
+        ipcRenderer.send("Post Select", postSelect);
+    });
+}
