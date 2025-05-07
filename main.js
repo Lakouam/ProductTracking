@@ -5,6 +5,10 @@ const {app, BrowserWindow, nativeImage, Menu, ipcMain, } = require('electron');
 const path = require('path');
 
 
+// import the ScanData class
+const ScanData = require('./ScanData.js'); 
+
+
 
 // Gets the path of the icon to use in the tray and taskbar
 const iconPath = path.join(__dirname, "src", "icons", "applogo.ico");
@@ -76,14 +80,24 @@ function createWindow() {
     {
         // receive scan input data
         {
+            // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
             ipcMain.on("Scan Input", (event, data) => {
-                // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
-                console.warn(data);
-                win.reload(); // reload the page to clear the input fields
 
-                // temporelle for testing
-                if(data.charAt(0) === '/') scanRejected = true;
-                else scanCount++;
+                const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                
+                // check if the scan is valid
+                if(scanData.isValide()){
+                    console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
+                    scanCount++;
+                }
+                else {
+                    console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
+                    scanRejected = true;
+                }
+
+
+
+                win.reload(); // reload the page to clear the input fields
 
             })
         }
