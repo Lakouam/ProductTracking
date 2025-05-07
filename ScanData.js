@@ -49,8 +49,26 @@ class ScanData {
 
     // true if the scan is valid, false otherwise
     isValide(){
-        if(this.nof === "") return false;
-        else return true;
+        // by default 
+            // nof is empty or has 7 letters
+            // refProduit is empty or has 6 letters
+            // qt is 0 or a number
+            // postActual is empty or a string
+            // etat is false or true
+            // commentaire is empty or a string
+
+
+
+        if(this.nof === "") return false; // nof is empty
+
+        if(this.refProduit === "") return false; // refProduit is empty
+        if(!isNaN(this.refProduit.charAt(0))) return false; // refProduit first letter is a number
+
+        if(this.qt === 0) return false; // qt is equal to 0
+
+        if(this.postActuel === "") return false; // postActuel is empty
+
+        return true;
     }
 
     // return the scan data as a string
