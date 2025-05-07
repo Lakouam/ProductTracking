@@ -39,12 +39,25 @@ const {ipcRenderer} = require('electron');
 
 
 
-// when selecting a post, send the post name to main process
+
+// register the post actuel in the main process and received it whenever the page is loaded
 {
-    document.getElementById("postSelect").addEventListener("change", function(event) {
-        // get the postSelect value
-        const postSelect = document.getElementById("postSelect").value;
-        // send the postSelect value to main process
-        ipcRenderer.send("Post Select", postSelect);
-    });
+    // when selecting a post, send the post name to main process
+    {
+        document.getElementById("postSelect").addEventListener("change", function(event) {
+            // get the postSelect value
+            const postSelect = document.getElementById("postSelect").value;
+            // send the postSelect value to main process
+            ipcRenderer.send("Post Select", postSelect);
+        });
+    }
+
+    // when receiving a post, select it
+    {
+        ipcRenderer.on("Post Actuel", (event, post) => {
+            // select the post in the postSelect
+            document.getElementById("postSelect").value = post;
+        });
+    }
 }
+

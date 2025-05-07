@@ -1,5 +1,5 @@
 // import Electron properties
-const {app, BrowserWindow, nativeImage, Menu, ipcMain} = require('electron');
+const {app, BrowserWindow, nativeImage, Menu, ipcMain, } = require('electron');
 
 // to use path
 const path = require('path');
@@ -85,13 +85,23 @@ function createWindow() {
         // receive post select data
         {
             ipcMain.on("Post Select", (event, data) => {
-                // Read the selected post that we send from the render process (page.html) (write it in command prompt)
+                // Read the selected post that we send from the render process (page.html) (and load the page)
                 postActuel = data;
-                console.warn(postActuel);
-            })
+                win.reload(); // reload the page to clear the input fields
+            });
         }
     }
 
+
+
+
+    // send data to render process
+    {
+        // send the post actuel whenever we load the page
+        win.webContents.on("did-finish-load", () => {
+            win.webContents.send("Post Actuel", postActuel);
+        });
+    }
 
 
 
