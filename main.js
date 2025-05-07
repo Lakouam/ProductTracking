@@ -71,7 +71,8 @@ function createWindow() {
     
     // receive data from render process
     let postActuel = null;
-    let scanCount = 0;
+    let scanCount = 0;        // temporelle for testing
+    let scanRejected = false; // temporelle for testing
     {
         // receive scan input data
         {
@@ -80,7 +81,10 @@ function createWindow() {
                 console.warn(data);
                 win.reload(); // reload the page to clear the input fields
 
-                scanCount++;
+                // temporelle for testing
+                if(data.charAt(0) === '/') scanRejected = true;
+                else scanCount++;
+
             })
         }
 
@@ -108,8 +112,15 @@ function createWindow() {
 
         // send a message about the scan whenever we load the page
         win.webContents.on("did-finish-load", () => {
-            if (scanCount % 2 === 0) win.webContents.send("Message About Scan", "Scan Initial");
-            else win.webContents.send("Message About Scan", "Scan Finale");
+            if (scanCount % 2 === 0) {
+                if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
+                else win.webContents.send("Message About Scan", "Scan Initial");
+            }
+            else {
+                if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
+                else win.webContents.send("Message About Scan", "Scan Finale");
+            }
+            scanRejected = false // initialize scanRejected
         });
     }
 
