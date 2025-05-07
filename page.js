@@ -17,6 +17,22 @@ const {ipcRenderer} = require('electron');
 
 
 
+// when we check the etatInput, we show the commentInput and when we uncheck it, we hide the commentInput and make it empty
+{
+    // when we check the etatInput, we show the commentInput
+    document.getElementById("etatInput").addEventListener("change", function(event) {
+        if (event.target.checked) {
+            document.getElementById("commentInput").style.display = "block";
+        } else {
+            document.getElementById("commentInput").style.display = "none";
+            document.getElementById("commentInput").value = ""; // make it empty when we uncheck the etat
+        }
+    });
+}
+
+
+
+
 // send the scanInput value with other informations (post, etat, comment) to main process when the user presses enter
 {
     document.getElementById("scanInput").addEventListener("keydown", function(event) {
