@@ -38,6 +38,15 @@ class TableData {
 
 
 
+    // Post next scan (initial: false or final: true);
+    postNextScanIsSecond(postActuel) {
+        if (this.postCurrentRow(postActuel) === -1) return false; // if the post is not scanning a product, return false
+        return (this.scanCount[this.postCurrentRow(postActuel)] % 2 === 1); // false if the post current scan is initial, true if scan is final
+    }
+
+
+
+
     // update table
     updateTable(scan) {
 

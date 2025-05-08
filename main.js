@@ -84,7 +84,7 @@ function createWindow() {
     // receive data from render process
     let postActuel = null;
     let scanRejected = false; // is the scan rejected?
-    let secondScan = false;   // is the next scan, the second scan?
+    let secondScan = false   // is the next scan, the second scan?
     {
         // receive scan input data
         {
@@ -122,6 +122,10 @@ function createWindow() {
                 // Read the selected post that we send from the render process (page.html) (and load the page)
                 postActuel = data;
                 win.reload(); // reload the page to clear the input fields
+
+
+                secondScan = tableData.postNextScanIsSecond(postActuel); // check if the next scan of the post is the second scan (initial: false or final: true)
+
             });
         }
     }
