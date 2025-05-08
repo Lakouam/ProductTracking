@@ -5,8 +5,9 @@ const {app, BrowserWindow, nativeImage, Menu, ipcMain, } = require('electron');
 const path = require('path');
 
 
-// import the ScanData class
+// import our classes
 const ScanData = require('./ScanData.js'); 
+const TableData = require('./TableData.js');
 
 
 
@@ -69,6 +70,13 @@ function createWindow() {
         });
     }
     
+
+
+    
+
+    // Create our table (nof, refProduit, qt, ...)
+    const tableData = new TableData(); 
+
 
 
 
@@ -135,6 +143,12 @@ function createWindow() {
                 else win.webContents.send("Message About Scan", "Scan Finale");
             }
             scanRejected = false // initialize scanRejected
+        });
+
+
+        // send the table data rows whenever we load the page
+        win.webContents.on("did-finish-load", () => {
+            win.webContents.send("Table Data Rows", tableData.getRows());
         });
     }
 
