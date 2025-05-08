@@ -38,12 +38,13 @@ function createWindow() {
 
 
 
-    // Notification in the prompt when loading the page
+    // when loading the page
     {
-        // you can use this event whenever our complete html and dom is ready 
+        // Notification in the prompt 
         win.webContents.on("did-finish-load", () => {
             console.warn("app loading is finished!");
         });
+
     }
 
 
@@ -121,10 +122,13 @@ function createWindow() {
             ipcMain.on("Post Select", (event, data) => {
                 // Read the selected post that we send from the render process (page.html) (and load the page)
                 postActuel = data;
+
                 win.reload(); // reload the page to clear the input fields
 
 
-                secondScan = tableData.postNextScanIsSecond(postActuel); // check if the next scan of the post is the second scan (initial: false or final: true)
+                // check if the next scan of the post is the second scan (initial: false or final: true)
+                secondScan = tableData.postNextScanIsSecond(postActuel);
+
 
             });
         }
