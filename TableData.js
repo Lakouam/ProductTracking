@@ -2,16 +2,16 @@ class TableData {
 
     // our table
     constructor(){
-        this.nof = ["2533024"];
-        this.refProduit = ["AEG661"];
-        this.qt = [200];
-        this.postActuel = ["Post 2"];
-        this.qa = [0];
-        this.moytempspasser = [""];
-        this.etat = ["false"];
-        this.commentaire = [""];
+        this.nof = ["2533024", "2533100"];
+        this.refProduit = ["AEG661", "0EMS15"];
+        this.qt = [200, 200];
+        this.postActuel = ["Post 2", "Post 1"];
+        this.qa = [0, 0];
+        this.moytempspasser = ["", ""];
+        this.etat = ["false", "false"];
+        this.commentaire = ["", ""];
 
-        this.scanCount = [1]; // number of scans done to the product (qt = scanCount / 2)
+        this.scanCount = [1, 1]; // number of scans done to the product (qt = scanCount / 2)
     }
 
 
