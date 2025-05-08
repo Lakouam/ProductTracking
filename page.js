@@ -90,3 +90,31 @@ const {ipcRenderer} = require('electron');
     }
 }
 
+
+
+// receiving Table Data rows
+{
+    // when receiving Table Data rows, show it in the table
+    {
+        ipcRenderer.on("Table Data Rows", (event, data) => {
+            console.log(data);
+
+            
+            // get the table body
+            const tableBody = document.getElementById("dataBody");
+            // clear the table body
+            tableBody.innerHTML = "";
+            // add the data to the table body
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                row.forEach(cell => {
+                    const td = document.createElement("td");
+                    td.innerText = cell;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+            
+        });
+    }
+}
