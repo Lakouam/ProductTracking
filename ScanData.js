@@ -1,4 +1,11 @@
 class ScanData {
+
+
+    static NOFSIZE = 7; // size of nof
+    static REFPSIZE = 6; // size of refProduit
+
+
+
     // if there is a problem in the data continue with the default values
     constructor(data) {
         
@@ -21,13 +28,13 @@ class ScanData {
                 // the first element is the nof (7 letters), refProduit (6 letters), qt (the rest of the string if is a number)
                 // test if the first element has no space
                 if(dataArray[0].indexOf(" ") === -1) {
-                        // test if the first element is a string of length 14 or more
-                    if(dataArray[0].length >= 14) {
-                        this.nof = dataArray[0].substring(0, 7); // the first 7 letters
-                        this.refProduit = dataArray[0].substring(7, 13); // the next 6 letters
+                        // test if the first element is a string of length 14 (7 + 6 + 1) or more
+                    if(dataArray[0].length >= ScanData.NOFSIZE + ScanData.REFPSIZE + 1) {
+                        this.nof = dataArray[0].substring(0, ScanData.NOFSIZE); // the first 7 letters
+                        this.refProduit = dataArray[0].substring(ScanData.NOFSIZE, ScanData.NOFSIZE + ScanData.REFPSIZE); // the next 6 letters
                         // test if the rest of the string is a number
-                        if(!isNaN(dataArray[0].substring(13))) {
-                            this.qt = parseInt(dataArray[0].substring(13)); // the rest of the string is a number
+                        if(!isNaN(dataArray[0].substring(ScanData.NOFSIZE + ScanData.REFPSIZE))) {
+                            this.qt = parseInt(dataArray[0].substring(ScanData.NOFSIZE + ScanData.REFPSIZE)); // the rest of the string is a number
                         } else {
                             this.qt = 0; // if not, set qt to 0
                         }
@@ -62,7 +69,6 @@ class ScanData {
         if(this.nof === "") return false; // nof is empty
 
         if(this.refProduit === "") return false; // refProduit is empty
-        if(!isNaN(this.refProduit.charAt(0))) return false; // refProduit first letter is a number
 
         if(this.qt === 0) return false; // qt is equal to 0
 
