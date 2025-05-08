@@ -83,8 +83,8 @@ function createWindow() {
     
     // receive data from render process
     let postActuel = null;
-    let scanCount = 0;        // temporelle for testing
-    let scanRejected = false; // temporelle for testing
+    let scanRejected = false; // is the scan rejected?
+    let secondScan = false;   // is the next scan, the second scan?
     {
         // receive scan input data
         {
@@ -96,7 +96,12 @@ function createWindow() {
                 // check if the scan is valid
                 if(scanData.isValide()){
                     console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
-                    scanCount++;
+
+                    // update TableData with the scan data
+                    let updateTableInformations = tableData.updateTable(scanData); // update the table with the scan data (and get the information about the scan)
+                    scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
+                    secondScan = updateTableInformations.secondScan; // get the second scan information
+
                 }
                 else {
                     console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
@@ -134,7 +139,7 @@ function createWindow() {
 
         // send a message about the scan whenever we load the page
         win.webContents.on("did-finish-load", () => {
-            if (scanCount % 2 === 0) {
+            if (!secondScan) {
                 if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
                 else win.webContents.send("Message About Scan", "Scan Initial");
             }

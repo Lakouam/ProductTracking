@@ -15,10 +15,68 @@ class TableData {
     }
 
 
+
+    // function used inside the class
+        // search for the row of product (that we are currently scanning) in this scan post
+        postCurrentRow(postActuel) {
+            return 0;
+        }
+
+        // the row that we want to update for the scan, -1 if not possible to update
+        isUpdatePossible(scan) {
+            return 0;
+        }
+
+        // update the following row
+        updateRow(row, scan) {
+
+            this.scanCount[row]++; // update scan count
+            if (this.scanCount[row] % 2 === 0) this.qa[row]++; // update Quantite total
+
+        }
+
+
+
+
     // update table
     updateTable(scan) {
 
+        let scanRejected = true; // true if the scan is rejected
+        let secondScan = false; // initial scan
+        let currentPostRow = this.postCurrentRow(scan.postActuel); // the row of product (that we are currently scanning) in this scan post
+        
+
+
+
+        // if the post is currently scanning a poduct
+        if (currentPostRow !== -1){
+            secondScan = (this.scanCount[currentPostRow] % 2 === 1);// false: if the post current scan is initial, true: if scan is final
+
+            // verify if we can update the table with this scan
+            let row = this.isUpdatePossible(scan);
+    
+            // if we can, update it
+            if(row !== -1){
+                // if row !== currentPostRow throw an error
+
+
+                // update the row
+                this.updateRow(row, scan);
+                scanRejected = false;
+                secondScan = (this.scanCount[row] % 2 === 1) ;
+            }
+        }
+
+        
+
+
+        // return information about the update (scan rejected?, scan initial or final?)
+        return {scanRejected: scanRejected, secondScan: secondScan};
+
     }
+
+
+
 
 
     // return a list of rows
