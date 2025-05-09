@@ -16,6 +16,7 @@ class ScanData {
         this.postActuel = "";
         this.etat = false;
         this.commentaire = "";
+        this.tempsActuel = new Date(); // the current date and time
 
 
         // if data is a string
@@ -79,7 +80,8 @@ class ScanData {
 
     // return the scan data as a string
     toString(){
-        return "NOF: " + this.nof + ", refProduit: " + this.refProduit + ", QT: " + this.qt +", Post Actual: " + this.postActuel + ", etat: " + this.etat + ", commentaire: " + this.commentaire;
+        return "NOF: " + this.nof + ", refProduit: " + this.refProduit + ", QT: " + this.qt +", Post Actual: " + this.postActuel + ", etat: " + this.etat + ", commentaire: " + 
+            this.commentaire + ", tempsActuel: " + this.tempsActuel.toLocaleString();
     }
 
 }

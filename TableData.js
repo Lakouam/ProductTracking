@@ -14,9 +14,10 @@ class TableData {
     /*
         Rule 1: Identifier of the table is (nof, postActuel)
         Rule 2: types.
-            string  : nof, refProduit, postActuel, moytempspasser, commentaire, tempsDebut, tempsFin
+            string  : nof, refProduit, postActuel, moytempspasser, commentaire, tempsFin
             boolean : etat
             number  : qt, qa, scanCount
+            Date    : tempsDebut
         Rule 3: qa <= qt, qt > 0, qa >= 0
         Rule 4: No post have multiple rows with (qa < qt) (not complete)
         Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
@@ -136,7 +137,7 @@ class TableData {
             return this._tempsDebut[row];
         }
         set tempsDebut(value) {
-            this._tempsDebut.push(""); // set the tempsDebut to "" (initial value)
+            this._tempsDebut.push(value); // set the tempsDebut value
         }
 
         // getter and setter for tempsFin
@@ -185,11 +186,10 @@ class TableData {
                 this._scanCount[row]++ // update the scanCount value by 1
         }
 
-        tempsDebutUpdate(row) {
-            
-        }
-        tempsFinUpdate(row) {
-            
+        tempsFinUpdate(row, value) {
+            if (this.isQaComplete(row)) { // if the qa is equal to the qt, update the tempsFin value
+                this._tempsFin[row] = value; // set the tempsFin value to the current date
+            }
         }
 
 
@@ -218,8 +218,9 @@ class TableData {
                 if (typeof this.etatGet(row) !== "boolean") throw new Error("etat must be a boolean"); // check if the etat is a boolean
                 if (typeof this.commentaireGet(row) !== "string") throw new Error("commentaire must be a string"); // check if the commentaire is a string
 
-                if (typeof this.tempsDebutGet(row) !== "string") throw new Error("tempsDebut must be a string"); // check if the tempsDebut is a string
-                if (typeof this.tempsFinGet(row) !== "string") throw new Error("tempsFin must be a string"); // check if the tempsFin is a string
+                if (!(this.tempsDebutGet(row) instanceof Date)) throw new Error("tempsDebut must be a Date"); // check if the tempsDebut is a Date
+                if (typeof this.tempsFinGet(row) !== "string" && !(this.tempsFinGet(row) instanceof Date)) throw new Error("tempsFin must be a string or Date"); 
+                    // check if the tempsFin is a string or a Date
                 
                 if (typeof this.scanCountGet(row) !== "number") throw new Error("scanCount must be a number"); // check if the scanCount is a number
             }
@@ -297,8 +298,7 @@ class TableData {
             this.scanCountUpdate(row) // update scan count
             this.qaUpdate(row); // update Quantite actual
 
-            this.tempsDebutUpdate(row); // update tempsDebut
-            this.tempsFinUpdate(row); // update tempsFin
+            this.tempsFinUpdate(row, scan.tempsActuel); // update tempsFin
 
             this.rule2(row); // check if Rule2 respected: types.
 
@@ -341,7 +341,7 @@ class TableData {
             this.etat = scan.etat; // add the etat to the table
             this.commentaire = scan.commentaire; // add the commentaire to the table
 
-            this.tempsDebut = scan.tempsDebut; // add the tempsDebut to the table
+            this.tempsDebut = scan.tempsActuel; // add the tempsDebut to the table
             this.tempsFin = scan.tempsFin; // add the tempsFin to the table
 
             this.scanCount = scan.scanCount // add the scanCount on the table

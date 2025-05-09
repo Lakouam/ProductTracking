@@ -107,7 +107,9 @@ const {ipcRenderer} = require('electron');
                 const tr = document.createElement("tr");
                 row.forEach(cell => {
                     const td = document.createElement("td");
-                    td.innerText = cell;
+                    if (cell instanceof Date) 
+                        td.innerText = cell.toLocaleString(); // format the date
+                    else td.innerText = cell;
                     tr.appendChild(td);
                 });
                 tableBody.appendChild(tr);
