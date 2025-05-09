@@ -1,5 +1,23 @@
 class TableData {
 
+
+    // Handle Errors:
+    /*
+        isQaComplete:      "qa is greater than qt"                                         : how?
+        commentaireUpdate: "commentaire must be a string"                                  : how?
+        postCurrentRow:    "Multiple products scanning not complete in the same post"      : Any post can only start scanning a product if only,
+                                                                                                it's not scanning any other product in the moment
+        isScanExists:
+                           "The scan has multiple rows Not Allowed"                        : nof and postActuel are the identifier of the table so multiple of them is not allowed
+        addScan:           
+                           "The scan is corrupted"                                         : why you add a scan that is corrupted (exists in the table but with some different values)
+                           "The scan already exists in the table"                          : why you add a scan that exist on the table
+        updateTable:       "Post is currently scanning a product,                   :
+                              but the progamme work like the post is currently complete"   : how?
+
+    */
+
+
     // our table
     constructor(){
         this._nof = [];
@@ -182,14 +200,14 @@ class TableData {
 
         }
 
-        // check if the scan exists in the table (return the row of the scan if it exists, -1 if not)
+        // check if the scan exists in the table (return the row of the scan if it exists, -1 if not, -2 if the scan is corrupted (exists but with some different values))
         isScanExists(scan) {
             let rows = []; // array of rows that are the same as the scan
             for (let i = 0; i < this.len; i++) {
                 if (this.nofGet(i) === scan.nof && this.postActuelGet(i) === scan.postActuel) {
                     // check for errors
-                    if (this.refProduitGet(i) !== scan.refProduit) throw new Error("refProduit is not the same"); // check if the refProduit is the same
-                    if (this.qtGet(i) !== scan.qt) throw new Error("qt is not the same"); // check if the qt is the same
+                    if (this.refProduitGet(i) !== scan.refProduit) return -2; // check if the refProduit is the same
+                    if (this.qtGet(i) !== scan.qt) return -2; // check if the qt is the same
 
                     rows.push(i); // add the row to the array
                 }
@@ -208,6 +226,7 @@ class TableData {
         // add the scan to the table
         addScan(scan) {
 
+            if (this.isScanExists(scan) === -2) throw new Error("The scan is corrupted"); // check if the scan is corrupted
             if (this.isScanExists(scan) !== -1) throw new Error("The scan already exists in the table"); // check if the scan already exists in the table
 
             this.nof = scan.nof; // add the nof to the table
@@ -258,16 +277,22 @@ class TableData {
         // check if the scan is not existing in the table (to add it)
             let scanRow = this.isScanExists(scan); // check if the scan exists in the table
 
-            // check for errors
-            if (scanRow !== -1) {  // if the scan exists in the table
-                // check if the scan not complete (qa < qt)
-                if (!this.isQaComplete(scanRow))  // if the scan is not complete (qa < qt)
-                    throw new Error("error: Post is currently scanning a product, but the progamme work like the post is currently complete"); // throw an error
+
+            if (scanRow !== -2) { // if the scan is not corrupted (exists but with some different values)
+                // check for errors
+                if (scanRow !== -1) {  // if the scan exists in the table
+                    // check if the scan not complete (qa < qt)
+                    if (!this.isQaComplete(scanRow))  // if the scan is not complete (qa < qt)
+                        throw new Error("Post is currently scanning a product, but the progamme work like the post is currently complete"); // throw an error
+                }
+                else { // if the scan does not exist in the table (add it)
+                    this.addScan(scan); // add the scan to the table
+                    scanRejected = false; // the scan is not rejected (added to the table)
+                    secondScan = this.isSecondScan(this.len - 1); // the count for the new row is 1, so secondScan should be true
+                }
             }
-            else { // if the scan does not exist in the table (add it)
-                this.addScan(scan); // add the scan to the table
-                scanRejected = false; // the scan is not rejected (added to the table)
-            }
+
+            
 
         }
 
