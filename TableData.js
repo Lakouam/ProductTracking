@@ -14,7 +14,7 @@ class TableData {
     /*
         Rule 1: Identifier of the table is (nof, postActuel)
         Rule 2: types.
-            string  : nof, refProduit, postActuel, moytempspasser, commentaire
+            string  : nof, refProduit, postActuel, moytempspasser, commentaire, tempsDebut, tempsFin
             boolean : etat
             number  : qt, qa, scanCount
         Rule 3: qa <= qt, qt > 0, qa >= 0
@@ -35,6 +35,10 @@ class TableData {
         this._moytempspasser = [];
         this._etat = [];
         this._commentaire = [];
+
+        // added new
+            this._tempsDebut = []; // time of the start of the first scan
+            this._tempsFin = []; // time of the end of the last scan that completed the product
 
         this._scanCount = []; // number of scans done to the product (qt = scanCount / 2)
     }
@@ -127,6 +131,22 @@ class TableData {
             this._scanCount.push(1);
         }
 
+        // getter and setter for tempsDebut
+        tempsDebutGet(row) {
+            return this._tempsDebut[row];
+        }
+        set tempsDebut(value) {
+            this._tempsDebut.push(""); // set the tempsDebut to "" (initial value)
+        }
+
+        // getter and setter for tempsFin
+        tempsFinGet(row) {
+            return this._tempsFin[row];
+        }
+        set tempsFin(value) {
+            this._tempsFin.push(""); // set the tempsFin to "" (initial value)
+        }
+
         // getter of id (nof, postActuel)
         isSameId(row1, row2) { // check if the two rows have the same id (nof, postActuel)
             if (this.nofGet(row1) !== this.nofGet(row2)) return false; // check if the nof is the same
@@ -165,6 +185,13 @@ class TableData {
                 this._scanCount[row]++ // update the scanCount value by 1
         }
 
+        tempsDebutUpdate(row) {
+            
+        }
+        tempsFinUpdate(row) {
+            
+        }
+
 
 
 
@@ -190,6 +217,9 @@ class TableData {
                 if (typeof this.moytempspasserGet(row) !== "string") throw new Error("moytempspasser must be a string"); // check if the moytempspasser is a string
                 if (typeof this.etatGet(row) !== "boolean") throw new Error("etat must be a boolean"); // check if the etat is a boolean
                 if (typeof this.commentaireGet(row) !== "string") throw new Error("commentaire must be a string"); // check if the commentaire is a string
+
+                if (typeof this.tempsDebutGet(row) !== "string") throw new Error("tempsDebut must be a string"); // check if the tempsDebut is a string
+                if (typeof this.tempsFinGet(row) !== "string") throw new Error("tempsFin must be a string"); // check if the tempsFin is a string
                 
                 if (typeof this.scanCountGet(row) !== "number") throw new Error("scanCount must be a number"); // check if the scanCount is a number
             }
@@ -267,6 +297,9 @@ class TableData {
             this.scanCountUpdate(row) // update scan count
             this.qaUpdate(row); // update Quantite actual
 
+            this.tempsDebutUpdate(row); // update tempsDebut
+            this.tempsFinUpdate(row); // update tempsFin
+
             this.rule2(row); // check if Rule2 respected: types.
 
             return true; // return true if the row is updated
@@ -307,6 +340,9 @@ class TableData {
             this.moytempspasser = scan.moytempspasser; // add the moytempspasser to the table
             this.etat = scan.etat; // add the etat to the table
             this.commentaire = scan.commentaire; // add the commentaire to the table
+
+            this.tempsDebut = scan.tempsDebut; // add the tempsDebut to the table
+            this.tempsFin = scan.tempsFin; // add the tempsFin to the table
 
             this.scanCount = scan.scanCount // add the scanCount on the table
 
@@ -381,6 +417,8 @@ class TableData {
 
         for (let i = 0; i < this.len; i++) {
             rows.push([
+                this.tempsDebutGet(i),
+                this.tempsFinGet(i),
                 this.nofGet(i),
                 this.refProduitGet(i),
                 this.qtGet(i),
