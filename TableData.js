@@ -14,8 +14,22 @@ class TableData {
                            "The scan already exists in the table"                          : why you add a scan that exist on the table
         updateTable:       "Post is currently scanning a product,                   :
                               but the progamme work like the post is currently complete"   : how?
-
     */
+
+
+    // TableData Rules:
+    /*
+        Rule 1: Identifier of the table is (nof, postActuel)
+        Rule 2: types.
+            string  : nof, refProduit, postActuel, moytempspasser, commentaire
+            boolean : etat
+            number  : qt, qa, scanCount
+        Rule 3: qa <= qt, qt > 0, qa >= 0
+        Rule 4: No post have multiple rows with (qa < qt) (not complete)
+        Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
+    */
+
+
 
 
     // our table
@@ -246,7 +260,6 @@ class TableData {
 
     // Post next scan (initial: false or final: true);
     postNextScanIsSecond(postActuel) {
-        if (this.postCurrentRow(postActuel) === -1) return false; // if the post is not scanning a product, return false
         let row = this.postCurrentRow(postActuel); // get the row of the product (that we are currently scanning) in this scan post
         if (row === -1) return false; // if the row is -1, return false: scan initial (no product scanning in this post)
         return this.isSecondScan(row); // false if the post current scan is initial, true if scan is final
@@ -288,7 +301,7 @@ class TableData {
                 else { // if the scan does not exist in the table (add it)
                     this.addScan(scan); // add the scan to the table
                     scanRejected = false; // the scan is not rejected (added to the table)
-                    secondScan = this.isSecondScan(this.len - 1); // the count for the new row is 1, so secondScan should be true
+                    secondScan = true; // the count for the new row is 1, so secondScan should be true
                 }
             }
 
