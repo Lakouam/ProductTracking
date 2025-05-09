@@ -127,6 +127,19 @@ class TableData {
             this._scanCount.push(1);
         }
 
+        // getter of id (nof, postActuel)
+        isSameId(row1, row2) { // check if the two rows have the same id (nof, postActuel)
+            if (this.nofGet(row1) !== this.nofGet(row2)) return false; // check if the nof is the same
+            if (this.postActuelGet(row1) !== this.postActuelGet(row2)) return false; // check if the postActuel is the same
+            return true; // return true if the nof and postActuel are the same
+        }
+        isSameScanId(row, scan) { // check if the scan has the same id (nof, postActuel) as the row
+            if (this.nofGet(row) !== scan.nof) return false; // check if the nof is the same
+            if (this.postActuelGet(row) !== scan.postActuel) return false; // check if the postActuel is the same
+            return true; // return true if the nof and postActuel are the same
+        }
+
+
 
 
     // updates setters
@@ -160,7 +173,7 @@ class TableData {
             rule1() {
                 for (let i = 0; i < this.len; i++) {
                     for (let j = i + 1; j < this.len; j++) {
-                        if (this.nofGet(i) === this.nofGet(j) && this.postActuelGet(i) === this.postActuelGet(j)) {
+                        if (this.isSameId(i, j)) { // check if the two rows have the same id (nof, postActuel)
                             throw new Error("Rule 1 not respected: Identifier of the table is (nof, postActuel)"); // throw an error
                         }
                     }
@@ -218,14 +231,6 @@ class TableData {
 
     // functions used inside the class
 
-        // check if the scan has the same id as the row
-        isSameId(row, scan) {
-            if (this.nofGet(row) !== scan.nof) return false; // check if the nof is the same
-            if (this.postActuelGet(row) !== scan.postActuel) return false; // check if the postActuel is the same
-            return true; // return true if the nof and postActuel are the same
-        }
-
-
         // search for the row of product (that we are currently scanning) in this scan post (-1: no product scanning in this post, row: the row of product)
         postCurrentRow(postActuel) {
 
@@ -274,7 +279,7 @@ class TableData {
             this.rule1() // check if Rule1 respected: Identifier of the table is (nof, postActuel)
 
             for (let i = 0; i < this.len; i++) {
-                if (this.isSameId(i, scan)) { // check if the nof and postActuel are the same
+                if (this.isSameScanId(i, scan)) { // check if the nof and postActuel are the same
                     // check for errors
                     if (this.rule5(i, scan) === false) return -2; // check if the nof, refProduit, qt, postActuel are the same (returns -2 if the scan is corrupted)
 
