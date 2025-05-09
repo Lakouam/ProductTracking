@@ -92,7 +92,7 @@ class TableData {
             return this._qa[row];
         }
         isQaComplete(row) {
-            if (this._qa[row] > this._qt[row]) throw new Error("qa is greater than qt"); // check if the qa is greater than the qt
+            this.rule3(row) // check if Rule3 respected: qa <= qt, qt > 0, qa >= 0
             return (this._qa[row] === this._qt[row]); // return true if the qa is equal to the qt, false otherwise
         }
         set qa(value) {
@@ -151,7 +151,6 @@ class TableData {
         }
 
         commentaireUpdate(row, value) {
-            if (typeof value !== "string") throw new Error("commentaire must be a string"); // check if the value is a string
             this._commentaire[row] = value // update the commentaire value
         }
 
@@ -159,6 +158,63 @@ class TableData {
             if(this.scanCountGet(row) < this.qtGet(row) * 2) // if the scanCount is less than the qt * 2, update it
                 this._scanCount[row]++ // update the scanCount value by 1
         }
+
+
+
+
+        // Rules of the table
+            // Rule 1: Identifier of the table is (nof, postActuel)
+            rule1() {
+                for (let i = 0; i < this.len; i++) {
+                    for (let j = i + 1; j < this.len; j++) {
+                        if (this.nofGet(i) === this.nofGet(j) && this.postActuelGet(i) === this.postActuelGet(j)) {
+                            throw new Error("Rule 1 not respected: Identifier of the table is (nof, postActuel)"); // throw an error
+                        }
+                    }
+                }
+            }
+
+            // Rule 2: types.
+            rule2(row) {
+                if (typeof this.nofGet(row) !== "string") throw new Error("nof must be a string"); // check if the nof is a string
+                if (typeof this.refProduitGet(row) !== "string") throw new Error("refProduit must be a string"); // check if the refProduit is a string
+                if (typeof this.qtGet(row) !== "number") throw new Error("qt must be a number"); // check if the qt is a number
+                if (typeof this.postActuelGet(row) !== "string") throw new Error("postActuel must be a string"); // check if the postActuel is a string
+                if (typeof this.qaGet(row) !== "number") throw new Error("qa must be a number"); // check if the qa is a number
+                if (typeof this.moytempspasserGet(row) !== "string") throw new Error("moytempspasser must be a string"); // check if the moytempspasser is a string
+                if (typeof this.etatGet(row) !== "boolean") throw new Error("etat must be a boolean"); // check if the etat is a boolean
+                if (typeof this.commentaireGet(row) !== "string") throw new Error("commentaire must be a string"); // check if the commentaire is a string
+                
+                if (typeof this.scanCountGet(row) !== "number") throw new Error("scanCount must be a number"); // check if the scanCount is a number
+            }
+            
+            // Rule 3: qa <= qt, qt > 0, qa >= 0
+            rule3(row) {
+                if (this.qaGet(row) > this.qtGet(row)) throw new Error("qa is greater than qt"); // check if the qa is greater than the qt
+                if (this.qtGet(row) <= 0) throw new Error("qt must be greater than 0"); // check if the qt is greater than 0
+                if (this.qaGet(row) < 0) throw new Error("qa must be greater than or equal to 0"); // check if the qa is greater than or equal to 0
+            }
+
+            // Rule 4: No post have multiple rows with (qa < qt) (not complete)
+            rule4() {
+                for (let i = 0; i < this.len; i++) {
+                    for (let j = i + 1; j < this.len; j++) {
+                        if (this.postActuelGet(i) === this.postActuelGet(j) && !this.isQaComplete(i) && !this.isQaComplete(j)) {
+                            throw new Error("Rule 4 not respected: No post have multiple rows with (qa < qt) (not complete)"); // throw an error
+                        }
+                    }
+                }
+            }
+
+            // Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
+            rule5(row, scan) {
+                if (this.nofGet(row) !== scan.nof) return false; // check if the nof is the same
+                if (this.refProduitGet(row) !== scan.refProduit) return false; // check if the refProduit is the same
+                if (this.qtGet(row) !== scan.qt) return false; // check if the qt is the same
+                if (this.postActuelGet(row) !== scan.postActuel) return false; // check if the postActuel is the same
+                return true; // return true if the nof, refProduit, qt, postActuel are the same
+            }
+
 
 
 
