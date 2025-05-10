@@ -183,7 +183,8 @@ class TableData {
 
         moytempspasserUpdate(row, value) {
             // moytempspasser = ((moytempspasser * scanCount) + ((tempsActuel - tempsDernierScan) in seconds)) / scanCount + 1
-            this._moytempspasser[row] = ((this._moytempspasser[row] * this.scanCountGet(row)) + ((value - this.tempsDernierScanGet(row)) / 1000)) / (this.scanCountGet(row) + 1); 
+            if (this.scanCountGet(row) > 0) // if this is not the first scan
+                this._moytempspasser[row] = ((this._moytempspasser[row] * (this.scanCountGet(row) - 1)) + ((value - this.tempsDernierScanGet(row)) / 1000)) / (this.scanCountGet(row)); 
             this._moytempspasser[row] = Math.round(this._moytempspasser[row]); // round the moytempspasser value
         }
 
