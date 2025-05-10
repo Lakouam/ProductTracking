@@ -92,8 +92,31 @@ const {ipcRenderer} = require('electron');
 
 
 
-// receiving Table Data rows
+// receiving Table Data columns and rows
 {
+
+    // when receiving Table Data columns, show it in the table
+    {
+        ipcRenderer.on("Table Data Columns", (event, data) => {
+
+            // get the table head
+            const tableHead = document.getElementById("dataHead");
+            // clear the table head
+            tableHead.innerHTML = "";
+            // add the data to the table head
+            const tr = document.createElement("tr");
+            data.forEach(column => {
+                const th = document.createElement("th");
+                th.innerText = column;
+                tr.appendChild(th);
+            });
+
+            tableHead.appendChild(tr);
+            
+        });
+    }
+
+
     // when receiving Table Data rows, show it in the table
     {
         ipcRenderer.on("Table Data Rows", (event, data) => {

@@ -159,8 +159,9 @@ function createWindow() {
         });
 
 
-        // send the table data rows whenever we load the page
+        // send the table data columns and rows whenever we load the page
         win.webContents.on("did-finish-load", () => {
+            win.webContents.send("Table Data Columns", tableData.getColumns());
             win.webContents.send("Table Data Rows", tableData.getRows());
         });
     }

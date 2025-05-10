@@ -458,6 +458,25 @@ class TableData {
     }
 
 
+    // return a list of columns
+    getColumns() {
+        let columns = [
+            "Temps Debut", 
+            "Temps Fin", 
+            "NOF", 
+            "Ref Produit", 
+            "QT", 
+            "Post Actuel", 
+            "QA", 
+            "Temps Moyen Passer / Produit", 
+            "Etat", 
+            "Commentaire"
+        ];
+
+        return columns;
+    }
+
+
 }
 
 module.exports = TableData;
