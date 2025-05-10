@@ -189,11 +189,13 @@ class TableData {
         }
 
         etatUpdate(row, value) {
-            this._etat[row] = (value === true || value === "true") // update the etat value
+            this._etat[row] = (value === true || value === "true" || this.etatGet(row)) // update the etat value
         }
 
         commentaireUpdate(row, value) {
-            this._commentaire[row] = value // update the commentaire value
+            if (this.commentaireGet(row) !== "" && value !== "") // if the commentaire and value are not empty
+                this._commentaire[row] += "\n" // add a new line
+            this._commentaire[row] += value // update the commentaire value
         }
 
         scanCountUpdate(row) {
