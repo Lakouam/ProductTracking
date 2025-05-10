@@ -14,10 +14,10 @@ class TableData {
     /*
         Rule 1: Identifier of the table is (nof, postActuel)
         Rule 2: types.
-            string  : nof, refProduit, postActuel, moytempspasser, commentaire, tempsFin
+            string  : nof, refProduit, postActuel, commentaire, tempsFin 
             boolean : etat
-            number  : qt, qa, scanCount
-            Date    : tempsDebut
+            number  : qt, qa, scanCount, moytempspasser
+            Date    : tempsDebut, tempsFin, tempsDernierScan
         Rule 3: qa <= qt, qt > 0, qa >= 0
         Rule 4: No post have multiple rows with (qa < qt) (not complete)
         Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
@@ -36,12 +36,16 @@ class TableData {
         this._moytempspasser = [];
         this._etat = [];
         this._commentaire = [];
+        
+        this._tempsDebut = []; // time of the start of the first scan
+        this._tempsFin = []; // time of the end of the last scan that completed the product
 
-        // added new
-            this._tempsDebut = []; // time of the start of the first scan
-            this._tempsFin = []; // time of the end of the last scan that completed the product
+
 
         this._scanCount = []; // number of scans done to the product (qt = scanCount / 2)
+
+        // added new
+            this._tempsDernierScan = []; // time of the last scan (initial or final) done to the product
     }
 
 
@@ -102,7 +106,7 @@ class TableData {
             return this._moytempspasser[row];
         }
         set moytempspasser(value) {
-            this._moytempspasser.push(""); // set the moytempspasser to "" (initial value)
+            this._moytempspasser.push(0); // set the moytempspasser to 0 (initial value)
         }
 
         // getter and setter for etat
@@ -148,6 +152,14 @@ class TableData {
             this._tempsFin.push(""); // set the tempsFin to "" (initial value)
         }
 
+        // getter and setter for tempsDernierScan
+        tempsDernierScanGet(row) {
+            return this._tempsDernierScan[row];
+        }
+        set tempsDernierScan(value) {
+            this._tempsDernierScan.push(value); // set the tempsDernierScan value
+        }
+
         // getter of id (nof, postActuel)
         isSameId(row1, row2) { // check if the two rows have the same id (nof, postActuel)
             if (this.nofGet(row1) !== this.nofGet(row2)) return false; // check if the nof is the same
@@ -169,8 +181,10 @@ class TableData {
                 this._qa[row]++ // update the qa value by 1
         }
 
-        moytempspasserUpdate(row) {
-
+        moytempspasserUpdate(row, value) {
+            // moytempspasser = ((moytempspasser * scanCount) + ((tempsActuel - tempsDernierScan) in seconds)) / scanCount + 1
+            this._moytempspasser[row] = ((this._moytempspasser[row] * this.scanCountGet(row)) + ((value - this.tempsDernierScanGet(row)) / 1000)) / (this.scanCountGet(row) + 1); 
+            this._moytempspasser[row] = Math.round(this._moytempspasser[row]); // round the moytempspasser value
         }
 
         etatUpdate(row, value) {
@@ -190,6 +204,10 @@ class TableData {
             if (this.isQaComplete(row)) { // if the qa is equal to the qt, update the tempsFin value
                 this._tempsFin[row] = value; // set the tempsFin value to the current date
             }
+        }
+
+        tempsDernierScanUpdate(row, value) {
+            this._tempsDernierScan[row] = value; // set the tempsDernierScan value to the current date
         }
 
 
@@ -214,7 +232,7 @@ class TableData {
                 if (typeof this.qtGet(row) !== "number") throw new Error("qt must be a number"); // check if the qt is a number
                 if (typeof this.postActuelGet(row) !== "string") throw new Error("postActuel must be a string"); // check if the postActuel is a string
                 if (typeof this.qaGet(row) !== "number") throw new Error("qa must be a number"); // check if the qa is a number
-                if (typeof this.moytempspasserGet(row) !== "string") throw new Error("moytempspasser must be a string"); // check if the moytempspasser is a string
+                if (typeof this.moytempspasserGet(row) !== "number") throw new Error("moytempspasser must be a number"); // check if the moytempspasser is a number
                 if (typeof this.etatGet(row) !== "boolean") throw new Error("etat must be a boolean"); // check if the etat is a boolean
                 if (typeof this.commentaireGet(row) !== "string") throw new Error("commentaire must be a string"); // check if the commentaire is a string
 
@@ -223,6 +241,8 @@ class TableData {
                     // check if the tempsFin is a string or a Date
                 
                 if (typeof this.scanCountGet(row) !== "number") throw new Error("scanCount must be a number"); // check if the scanCount is a number
+
+                if (!(this.tempsDernierScanGet(row) instanceof Date)) throw new Error("tempsDernierScan must be a Date"); // check if the tempsDernierScan is a Date
             }
             
             // Rule 3: qa <= qt, qt > 0, qa >= 0
@@ -291,7 +311,7 @@ class TableData {
 
             if (this.isUpdateRowPossible(row, scan) === false) return false // check if we can update the row
 
-            this.moytempspasserUpdate(row); // update the time spent
+            this.moytempspasserUpdate(row, scan.tempsActuel); // update the time spent
             this.etatUpdate(row, scan.etat); // update the etat value
             this.commentaireUpdate(row, scan.commentaire); // update the commentaire value
 
@@ -299,6 +319,8 @@ class TableData {
             this.qaUpdate(row); // update Quantite actual
 
             this.tempsFinUpdate(row, scan.tempsActuel); // update tempsFin
+
+            this.tempsDernierScanUpdate(row, scan.tempsActuel); // update tempsDernierScan
 
             this.rule2(row); // check if Rule2 respected: types.
 
@@ -345,6 +367,8 @@ class TableData {
             this.tempsFin = scan.tempsFin; // add the tempsFin to the table
 
             this.scanCount = scan.scanCount // add the scanCount on the table
+
+            this.tempsDernierScan = scan.tempsActuel; // add the tempsDernierScan to the table
 
             this.rule2(this.len - 1); // check for the new row if Rule2 respected: types.
 
