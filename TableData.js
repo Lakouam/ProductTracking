@@ -20,7 +20,6 @@ class TableData {
             Date    : tempsDebut, tempsFin, tempsDernierScan
         Rule 3: qa <= qt, qt > 0, qa >= 0
         Rule 4: No post have multiple rows with (qa < qt) (not complete)
-        Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
     */
 
 
@@ -172,6 +171,14 @@ class TableData {
             return true; // return true if the nof and postActuel are the same
         }
 
+        // getter of marque fix
+        isSameMarqueFix(row, scan) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
+            if (this.nofGet(row) !== scan.nof) return false; // check if the nof is the same
+            if (this.refProduitGet(row) !== scan.refProduit) return false; // check if the refProduit is the same
+            if (this.qtGet(row) !== scan.qt) return false; // check if the qt is the same
+            return true; // return true if the nof, refProduit and qt are the same
+        }
+
 
 
 
@@ -266,14 +273,6 @@ class TableData {
                 }
             }
 
-            // Rule 5: Cannot be changed (nof, refProduit, qt, postActuel)
-            rule5(row, scan) { // check if the nof, refProduit, qt, postActuel are the same as the scan
-                if (this.nofGet(row) !== scan.nof) return false; // check if the nof is the same
-                if (this.refProduitGet(row) !== scan.refProduit) return false; // check if the refProduit is the same
-                if (this.qtGet(row) !== scan.qt) return false; // check if the qt is the same
-                if (this.postActuelGet(row) !== scan.postActuel) return false; // check if the postActuel is the same
-                return true; // return true if the nof, refProduit, qt, postActuel are the same
-            }
 
 
 
@@ -304,7 +303,7 @@ class TableData {
         isUpdateRowPossible(row, scan) {
             
             // check if the nof, refProduit, qt, postActuel are the same
-            if (this.rule5(row, scan)) return true; // possible to update (same scan)
+            if (this.isSameMarqueFix(row, scan) && this.postActuelGet(row) === scan.postActuel) return true; // possible to update (same scan)
 
             return false; // not possible to update (not the same scan)
         }
@@ -339,7 +338,7 @@ class TableData {
             for (let i = 0; i < this.len; i++) {
                 if (this.isSameScanId(i, scan)) { // check if the nof and postActuel are the same
                     // check for errors
-                    if (this.rule5(i, scan) === false) return -2; // check if the nof, refProduit, qt, postActuel are the same (returns -2 if the scan is corrupted)
+                    if (this.isSameMarqueFix(i, scan) === false) return -2; // check if the nof, refProduit, qt are the same (returns -2 if the scan is corrupted)
 
                     return i; // return the row of the scan
                 }
