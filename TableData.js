@@ -20,6 +20,7 @@ class TableData {
             Date    : tempsDebut, tempsFin, tempsDernierScan
         Rule 3: qa <= qt, qt > 0, qa >= 0
         Rule 4: No post have multiple rows with (qa < qt) (not complete)
+        Rule 5: Scan is not corrupted (same nof, but different marque fix (refProduit, qt))
     */
 
 
@@ -273,6 +274,21 @@ class TableData {
                 }
             }
 
+            // Rule 5: Scan is not corrupted (same nof, but different marque fix (refProduit, qt))
+            rule5(scan) {
+                for (let i = 0; i < this.len; i++) {
+                    // check if the scan has the same nof as the row
+                    if (this.nofGet(i) === scan.nof) {
+                        // check if the scan has the same marque fix as the row
+                        if (this.isSameMarqueFix(i, scan) === false) {
+                            return false; // return false if the scan is corrupted
+                        }
+                    }
+                }
+
+                return true; // return true if the scan is not corrupted
+            }
+
 
 
 
@@ -330,21 +346,18 @@ class TableData {
 
         }
 
-        // check if the scan exists in the table (return the row of the scan if it exists, -1 if not, -2 if the scan is corrupted (exists but with some different values))
+        // check if the scan exists in the table (return the row of the scan if it exists, -1 if not exists)
         isScanExists(scan) {
 
             this.rule1() // check if Rule1 respected: Identifier of the table is (nof, postActuel)
 
+
             for (let i = 0; i < this.len; i++) {
                 if (this.isSameScanId(i, scan)) { // check if the nof and postActuel are the same
-                    // check for errors
-                    if (this.isSameMarqueFix(i, scan) === false) return -2; // check if the nof, refProduit, qt are the same (returns -2 if the scan is corrupted)
-
                     return i; // return the row of the scan
                 }
             }
 
-            // check if the array is empty
             return -1; // no scan exists in the table
             
         }
@@ -352,9 +365,6 @@ class TableData {
 
         // add the scan to the table
         addScan(scan) {
-
-            if (this.isScanExists(scan) === -2) throw new Error("The scan is corrupted why are you trying to add it"); // check if the scan is corrupted
-            if (this.isScanExists(scan) !== -1) throw new Error("The scan already exists in the table"); // check if the scan already exists in the table
 
             this.nof = scan.nof; // add the nof to the table
             this.refProduit = scan.refProduit; // add the refProduit to the table
@@ -401,31 +411,39 @@ class TableData {
     // update table
     updateTable(scan) {
 
+
         let scanRejected = true; // true if the scan is rejected
         let secondScan = false; // initial scan
         let currentPostRow = this.postCurrentRow(scan.postActuel); // the row of product (that we are currently scanning) in this scan post
         
 
-        // if the post is currently scanning a poduct
-        if (currentPostRow !== -1){
+        // check if the scan is not corrupted
+        if (this.rule5(scan) === true) {
 
-            // update the row
-            scanRejected = (!this.updateRow(currentPostRow, scan));
-            secondScan = this.isSecondScan(currentPostRow);
-            
-        }
-        else { // post is currently complete (no scanning in the momment)
+            // if the post is currently scanning a poduct
+            if (currentPostRow !== -1){
 
-        // check if the scan is not existing in the table (to add it)
+                // update the row
+                scanRejected = (!this.updateRow(currentPostRow, scan));
+                secondScan = this.isSecondScan(currentPostRow);
+                
+            }
+            else { // post is currently complete (no scanning in the momment)
 
-            let scanRow = this.isScanExists(scan); // check if the scan exists in the table
-            
-            if (scanRow === -1) { // if the scan does not exist in the table (add it)
-                this.addScan(scan); // add the scan to the table
-                scanRejected = false; // the scan is not rejected (added to the table)
-                secondScan = true; // the count for the new row is 1, so secondScan should be true
+            // check if the scan is not existing in the table (to add it)
+
+                let scanRow = this.isScanExists(scan); // check if the scan exists in the table
+                
+                if (scanRow === -1) { // if the scan does not exist in the table (add it)
+                    this.addScan(scan); // add the scan to the table
+                    scanRejected = false; // the scan is not rejected (added to the table)
+                    secondScan = true; // the count for the new row is 1, so secondScan should be true
+                }
             }
         }
+        else if (currentPostRow !== -1)  // if the scan is corrupted and the post is currently scanning a product
+            secondScan = this.isSecondScan(currentPostRow);
+
 
 
 
