@@ -20,7 +20,7 @@ class TableData {
             Date    : tempsDebut, tempsFin, tempsDernierScan
         Rule 3: qa <= qt, qt > 0, qa >= 0
         Rule 4: No post have multiple rows with (qa < qt) (not complete)
-        Rule 5: Scan is not corrupted (same nof, but different marque fix (refProduit, qt))
+        Rule 5: No rows with (same nof, but different marque fix (refProduit, qt))
     */
 
 
@@ -179,6 +179,12 @@ class TableData {
             if (this.qtGet(row) !== scan.qt) return false; // check if the qt is the same
             return true; // return true if the nof, refProduit and qt are the same
         }
+        isSameMarqueFixRows(row1, row2) { // check if the two rows have the same marque fix (nof, refProduit, qt)
+            if (this.nofGet(row1) !== this.nofGet(row2)) return false; // check if the nof is the same
+            if (this.refProduitGet(row1) !== this.refProduitGet(row2)) return false; // check if the refProduit is the same
+            if (this.qtGet(row1) !== this.qtGet(row2)) return false; // check if the qt is the same
+            return true; // return true if the nof, refProduit and qt are the same
+        }
 
 
 
@@ -274,20 +280,22 @@ class TableData {
                 }
             }
 
-            // Rule 5: Scan is not corrupted (same nof, but different marque fix (refProduit, qt))
-            rule5(scan) {
+            
+            // Rule 5: No rows with (same nof, but different marque fix (refProduit, qt))
+            rule5() {
                 for (let i = 0; i < this.len; i++) {
-                    // check if the scan has the same nof as the row
-                    if (this.nofGet(i) === scan.nof) {
-                        // check if the scan has the same marque fix as the row
-                        if (this.isSameMarqueFix(i, scan) === false) {
-                            return false; // return false if the scan is corrupted
+                    
+                    for (let j = i + 1; j < this.len; j++) {
+                        if (this.nofGet(i) === this.nofGet(j) && this.isSameMarqueFixRows(i, j) === false) {
+                            throw new Error("Rule 5 not respected: No rows with (same nof, but different marque fix (refProduit, qt))"); // throw an error
                         }
                     }
+                    
                 }
 
                 return true; // return true if the scan is not corrupted
             }
+            
 
 
 
@@ -387,6 +395,25 @@ class TableData {
         }
 
 
+        // check if the scan is corrupted (same nof, but different marque fix (refProduit, qt))
+        isScanCorrupted(scan) {
+            for (let i = 0; i < this.len; i++) {
+                // check if the scan has the same nof as the row
+                if (this.nofGet(i) === scan.nof) {
+                    // check if the scan has the same marque fix as the row
+                    if (this.isSameMarqueFix(i, scan) === false) {
+                        return true; // return true if the scan is corrupted
+                    }
+                }
+            }
+
+            return false; // return false if the scan is not corrupted
+        }
+
+
+
+
+
 
 
 
@@ -418,7 +445,7 @@ class TableData {
         
 
         // check if the scan is not corrupted
-        if (this.rule5(scan) === true) {
+        if (this.isScanCorrupted(scan) === false) {
 
             // if the post is currently scanning a poduct
             if (currentPostRow !== -1){
@@ -445,6 +472,8 @@ class TableData {
             secondScan = this.isSecondScan(currentPostRow);
 
 
+
+        this.rule5() // check if Rule5 respected: No rows with (same nof, but different marque fix (refProduit, qt))
 
 
         // return information about the update (scan rejected?, scan initial or final?)
