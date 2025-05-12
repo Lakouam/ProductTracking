@@ -8,6 +8,7 @@ const path = require('path');
 // import our classes
 const ScanData = require('./ScanData.js'); 
 const TableData = require('./TableData.js');
+const TrackingDB = require('./TrackingDB.js');
 
 
 
@@ -165,6 +166,19 @@ function createWindow() {
             win.webContents.send("Table Data Rows", tableData.getRows());
         });
     }
+
+
+
+
+
+    // Database
+    {
+        // create the database and the tables if they do not exist
+        //TrackingDB.createDatabase();
+        //TrackingDB.createTables();
+    }
+
+
 
 
 
