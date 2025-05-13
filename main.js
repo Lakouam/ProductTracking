@@ -176,6 +176,9 @@ function createWindow() {
         // create the database and the tables if they do not exist
         //TrackingDB.createDatabase();
         //TrackingDB.createTables();
+        TrackingDB.clearTables();
+        TrackingDB.insertValuesInitial();
+
     }
 
 

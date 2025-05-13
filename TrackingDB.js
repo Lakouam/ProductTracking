@@ -89,6 +89,82 @@ class TrackingDB {
 
 
 
+
+
+    // Function to insert values into the tables if they don't exist
+    static insertValuesInitial() {
+        // Insert a value into the table post if it doesn't exist
+        let values = [
+            ['post1'],
+            ['post2'],
+            ['post3'],
+            ['post4'],
+            ['post5'],
+            ['post6'],
+            ['post7'],
+            ['post8'],
+            ['post9'],
+            ['post10']
+        ];
+        let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
+        this.connection.query(sql, [values], (err, result) => {
+            if (err) throw err;
+            console.log("Values inserted into table post if not existed!");
+        });
+
+
+        // Insert a value into the table marque if it doesn't exist
+        let values2 = [
+            ['2533024', 'AEG661', 3],
+            ['2533100', '0EMS15', 4]
+        ];
+        let sql2 = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES ?`;
+        this.connection.query(sql2, [values2], (err, result) => {
+            if (err) throw err;
+            console.log("Values inserted into table marque if not existed!");
+        });
+
+
+        // Insert a value into the table scan if it doesn't exist
+        let values3 = [
+            ['2533024', 'post1', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00'],
+            ['2533100', 'post2', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00']
+        ];
+        let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
+        this.connection.query(sql3, [values3], (err, result) => {
+            if (err) throw err;
+            console.log("Values inserted into table scan if not existed!");
+        });
+        
+    }
+
+
+
+    // clear all the tables
+    static clearTables() {
+
+        let sql3 = `DELETE FROM scan`;
+        this.connection.query(sql3, (err, result) => {
+            if (err) throw err;
+            console.log("Table scan cleared!");
+        });
+
+        let sql = `DELETE FROM post`;
+        this.connection.query(sql, (err, result) => {
+            if (err) throw err;
+            console.log("Table post cleared!");
+        });
+
+        let sql2 = `DELETE FROM marque`;
+        this.connection.query(sql2, (err, result) => {
+            if (err) throw err;
+            console.log("Table marque cleared!");
+        });
+    }
+
+
+
+
 }
 
 module.exports = TrackingDB;
