@@ -9,6 +9,7 @@ const path = require('path');
 const ScanData = require('./ScanData.js'); 
 const TableData = require('./TableData.js');
 const TrackingDB = require('./TrackingDB.js');
+const Post = require('./Post.js');
 
 
 
@@ -78,6 +79,9 @@ function createWindow() {
 
     // Create our table (nof, refProduit, qt, ...)
     const tableData = new TableData(); 
+
+    // Create our post (nof, refProduit, qt, ...) of the active row (qa < qt) of the post
+    let post = new Post(); // create a new Post object
 
 
 
@@ -192,6 +196,22 @@ function createWindow() {
                 });
         });
         */
+        
+
+        
+        // get active row (qa < qt) of the post from the database whenever we load the page
+        win.webContents.on("did-finish-load", () => {
+            TrackingDB.getActiveRow(postActuel) 
+                .then(data => {
+                    post.fillPostName(postActuel); // fill the post name
+                    post.fillFromDB(data); // fill the post with the data from the database
+                    post.show(); // show the post in the console
+                })
+                .catch(error => {
+                    console.error("Error retrieving data from the database:", error);
+                });
+        });
+        
         
 
     }

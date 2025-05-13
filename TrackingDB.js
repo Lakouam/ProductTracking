@@ -206,7 +206,7 @@ class TrackingDB {
     // get Active row (qa < qt) of a post
     static getActiveRow(post) {
         return new Promise((resolve, reject) => {
-            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
+            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
             this.connection.query(sql, [post], (err, result, fields) => {
                 if (err) {
                     reject(err); // Reject the promise if there's an error
@@ -226,7 +226,9 @@ class TrackingDB {
                     row.qa,
                     row.moy_temps_passer,
                     row.etat,
-                    row.commentaire
+                    row.commentaire,
+                    row.scan_count,
+                    row.temps_dernier_scan
                 ]);
                 
                 // resolve an object {column name: first row of that column}
