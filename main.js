@@ -108,6 +108,13 @@ function createWindow() {
                     scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
                     secondScan = updateTableInformations.secondScan; // get the second scan information
 
+
+
+                    // update the post with the scan data
+                    post.update(scanData); // update the post with the scan data
+                    post.show(); // show the post in the console
+
+
                 }
                 else {
                     console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
@@ -199,11 +206,11 @@ function createWindow() {
         
 
         
-        // get active row (qa < qt) of the post from the database whenever we load the page
-        win.webContents.on("did-finish-load", () => {
-            TrackingDB.getActiveRow(postActuel) 
+        // get active row (qa < qt) of the post from the database whenever we change the post
+        ipcMain.on("Post Select", (event, postName) => {
+            TrackingDB.getActiveRow(postName) 
                 .then(data => {
-                    post.fillPostName(postActuel); // fill the post name
+                    post.fillPostName(postName); // fill the post name
                     post.fillFromDB(data); // fill the post with the data from the database
                     post.show(); // show the post in the console
                 })
