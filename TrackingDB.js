@@ -95,16 +95,11 @@ class TrackingDB {
     static insertValuesInitial() {
         // Insert a value into the table post if it doesn't exist
         let values = [
-            ['post1'],
-            ['post2'],
-            ['post3'],
-            ['post4'],
-            ['post5'],
-            ['post6'],
-            ['post7'],
-            ['post8'],
-            ['post9'],
-            ['post10']
+            ['Post 1'],
+            ['Post 2'],
+            ['Post 3'],
+            ['Post 4'],
+            ['Post 5']
         ];
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
         this.connection.query(sql, [values], (err, result) => {
@@ -127,8 +122,8 @@ class TrackingDB {
 
         // Insert a value into the table scan if it doesn't exist
         let values3 = [
-            ['2533024', 'post1', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00'],
-            ['2533100', 'post2', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00']
+            ['2533024', 'Post 1', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00'],
+            ['2533100', 'Post 2', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00']
         ];
         let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
         this.connection.query(sql3, [values3], (err, result) => {
@@ -203,6 +198,53 @@ class TrackingDB {
         });
         
         
+    }
+
+
+
+
+    // get Active row (qa < qt) of a post
+    static getActiveRow(post) {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
+            this.connection.query(sql, [post], (err, result, fields) => {
+                if (err) {
+                    reject(err); // Reject the promise if there's an error
+                    return;
+                }
+
+                console.log("Active row retrieved from the database!");
+
+                // Map the result to a two-dimensional array
+                let rows = result.map(row => [
+                    row.temps_debut,
+                    row.temps_fin,
+                    row.nof,
+                    row.ref_produit,
+                    row.qt,
+                    row.post_actuel,
+                    row.qa,
+                    row.moy_temps_passer,
+                    row.etat,
+                    row.commentaire
+                ]);
+                
+                // resolve an object {column name: first row of that column}
+                let columns = fields.map(field => field.name);
+
+
+                let obj = {};
+                for (let i = 0; i < columns.length; i++) {
+                    if(rows.length === 0)
+                        obj[columns[i]] = null;
+                    else obj[columns[i]] = rows[0][i];
+                }
+
+
+                resolve(obj); // Resolve the promise with the data
+                
+            });
+        });
     }
 
 
