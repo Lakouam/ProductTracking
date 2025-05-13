@@ -176,8 +176,23 @@ function createWindow() {
         // create the database and the tables if they do not exist
         //TrackingDB.createDatabase();
         //TrackingDB.createTables();
-        TrackingDB.clearTables();
-        TrackingDB.insertValuesInitial();
+        //TrackingDB.clearTables(); // clear the tables
+        //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+
+        /*
+        // get the data from the database then send it to the render process whenever we load the page
+        win.webContents.on("did-finish-load", () => {
+            TrackingDB.getData()
+                .then(data => {
+                    win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
+                    win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
+                })
+                .catch(error => {
+                    console.error("Error retrieving data from the database:", error);
+                });
+        });
+        */
+        
 
     }
 

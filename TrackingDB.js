@@ -165,6 +165,49 @@ class TrackingDB {
 
 
 
+    // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
+    static getData() {
+
+
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
+
+            this.connection.query(sql, (err, result, fields) => {
+                if (err) {
+                    reject(err); // Reject the promise if there's an error
+                    return;
+                }
+
+                console.log("Data retrieved from the database!");
+
+                // Map the result to a two-dimensional array
+                let rows = result.map(row => [
+                    row.temps_debut,
+                    row.temps_fin,
+                    row.nof,
+                    row.ref_produit,
+                    row.qt,
+                    row.post_actuel,
+                    row.qa,
+                    row.moy_temps_passer,
+                    row.etat,
+                    row.commentaire
+                ]);
+
+                // Add the column names as the first row
+                let columns = fields.map(field => field.name);
+                rows.unshift(columns);
+
+                resolve(rows); // Resolve the promise with the data
+            });
+        });
+        
+        
+    }
+
+
+
+
 }
 
 module.exports = TrackingDB;
