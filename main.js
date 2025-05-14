@@ -74,6 +74,23 @@ function createWindow() {
     
 
 
+
+
+
+    // some Database operations
+    {
+        
+        //TrackingDB.createDatabase();      // create the database if not exist
+        //TrackingDB.dropTables();          // drop the tables if exist
+        //TrackingDB.createTables();        // create the tables if they do not exist
+        TrackingDB.clearTables();         // clear the tables
+        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+        
+    }
+
+
+
+
     
 
 
@@ -85,13 +102,11 @@ function createWindow() {
 
     
     // receive data from render process
-    //let postActuel = null;
     let scanRejected = false; // is the scan rejected?
-    let secondScan = false   // is the next scan, the second scan?
     {
-        // receive scan input data
+        // receive scan input data amd update it in the database
         {
-            // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
+            // Read Scanner data that we send from the render process (page.html) (update it in the database)
             ipcMain.on("Scan Input", async (event, data) => {
 
                 const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
@@ -101,9 +116,8 @@ function createWindow() {
                     console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
                     // update the post with the scan data
-                    let updateTableInformations = await post.update(scanData); // update the post with the scan data
-                    scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
-                    secondScan = updateTableInformations.secondScan; // get the second scan information
+                    let updateInformations = await post.update(scanData); // update the post with the scan data
+                    scanRejected = updateInformations.scanRejected; // get the scan rejected information
 
                 }
                 else {
@@ -123,27 +137,46 @@ function createWindow() {
 
 
 
-    // send data to render process
-    {
-        // send the post actuel whenever we load the page
-        win.webContents.on("did-finish-load", () => {
-            //win.webContents.send("Post Actuel", postActuel);
-            win.webContents.send("Post Actuel", post.postActuel);
-        });
 
 
-        // send a message about the scan whenever we load the page
-        win.webContents.on("did-finish-load", () => {
-            if (!secondScan) {
-                if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
-                else win.webContents.send("Message About Scan", "Scan Initial");
-            }
-            else {
-                if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
-                else win.webContents.send("Message About Scan", "Scan Finale");
-            }
-            scanRejected = false // initialize scanRejected
-        });
+    // receive data from Database
+    {   
+        // receive data from database then send it to the render process whenever we load the page
+        {
+            win.webContents.on("did-finish-load", () => {
+                TrackingDB.getData()
+                    .then(data => {
+                        win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
+                        win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
+                    })
+                    .catch(error => {
+                        console.error("Error retrieving data from the database:", error);
+                    });
+            });
+        }
+        
+        
+        
+
+        
+        // receive active row (qa < qt) of the post from database whenever we change the post
+        {
+            ipcMain.on("Post Select", (event, postName) => {
+                TrackingDB.getActiveRow(postName) 
+                    .then(data => {
+
+                        post.fillPostName(postName); // fill the post name
+                        post.fillFromDB(data); // fill the post with the data from the database
+                    
+
+                        win.reload(); // reload the page to clear the input fields
+                    })
+                    .catch(error => {
+                        console.error("Error retrieving data from the database:", error);
+                    });
+            });
+        }
+        
 
     }
 
@@ -151,49 +184,33 @@ function createWindow() {
 
 
 
-    // Database
+
+    // send data to render process
     {
-        // create the database and the tables if they do not exist
-        //TrackingDB.createDatabase();
-        //TrackingDB.dropTables(); // drop the tables if exist
-        //TrackingDB.createTables();
-        TrackingDB.clearTables(); // clear the tables
-        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
-
-        
-        // get the data from the database then send it to the render process whenever we load the page
-        win.webContents.on("did-finish-load", () => {
-            TrackingDB.getData()
-                .then(data => {
-                    win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
-                    win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
-                })
-                .catch(error => {
-                    console.error("Error retrieving data from the database:", error);
-                });
-        });
-        
+        // send the post actuel whenever we load the page
+        {
+            win.webContents.on("did-finish-load", () => {
+                win.webContents.send("Post Actuel", post.postActuel);
+            });
+        }
         
 
+
+        // send a message about the scan whenever we load the page
+        {
+            win.webContents.on("did-finish-load", () => {
+                if (!post.isSecondScan()) {
+                    if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
+                    else win.webContents.send("Message About Scan", "Scan Initial");
+                }
+                else {
+                    if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
+                    else win.webContents.send("Message About Scan", "Scan Finale");
+                }
+                scanRejected = false // initialize scanRejected
+            });
+        }
         
-        // get active row (qa < qt) of the post from the database whenever we change the post
-        ipcMain.on("Post Select", (event, postName) => {
-            TrackingDB.getActiveRow(postName) 
-                .then(data => {
-
-                    post.fillPostName(postName); // fill the post name
-                    post.fillFromDB(data); // fill the post with the data from the database
-                    //post.show(); // show the post in the console
-
-                
-                    secondScan = post.isSecondScan(); // check if the next scan of the post is the second scan (initial: false or final: true)
-
-                    win.reload(); // reload the page to clear the input fields
-                })
-                .catch(error => {
-                    console.error("Error retrieving data from the database:", error);
-                });
-        });
 
     }
 
