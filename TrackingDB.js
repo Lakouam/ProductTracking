@@ -317,7 +317,7 @@ class TrackingDB {
         return new Promise((resolve, reject) => {
             // check if the nof is not in the database
             let sql = `SELECT * FROM marque WHERE nof = ?`;
-            this.connection.query(sql, [nof], (err, result) => {
+            this.connection.query(sql, [scan.nof], (err, result) => {
                 if (err) {
                     reject(err); // Reject the promise if there's an error
                     return;
@@ -326,11 +326,11 @@ class TrackingDB {
                 // If the nof is not in the database, resolve with 1
                 if (result.length === 0) {
                     console.log("Nof Not exist in the database!");
-                    resolve(1);
+                    resolve(0);
                 } else {
                     if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
                         console.log("Nof exist in the database!");
-                        resolve(0);
+                        resolve(1);
                     }
                     else {
                         console.log("Nof exist in the database but scan is corrupted!");
@@ -356,6 +356,16 @@ class TrackingDB {
     }
 
     
+    // insert a row (a new nof) into the table marque
+    static insertMarque(post) {
+        // insert a row into the table marque
+        let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
+        this.connection.query(sql, [post.nof, post.refProduit, post.qt]
+                            , (err, result) => {
+            if (err) throw err;
+            console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
+        });
+    }
     
 
 

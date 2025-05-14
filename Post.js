@@ -267,7 +267,7 @@ class Post {
     }
 
 
-    // update
+    // update the post with the scan
     update(scan) {
 
         if(!this.isEmpty()) { // if the post is not empty
@@ -286,6 +286,11 @@ class Post {
                             .then((nofExist) => {
                                 if (nofExist === 1) { // if the nof exists in the database
                                     this.fillNew(scan);
+                                    TrackingDB.insertScan(this); // insert the scan in the database
+                                }
+                                else if (nofExist === 0) { // if the nof does not exist in the database
+                                    this.fillNew(scan);
+                                    TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
                                     TrackingDB.insertScan(this); // insert the scan in the database
                                 }
                             })
