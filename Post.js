@@ -268,41 +268,43 @@ class Post {
 
 
     // update the post with the scan
-    update(scan) {
+    async update(scan) {
+
+        let scanRejected = true; // true if the scan is rejected
+        let secondScan = false; // initial scan
+
 
         if(!this.isEmpty()) { // if the post is not empty
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
                     this.allUpdate(scan); // update all the variables (that can be updated)
-                    TrackingDB.updateScan(this); // update the scan in the database
+                    await TrackingDB.updateScan(this); // update the scan in the database
+                    scanRejected = false;
+                    secondScan = this.isSecondScan(); // check if the scan is the second scan
                 }
             }
         }
         else { // if the post is empty
-            TrackingDB.isScanNotExist(scan) // check if the scan is Not exist in the database (nof, postActuel)
-                .then((result) => {
-                    if (result) { // if the scan is Not exist in the database
-                        TrackingDB.isNofExist(scan) // check if the nof exists in the database
-                            .then((nofExist) => {
-                                if (nofExist === 1) { // if the nof exists in the database
-                                    this.fillNew(scan);
-                                    TrackingDB.insertScan(this); // insert the scan in the database
-                                }
-                                else if (nofExist === 0) { // if the nof does not exist in the database
-                                    this.fillNew(scan);
-                                    TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
-                                    TrackingDB.insertScan(this); // insert the scan in the database
-                                }
-                            })
-                            .catch((error) => {
-                                console.error("Error checking Nof:", error);
-                            });
+            const scanNotExist = await TrackingDB.isScanNotExist(scan); // check if the scan is Not exist in the database (nof, postActuel)
+            
+            if (scanNotExist) { // if the scan is Not exist in the database
+                const nofExist = await TrackingDB.isNofExist(scan); // check if the nof exists in the database
 
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error checking scan:", error);
-                });
+                if (nofExist === 1) { // if the nof exists in the database
+                    this.fillNew(scan);
+                    await TrackingDB.insertScan(this); // insert the scan in the database
+                    scanRejected = false;
+                    secondScan = this.isSecondScan(); // check if the scan is the second scan
+                }
+                else if (nofExist === 0) { // if the nof does not exist in the database
+                    this.fillNew(scan);
+                    await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
+                    await TrackingDB.insertScan(this); // insert the scan in the database
+                    scanRejected = false;
+                    secondScan = this.isSecondScan(); // check if the scan is the second scan
+                }
+
+            }
 
 
         }
@@ -314,6 +316,12 @@ class Post {
             if (this.isQaCompleted()) 
                 this.clear(); // if the post is not empty and if the qa is equal to the qt, clear the post
         
+
+
+        // return information about the update (scan rejected?, scan initial or final?)
+        return {scanRejected: scanRejected, secondScan: secondScan};
+
+
     }
 
 

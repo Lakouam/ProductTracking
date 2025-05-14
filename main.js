@@ -88,14 +88,14 @@ function createWindow() {
 
     
     // receive data from render process
-    let postActuel = null;
+    //let postActuel = null;
     let scanRejected = false; // is the scan rejected?
     let secondScan = false   // is the next scan, the second scan?
     {
         // receive scan input data
         {
             // Read Scanner data that we send from the render process (page.html) (write it in command prompt)
-            ipcMain.on("Scan Input", (event, data) => {
+            ipcMain.on("Scan Input", async (event, data) => {
 
                 const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
                 
@@ -103,16 +103,21 @@ function createWindow() {
                 if(scanData.isValide()){
                     console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
+                    /*
                     // update TableData with the scan data
                     let updateTableInformations = tableData.updateTable(scanData); // update the table with the scan data (and get the information about the scan)
                     scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
                     secondScan = updateTableInformations.secondScan; // get the second scan information
+                    */
 
 
 
                     // update the post with the scan data
-                    post.update(scanData); // update the post with the scan data
-                    post.show(); // show the post in the console
+                    let updateTableInformations = await post.update(scanData); // update the post with the scan data
+                    scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
+                    secondScan = updateTableInformations.secondScan; // get the second scan information
+
+                    //post.show(); // show the post in the console
 
 
                 }
@@ -131,6 +136,7 @@ function createWindow() {
 
         // receive post select data
         {
+            /*
             ipcMain.on("Post Select", (event, data) => {
                 // Read the selected post that we send from the render process (page.html) (and load the page)
                 postActuel = data;
@@ -143,6 +149,7 @@ function createWindow() {
 
 
             });
+            */
         }
     }
 
@@ -153,7 +160,8 @@ function createWindow() {
     {
         // send the post actuel whenever we load the page
         win.webContents.on("did-finish-load", () => {
-            win.webContents.send("Post Actuel", postActuel);
+            //win.webContents.send("Post Actuel", postActuel);
+            win.webContents.send("Post Actuel", post.postActuel);
         });
 
 
@@ -173,8 +181,10 @@ function createWindow() {
 
         // send the table data columns and rows whenever we load the page
         win.webContents.on("did-finish-load", () => {
+            /*
             win.webContents.send("Table Data Columns", tableData.getColumns());
             win.webContents.send("Table Data Rows", tableData.getRows());
+            */
         });
     }
 
@@ -188,10 +198,10 @@ function createWindow() {
         //TrackingDB.createDatabase();
         //TrackingDB.dropTables(); // drop the tables if exist
         //TrackingDB.createTables();
-        //TrackingDB.clearTables(); // clear the tables
-        //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+        TrackingDB.clearTables(); // clear the tables
+        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
 
-        /*
+        
         // get the data from the database then send it to the render process whenever we load the page
         win.webContents.on("did-finish-load", () => {
             TrackingDB.getData()
@@ -203,7 +213,7 @@ function createWindow() {
                     console.error("Error retrieving data from the database:", error);
                 });
         });
-        */
+        
         
 
         
@@ -211,9 +221,15 @@ function createWindow() {
         ipcMain.on("Post Select", (event, postName) => {
             TrackingDB.getActiveRow(postName) 
                 .then(data => {
+
                     post.fillPostName(postName); // fill the post name
                     post.fillFromDB(data); // fill the post with the data from the database
-                    post.show(); // show the post in the console
+                    //post.show(); // show the post in the console
+
+                
+                    secondScan = post.isSecondScan(); // check if the next scan of the post is the second scan (initial: false or final: true)
+
+                    win.reload(); // reload the page to clear the input fields
                 })
                 .catch(error => {
                     console.error("Error retrieving data from the database:", error);

@@ -131,6 +131,7 @@ class TrackingDB {
         });
 
 
+        /*
         // Insert a value into the table marque if it doesn't exist
         let values2 = [
             ['2533024', 'AEG661', 3],
@@ -153,7 +154,7 @@ class TrackingDB {
             if (err) throw err;
             console.log("Values inserted into table scan if not existed!");
         });
-        
+        */
     }
 
 
@@ -276,12 +277,15 @@ class TrackingDB {
     // update the table scan by a post
     static updateScan(post) {
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
-        let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
-        this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
-                            , (err, result) => {
-            if (err) throw err;
-            console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
-        });
+        return new Promise((resolve, reject) => {
+            let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
+            this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
+                                , (err, result) => {
+                if (err) throw err;
+                console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
+                resolve(result);
+            });
+         });   
 
     }
 
@@ -309,6 +313,7 @@ class TrackingDB {
                 }
             });
         });
+        
     }
 
 
@@ -340,30 +345,37 @@ class TrackingDB {
                 }
             });
         });
+        
     }
 
 
 
     // insert a row into the table scan
     static insertScan(post) {
-        // insert a row into the table scan
-        let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
-                            , (err, result) => {
-            if (err) throw err;
-            console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+        return new Promise((resolve, reject) => {
+            // insert a row into the table scan
+            let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
+                                , (err, result) => {
+                if (err) throw err;
+                console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+                resolve(result);
+            });
         });
     }
 
     
     // insert a row (a new nof) into the table marque
     static insertMarque(post) {
-        // insert a row into the table marque
-        let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-        this.connection.query(sql, [post.nof, post.refProduit, post.qt]
-                            , (err, result) => {
-            if (err) throw err;
-            console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
+        return new Promise((resolve, reject) => {
+            // insert a row into the table marque
+            let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
+            this.connection.query(sql, [post.nof, post.refProduit, post.qt]
+                                , (err, result) => {
+                if (err) throw err;
+                console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
+                resolve(result);
+            });
         });
     }
     
