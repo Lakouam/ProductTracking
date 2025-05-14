@@ -286,6 +286,79 @@ class TrackingDB {
     }
 
 
+    // check if the scan is exist in the database
+    static isScanNotExist(scan) {
+        return new Promise((resolve, reject) => {
+            // check if the scan is not in the database
+            let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
+            this.connection.query(sql, [scan.nof, scan.postActuel], (err, result) => {
+                if (err) {
+                    reject(err); // Reject the promise if there's an error
+                    return;
+                }
+
+                
+
+                // If the scan is not in the database, resolve with true
+                if (result.length === 0) {
+                    console.log("Scan Not exist in the database!");
+                    resolve(true);
+                } else {
+                    console.log("Scan exist in the database!");
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+
+    // check if the nof exists in the database (1: exist, 0: not exist, -1: Corrupted)
+    static isNofExist(scan) {
+        return new Promise((resolve, reject) => {
+            // check if the nof is not in the database
+            let sql = `SELECT * FROM marque WHERE nof = ?`;
+            this.connection.query(sql, [nof], (err, result) => {
+                if (err) {
+                    reject(err); // Reject the promise if there's an error
+                    return;
+                }
+
+                // If the nof is not in the database, resolve with 1
+                if (result.length === 0) {
+                    console.log("Nof Not exist in the database!");
+                    resolve(1);
+                } else {
+                    if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
+                        console.log("Nof exist in the database!");
+                        resolve(0);
+                    }
+                    else {
+                        console.log("Nof exist in the database but scan is corrupted!");
+                        resolve(-1);
+                    }
+                        
+                }
+            });
+        });
+    }
+
+
+
+    // insert a row into the table scan
+    static insertScan(post) {
+        // insert a row into the table scan
+        let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
+                            , (err, result) => {
+            if (err) throw err;
+            console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+        });
+    }
+
+    
+    
+
+
 
 }
 

@@ -247,15 +247,59 @@ class Post {
         this.tempsDernierScan = row.temps_dernier_scan;
     }
 
+    // fill a new values from scan
+    fillNew(scan) {
+        // fill all the variables except postActuel with the data from the scan
+        this.nof = scan.nof; 
+        this.refProduit = scan.refProduit;
+        this.qt = scan.qt; 
+        this.qa = 0;
+        this.moytempspasser = 0;
+        this.etat = scan.etat;
+        this.commentaire = scan.commentaire;
+
+        this.tempsDebut = scan.tempsActuel;
+        this.tempsFin = null;
+
+        this.scanCount = 1;
+
+        this.tempsDernierScan = scan.tempsActuel;
+    }
+
 
     // update
     update(scan) {
 
-        if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
-            if (!this.isQaCompleted()) { // if the qa is less than the qt
-                this.allUpdate(scan); // update all the variables (that can be updated)
-                TrackingDB.updateScan(this); // update the scan in the database
+        if(!this.isEmpty()) { // if the post is not empty
+            if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
+                if (!this.isQaCompleted()) { // if the qa is less than the qt
+                    this.allUpdate(scan); // update all the variables (that can be updated)
+                    TrackingDB.updateScan(this); // update the scan in the database
+                }
             }
+        }
+        else { // if the post is empty
+            TrackingDB.isScanNotExist(scan) // check if the scan is Not exist in the database (nof, postActuel)
+                .then((result) => {
+                    if (result) { // if the scan is Not exist in the database
+                        TrackingDB.isNofExist(scan) // check if the nof exists in the database
+                            .then((nofExist) => {
+                                if (nofExist === 1) { // if the nof exists in the database
+                                    this.fillNew(scan);
+                                    TrackingDB.insertScan(this); // insert the scan in the database
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Error checking Nof:", error);
+                            });
+
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking scan:", error);
+                });
+
+
         }
 
 
