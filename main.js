@@ -1,5 +1,5 @@
 // import Electron properties
-const {app, BrowserWindow, nativeImage, Menu, ipcMain, } = require('electron');
+const {app, BrowserWindow, nativeImage, Menu, ipcMain} = require('electron');
 
 // to use path
 const path = require('path');
@@ -7,7 +7,6 @@ const path = require('path');
 
 // import our classes
 const ScanData = require('./ScanData.js'); 
-const TableData = require('./TableData.js');
 const TrackingDB = require('./TrackingDB.js');
 const Post = require('./Post.js');
 
@@ -77,8 +76,6 @@ function createWindow() {
 
     
 
-    // Create our table (nof, refProduit, qt, ...)
-    const tableData = new TableData(); 
 
     // Create our post (nof, refProduit, qt, ...) of the active row (qa < qt) of the post
     let post = new Post(); // create a new Post object
@@ -103,22 +100,10 @@ function createWindow() {
                 if(scanData.isValide()){
                     console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
-                    /*
-                    // update TableData with the scan data
-                    let updateTableInformations = tableData.updateTable(scanData); // update the table with the scan data (and get the information about the scan)
-                    scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
-                    secondScan = updateTableInformations.secondScan; // get the second scan information
-                    */
-
-
-
                     // update the post with the scan data
                     let updateTableInformations = await post.update(scanData); // update the post with the scan data
                     scanRejected = updateTableInformations.scanRejected; // get the scan rejected information
                     secondScan = updateTableInformations.secondScan; // get the second scan information
-
-                    //post.show(); // show the post in the console
-
 
                 }
                 else {
@@ -133,24 +118,6 @@ function createWindow() {
             })
         }
 
-
-        // receive post select data
-        {
-            /*
-            ipcMain.on("Post Select", (event, data) => {
-                // Read the selected post that we send from the render process (page.html) (and load the page)
-                postActuel = data;
-
-                win.reload(); // reload the page to clear the input fields
-
-
-                // check if the next scan of the post is the second scan (initial: false or final: true)
-                secondScan = tableData.postNextScanIsSecond(postActuel);
-
-
-            });
-            */
-        }
     }
 
 
@@ -178,14 +145,6 @@ function createWindow() {
             scanRejected = false // initialize scanRejected
         });
 
-
-        // send the table data columns and rows whenever we load the page
-        win.webContents.on("did-finish-load", () => {
-            /*
-            win.webContents.send("Table Data Columns", tableData.getColumns());
-            win.webContents.send("Table Data Rows", tableData.getRows());
-            */
-        });
     }
 
 
@@ -235,8 +194,6 @@ function createWindow() {
                     console.error("Error retrieving data from the database:", error);
                 });
         });
-        
-        
 
     }
 
