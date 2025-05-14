@@ -1,3 +1,5 @@
+const TrackingDB = require("./TrackingDB");
+
 class Post {
 
     constructor() {
@@ -250,8 +252,10 @@ class Post {
     update(scan) {
 
         if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
-            if (!this.isQaCompleted()) // if the qa is less than the qt
+            if (!this.isQaCompleted()) { // if the qa is less than the qt
                 this.allUpdate(scan); // update all the variables (that can be updated)
+                TrackingDB.updateScan(this); // update the scan in the database
+            }
         }
 
 

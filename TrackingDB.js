@@ -73,7 +73,7 @@ class TrackingDB {
             etat BOOLEAN NOT NULL,
             commentaire VARCHAR(255) NOT NULL,
             temps_debut DATETIME NOT NULL,
-            temps_fin DATETIME NOT NULL,
+            temps_fin DATETIME,
             scan_count INT NOT NULL,
             temps_dernier_scan DATETIME NOT NULL,
             PRIMARY KEY (nof, post_actuel),
@@ -86,6 +86,29 @@ class TrackingDB {
             console.log("Table scan created or already exists!");
         });
     }
+
+
+    // drop tables
+    static dropTables() {
+        let sql3 = `DROP TABLE IF EXISTS scan`;
+        this.connection.query(sql3, (err, result) => {
+            if (err) throw err;
+            console.log("Table scan dropped!");
+        });
+
+        let sql = `DROP TABLE IF EXISTS post`;
+        this.connection.query(sql, (err, result) => {
+            if (err) throw err;
+            console.log("Table post dropped!");
+        });
+
+        let sql2 = `DROP TABLE IF EXISTS marque`;
+        this.connection.query(sql2, (err, result) => {
+            if (err) throw err;
+            console.log("Table marque dropped!");
+        });
+    }
+
 
 
 
@@ -122,8 +145,8 @@ class TrackingDB {
 
         // Insert a value into the table scan if it doesn't exist
         let values3 = [
-            ['2533024', 'Post 1', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00'],
-            ['2533100', 'Post 2', 0, 0, 0, '', '2023-10-01 00:00:00', null, 1, '2023-10-01 00:00:00']
+            ['2533024', 'Post 1', 0, 0, 0, '', new Date(), null, 1, new Date()],
+            ['2533100', 'Post 2', 0, 0, 0, '', new Date(), null, 1, new Date()]
         ];
         let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
         this.connection.query(sql3, [values3], (err, result) => {
@@ -249,6 +272,18 @@ class TrackingDB {
         });
     }
 
+
+    // update the table scan by a post
+    static updateScan(post) {
+        // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
+        let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
+        this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
+                            , (err, result) => {
+            if (err) throw err;
+            console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
+        });
+
+    }
 
 
 

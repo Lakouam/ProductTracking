@@ -186,6 +186,7 @@ function createWindow() {
     {
         // create the database and the tables if they do not exist
         //TrackingDB.createDatabase();
+        //TrackingDB.dropTables(); // drop the tables if exist
         //TrackingDB.createTables();
         //TrackingDB.clearTables(); // clear the tables
         //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
