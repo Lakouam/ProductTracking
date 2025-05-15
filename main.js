@@ -116,31 +116,30 @@ function createWindow() {
 
                 PageUI.disable(); // disable UI
 
-                //setTimeout(async function() { // to wait for some second (for testing)
+                const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                
+                // check if the scan is valid
+                if(scanData.isValide()){
+                    console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
-                    const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
-                    
-                    // check if the scan is valid
-                    if(scanData.isValide()){
-                        console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
+                    // update the post with the scan data
+                    let updateInformations = await post.update(scanData); // update the post with the scan data
+                    scanRejected = updateInformations.scanRejected; // get the scan rejected information
 
-                        // update the post with the scan data
-                        let updateInformations = await post.update(scanData); // update the post with the scan data
-                        scanRejected = updateInformations.scanRejected; // get the scan rejected information
-
-                    }
-                    else {
-                        console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
-                        scanRejected = true;
-                    }
+                }
+                else {
+                    console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
+                    scanRejected = true;
+                }
 
 
+                setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
 
                     win.reload(); // reload the page to clear the input fields
 
                     PageUI.enable(); // enable UI
 
-                //}, 3000); // to wait for some second (for testing)
+                }, 1000); // to wait for one second
             })
         }
 
@@ -174,18 +173,19 @@ function createWindow() {
 
                 PageUI.disable(); // disable UI
 
-                //setTimeout(async function() { // to wait for some second (for testing)
 
-                    let data = await TrackingDB.getActiveRow(postName) 
-                        
-                    post.fillPostName(postName); // fill the post name
-                    post.fillFromDB(data); // fill the post with the data from the database
+                let data = await TrackingDB.getActiveRow(postName) 
+                    
+                post.fillPostName(postName); // fill the post name
+                post.fillFromDB(data); // fill the post with the data from the database
                 
+                setTimeout(async function() { // to wait for one sec (For test)
+
                     win.reload(); // reload the page to clear the input fields
 
                     PageUI.enable(); // enable UI
 
-                //}, 3000); // to wait for some second (for testing)
+                }, 1000); // to wait for one sec
                     
             });
         }
