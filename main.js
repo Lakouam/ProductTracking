@@ -155,15 +155,12 @@ function createWindow() {
     {   
         // receive data from database then send it to the render process whenever we load the page
         {
-            win.webContents.on("did-finish-load", () => {
-                TrackingDB.getData()
-                    .then(data => {
-                        win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
-                        win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
-                    })
-                    .catch(error => {
-                        console.error("Error retrieving data from the database:", error);
-                    });
+            win.webContents.on("did-finish-load", async () => {
+                let data = await TrackingDB.getData();
+                    
+                win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
+                win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
+                    
             });
         }
         
@@ -173,19 +170,23 @@ function createWindow() {
         
         // receive active row (qa < qt) of the post from database whenever we change the post
         {
-            ipcMain.on("Post Select", (event, postName) => {
-                TrackingDB.getActiveRow(postName) 
-                    .then(data => {
+            ipcMain.on("Post Select", async (event, postName) => {
 
-                        post.fillPostName(postName); // fill the post name
-                        post.fillFromDB(data); // fill the post with the data from the database
+                PageUI.disable(); // disable UI
+
+                //setTimeout(async function() { // to wait for some second (for testing)
+
+                    let data = await TrackingDB.getActiveRow(postName) 
+                        
+                    post.fillPostName(postName); // fill the post name
+                    post.fillFromDB(data); // fill the post with the data from the database
+                
+                    win.reload(); // reload the page to clear the input fields
+
+                    PageUI.enable(); // enable UI
+
+                //}, 3000); // to wait for some second (for testing)
                     
-
-                        win.reload(); // reload the page to clear the input fields
-                    })
-                    .catch(error => {
-                        console.error("Error retrieving data from the database:", error);
-                    });
             });
         }
         
