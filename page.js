@@ -141,3 +141,18 @@ const {ipcRenderer} = require('electron');
         });
     }
 }
+
+
+
+
+// receive a signal to disable UI (interaction of user with some elements)
+{
+    function setInputsDisabled(disabled) { // what's elements to disable or enable
+        document.getElementById('postSelect').disabled = disabled;
+        document.getElementById('scanInput').disabled = disabled;
+        document.getElementById('etatInput').disabled = disabled;
+        document.getElementById('commentInput').disabled = disabled;
+    }
+
+    ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
+}

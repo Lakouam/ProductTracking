@@ -19,8 +19,8 @@ const iconPath = path.join(__dirname, "src", "icons", "applogo.ico");
 // function to create a window
 function createWindow() {
     const win = new BrowserWindow({
-        width: 900, // width of the app
-        height: 600, // hight of the app
+        width: 1050, // width of the app
+        height: 700, // hight of the app
 
         icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
         
@@ -53,6 +53,7 @@ function createWindow() {
 
 
     // Menu
+    let contextMenuRightClick;
     {
         // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
         Menu.setApplicationMenu(null);
@@ -65,7 +66,7 @@ function createWindow() {
             {label: 'Reload', role: 'reload'},
             {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
         ];
-        let contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
+        contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
 
         win.webContents.on('context-menu', () =>{
             contextMenuRightClick.popup();
@@ -83,8 +84,8 @@ function createWindow() {
         //TrackingDB.createDatabase();      // create the database if not exist
         //TrackingDB.dropTables();          // drop the tables if exist
         //TrackingDB.createTables();        // create the tables if they do not exist
-        TrackingDB.clearTables();         // clear the tables
-        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+        //TrackingDB.clearTables();         // clear the tables
+        //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
         
     }
 
@@ -109,26 +110,48 @@ function createWindow() {
             // Read Scanner data that we send from the render process (page.html) (update it in the database)
             ipcMain.on("Scan Input", async (event, data) => {
 
-                const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
-                
-                // check if the scan is valid
-                if(scanData.isValide()){
-                    console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
-
-                    // update the post with the scan data
-                    let updateInformations = await post.update(scanData); // update the post with the scan data
-                    scanRejected = updateInformations.scanRejected; // get the scan rejected information
-
-                }
-                else {
-                    console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
-                    scanRejected = true;
+                // Disable UI
+                {
+                    // Disable UI (page.html some elements)
+                    win.webContents.send("Disable UI");
+                    // disable contextMenuRightClick all items
+                    contextMenuRightClick.items.forEach(item => {
+                        item.enabled = false;
+                    });
                 }
 
 
+                //setTimeout(async function() { // to wait for some second (for testing)
 
-                win.reload(); // reload the page to clear the input fields
+                    const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                    
+                    // check if the scan is valid
+                    if(scanData.isValide()){
+                        console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
+                        // update the post with the scan data
+                        let updateInformations = await post.update(scanData); // update the post with the scan data
+                        scanRejected = updateInformations.scanRejected; // get the scan rejected information
+
+                    }
+                    else {
+                        console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
+                        scanRejected = true;
+                    }
+
+
+
+                    win.reload(); // reload the page to clear the input fields
+
+                    // Enable UI
+                    {
+                        // Enable contextMenuRightClick all items
+                        contextMenuRightClick.items.forEach(item => {
+                            item.enabled = true;
+                        });
+                    }
+
+                //}, 5000); // to wait for some second (for testing)
             })
         }
 
