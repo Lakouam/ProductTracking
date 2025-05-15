@@ -21,6 +21,8 @@ class PageUI {
 
     // Enable UI
     static enable() {
+        // Enable UI (page.html some elements)
+        this.win.webContents.send("Enable UI");
         // Enable contextMenuRightClick all items
         this.contextMenuRightClick.items.forEach(item => {
             item.enabled = true;

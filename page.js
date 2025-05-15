@@ -145,7 +145,7 @@ const {ipcRenderer} = require('electron');
 
 
 
-// receive a signal to disable UI (interaction of user with some elements)
+// receive a signal to disable UI or Enable it (interaction of user with some elements)
 {
     function setInputsDisabled(disabled) { // what's elements to disable or enable
         document.getElementById('postSelect').disabled = disabled;
@@ -155,4 +155,5 @@ const {ipcRenderer} = require('electron');
     }
 
     ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
+    ipcRenderer.on("Enable UI", () => setInputsDisabled(false)); // Enable UI
 }
