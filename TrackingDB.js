@@ -185,40 +185,44 @@ class TrackingDB {
 
 
     // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-    static getData() {
-
+    static getData(retryIntervalMs = 3000) {
 
         return new Promise((resolve, reject) => {
-            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
+            const attempt = () => {
+                let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
 
-            this.connection.query(sql, (err, result, fields) => {
-                if (err) {
-                    reject(err); // Reject the promise if there's an error
-                    return;
-                }
+                this.connection.query(sql, (err, result, fields) => {
+                    if (err) {
+                        console.error("getData error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
 
-                console.log("Data retrieved from the database!");
+                    console.log("Data retrieved from the database!");
 
-                // Map the result to a two-dimensional array
-                let rows = result.map(row => [
-                    row.temps_debut,
-                    row.temps_fin,
-                    row.nof,
-                    row.ref_produit,
-                    row.qt,
-                    row.post_actuel,
-                    row.qa,
-                    row.moy_temps_passer,
-                    row.etat,
-                    row.commentaire
-                ]);
+                    // Map the result to a two-dimensional array
+                    let rows = result.map(row => [
+                        row.temps_debut,
+                        row.temps_fin,
+                        row.nof,
+                        row.ref_produit,
+                        row.qt,
+                        row.post_actuel,
+                        row.qa,
+                        row.moy_temps_passer,
+                        row.etat,
+                        row.commentaire
+                    ]);
 
-                // Add the column names as the first row
-                let columns = fields.map(field => field.name);
-                rows.unshift(columns);
+                    // Add the column names as the first row
+                    let columns = fields.map(field => field.name);
+                    rows.unshift(columns);
 
-                resolve(rows); // Resolve the promise with the data
-            });
+                    resolve(rows); // Resolve the promise with the data
+                });
+            };
+
+            attempt();
         });
         
         
@@ -228,122 +232,144 @@ class TrackingDB {
 
 
     // get Active row (qa < qt) of a post
-    static getActiveRow(post) {
+    static getActiveRow(post, retryIntervalMs = 3000) {
         return new Promise((resolve, reject) => {
-            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
-            this.connection.query(sql, [post], (err, result, fields) => {
-                if (err) {
-                    reject(err); // Reject the promise if there's an error
-                    return;
-                }
+            const attempt = () => {
+                let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
+                this.connection.query(sql, [post], (err, result, fields) => {
+                    if (err) {
+                        console.error("getActiveRow error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
 
-                console.log("Active row retrieved from the database!");
+                    console.log("Active row retrieved from the database!");
 
-                // Map the result to a two-dimensional array
-                let rows = result.map(row => [
-                    row.temps_debut,
-                    row.temps_fin,
-                    row.nof,
-                    row.ref_produit,
-                    row.qt,
-                    row.post_actuel,
-                    row.qa,
-                    row.moy_temps_passer,
-                    row.etat,
-                    row.commentaire,
-                    row.scan_count,
-                    row.temps_dernier_scan
-                ]);
-                
-                // resolve an object {column name: first row of that column}
-                let columns = fields.map(field => field.name);
-
-
-                let obj = {};
-                for (let i = 0; i < columns.length; i++) {
-                    if(rows.length === 0)
-                        obj[columns[i]] = null;
-                    else obj[columns[i]] = rows[0][i];
-                }
+                    // Map the result to a two-dimensional array
+                    let rows = result.map(row => [
+                        row.temps_debut,
+                        row.temps_fin,
+                        row.nof,
+                        row.ref_produit,
+                        row.qt,
+                        row.post_actuel,
+                        row.qa,
+                        row.moy_temps_passer,
+                        row.etat,
+                        row.commentaire,
+                        row.scan_count,
+                        row.temps_dernier_scan
+                    ]);
+                    
+                    // resolve an object {column name: first row of that column}
+                    let columns = fields.map(field => field.name);
 
 
-                resolve(obj); // Resolve the promise with the data
-                
-            });
+                    let obj = {};
+                    for (let i = 0; i < columns.length; i++) {
+                        if(rows.length === 0)
+                            obj[columns[i]] = null;
+                        else obj[columns[i]] = rows[0][i];
+                    }
+
+
+                    resolve(obj); // Resolve the promise with the data
+                    
+                });
+            }
+
+            attempt();
         });
     }
 
 
     // update the table scan by a post
-    static updateScan(post) {
+    static updateScan(post, retryIntervalMs = 3000) {
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
         return new Promise((resolve, reject) => {
-            let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
-            this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
-                                , (err, result) => {
-                if (err) throw err;
-                console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
-                resolve(result);
-            });
+            const attempt = () => {
+                let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
+                this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
+                                    , (err, result) => {
+                    if (err) {
+                        console.error("updateScan error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
+                    console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
+                    resolve(result);
+                });
+            }
+
+            attempt();
          });   
 
     }
 
 
     // check if the scan is exist in the database
-    static isScanNotExist(scan) {
+    static isScanNotExist(scan, retryIntervalMs = 3000) {
         return new Promise((resolve, reject) => {
-            // check if the scan is not in the database
-            let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
-            this.connection.query(sql, [scan.nof, scan.postActuel], (err, result) => {
-                if (err) {
-                    reject(err); // Reject the promise if there's an error
-                    return;
-                }
+            const attempt = () => {
+                // check if the scan is not in the database
+                let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
+                this.connection.query(sql, [scan.nof, scan.postActuel], (err, result) => {
+                    if (err) {
+                        console.error("isScanNotExist error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
+                    
 
-                
+                    // If the scan is not in the database, resolve with true
+                    if (result.length === 0) {
+                        console.log("Scan Not exist in the database!");
+                        resolve(true);
+                    } else {
+                        console.log("Scan exist in the database!");
+                        resolve(false);
+                    }
+                });
+            }
 
-                // If the scan is not in the database, resolve with true
-                if (result.length === 0) {
-                    console.log("Scan Not exist in the database!");
-                    resolve(true);
-                } else {
-                    console.log("Scan exist in the database!");
-                    resolve(false);
-                }
-            });
+            attempt();
         });
         
     }
 
 
     // check if the nof exists in the database (1: exist, 0: not exist, -1: Corrupted)
-    static isNofExist(scan) {
+    static isNofExist(scan, retryIntervalMs = 3000) {
         return new Promise((resolve, reject) => {
-            // check if the nof is not in the database
-            let sql = `SELECT * FROM marque WHERE nof = ?`;
-            this.connection.query(sql, [scan.nof], (err, result) => {
-                if (err) {
-                    reject(err); // Reject the promise if there's an error
-                    return;
-                }
+            const attempt = () => {
+                // check if the nof is not in the database
+                let sql = `SELECT * FROM marque WHERE nof = ?`;
+                this.connection.query(sql, [scan.nof], (err, result) => {
+                    if (err) {
+                        console.error("isNofExist error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
 
-                // If the nof is not in the database, resolve with 1
-                if (result.length === 0) {
-                    console.log("Nof Not exist in the database!");
-                    resolve(0);
-                } else {
-                    if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
-                        console.log("Nof exist in the database!");
-                        resolve(1);
+                    // If the nof is not in the database, resolve with 1
+                    if (result.length === 0) {
+                        console.log("Nof Not exist in the database!");
+                        resolve(0);
+                    } else {
+                        if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
+                            console.log("Nof exist in the database!");
+                            resolve(1);
+                        }
+                        else {
+                            console.log("Nof exist in the database but scan is corrupted!");
+                            resolve(-1);
+                        }
+                            
                     }
-                    else {
-                        console.log("Nof exist in the database but scan is corrupted!");
-                        resolve(-1);
-                    }
-                        
-                }
-            });
+                });
+            }
+
+            attempt();
         });
         
     }
@@ -351,31 +377,47 @@ class TrackingDB {
 
 
     // insert a row into the table scan
-    static insertScan(post) {
+    static insertScan(post, retryIntervalMs = 3000) {
         return new Promise((resolve, reject) => {
-            // insert a row into the table scan
-            let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
-                                , (err, result) => {
-                if (err) throw err;
-                console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
-                resolve(result);
-            });
+            const attempt = () => {
+                // insert a row into the table scan
+                let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
+                                    , (err, result) => {
+                    if (err) {
+                        console.error("insertScan error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
+                    console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+                    resolve(result);
+                });
+            }
+
+            attempt();
         });
     }
 
     
     // insert a row (a new nof) into the table marque
-    static insertMarque(post) {
+    static insertMarque(post, retryIntervalMs = 3000) {
         return new Promise((resolve, reject) => {
-            // insert a row into the table marque
-            let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-            this.connection.query(sql, [post.nof, post.refProduit, post.qt]
-                                , (err, result) => {
-                if (err) throw err;
-                console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
-                resolve(result);
-            });
+            const attempt = () => {
+                // insert a row into the table marque
+                let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
+                this.connection.query(sql, [post.nof, post.refProduit, post.qt]
+                                    , (err, result) => {
+                    if (err) {
+                        console.error("insertMarque error, retrying in 1s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
+                    console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
+                    resolve(result);
+                });
+            }
+
+            attempt();
         });
     }
     

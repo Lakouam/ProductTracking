@@ -81,13 +81,15 @@ function createWindow() {
 
     // some Database operations
     {
-        
         //TrackingDB.createDatabase();      // create the database if not exist
         //TrackingDB.dropTables();          // drop the tables if exist
-        //TrackingDB.createTables();        // create the tables if they do not exist
-        TrackingDB.clearTables();         // clear the tables
-        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
-        
+
+        //setTimeout(function() { // to wait for 10 second (for test: DB failure)
+            //TrackingDB.createTables();        // create the tables if they do not exist
+            //TrackingDB.clearTables();         // clear the tables
+            //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+        //}, 10000); // to wait for 10 second
+
     }
 
 
@@ -179,13 +181,13 @@ function createWindow() {
                 post.fillPostName(postName); // fill the post name
                 post.fillFromDB(data); // fill the post with the data from the database
                 
-                setTimeout(async function() { // to wait for one sec (For test)
+                //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
                     win.reload(); // reload the page to clear the input fields
 
                     PageUI.enable(); // enable UI
 
-                }, 1000); // to wait for one sec
+                //}, 1000); // to wait for one sec
                     
             });
         }
