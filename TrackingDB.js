@@ -9,6 +9,7 @@ class TrackingDB {
     static password = "muslim1997";
     static database = "trackingdb";
 
+    /*
     // Create a connection to the database
     static connection = this.mysql.createConnection({
         host: this.host,
@@ -16,22 +17,30 @@ class TrackingDB {
         password: this.password,
         database: this.database
     });
+    */
+
+    // Create a pool to the database
+    static pool = this.mysql.createPool({
+        host: this.host,
+        user: this.user,
+        password: this.password,
+        database: this.database,
+        waitForConnections: true,
+        connectionLimit: 1, // or higher if needed (1 if you want to perform only one query at a time)
+        queueLimit: 0 // queue limit (0 for no limit)
+    });
+
 
 
     // Function to create the database if they do not exist
     static createDatabase() {
-        this.connection.connect((err) => {
+
+        // Create the database if it doesn't exist
+        this.pool.query(`CREATE DATABASE IF NOT EXISTS ${this.database}`, (err, result) => {
             if (err) throw err;
-            console.log("Connected to the database!");
-
-            // Create the database if it doesn't exist
-            this.connection.query(`CREATE DATABASE IF NOT EXISTS ${this.database}`, (err, result) => {
-                if (err) throw err;
-                console.log("Database created or already exists!");
-
-                
-            });
+            console.log("Database created or already exists!");
         });
+    
     }
 
 
@@ -44,7 +53,7 @@ class TrackingDB {
             name VARCHAR(255) PRIMARY KEY
         )`;
 
-        this.connection.query(sql , (err, result) => {
+        this.pool.query(sql , (err, result) => {
             if (err) throw err;
             console.log("Table post created or already exists!");
         });
@@ -58,7 +67,7 @@ class TrackingDB {
             PRIMARY KEY (nof)
         )`;
 
-        this.connection.query(sql2 , (err, result) => {
+        this.pool.query(sql2 , (err, result) => {
             if (err) throw err;
             console.log("Table marque created or already exists!");
         });
@@ -81,7 +90,7 @@ class TrackingDB {
             FOREIGN KEY (post_actuel) REFERENCES post(name)
         )`;
 
-        this.connection.query(sql3 , (err, result) => {
+        this.pool.query(sql3 , (err, result) => {
             if (err) throw err;
             console.log("Table scan created or already exists!");
         });
@@ -91,19 +100,19 @@ class TrackingDB {
     // drop tables
     static dropTables() {
         let sql3 = `DROP TABLE IF EXISTS scan`;
-        this.connection.query(sql3, (err, result) => {
+        this.pool.query(sql3, (err, result) => {
             if (err) throw err;
             console.log("Table scan dropped!");
         });
 
         let sql = `DROP TABLE IF EXISTS post`;
-        this.connection.query(sql, (err, result) => {
+        this.pool.query(sql, (err, result) => {
             if (err) throw err;
             console.log("Table post dropped!");
         });
 
         let sql2 = `DROP TABLE IF EXISTS marque`;
-        this.connection.query(sql2, (err, result) => {
+        this.pool.query(sql2, (err, result) => {
             if (err) throw err;
             console.log("Table marque dropped!");
         });
@@ -125,7 +134,7 @@ class TrackingDB {
             ['Post 5']
         ];
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
-        this.connection.query(sql, [values], (err, result) => {
+        this.pool.query(sql, [values], (err, result) => {
             if (err) throw err;
             console.log("Values inserted into table post if not existed!");
         });
@@ -138,7 +147,7 @@ class TrackingDB {
             ['2533100', '0EMS15', 4]
         ];
         let sql2 = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES ?`;
-        this.connection.query(sql2, [values2], (err, result) => {
+        this.pool.query(sql2, [values2], (err, result) => {
             if (err) throw err;
             console.log("Values inserted into table marque if not existed!");
         });
@@ -150,7 +159,7 @@ class TrackingDB {
             ['2533100', 'Post 2', 0, 0, 0, '', new Date(), null, 1, new Date()]
         ];
         let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
-        this.connection.query(sql3, [values3], (err, result) => {
+        this.pool.query(sql3, [values3], (err, result) => {
             if (err) throw err;
             console.log("Values inserted into table scan if not existed!");
         });
@@ -163,19 +172,19 @@ class TrackingDB {
     static clearTables() {
 
         let sql3 = `DELETE FROM scan`;
-        this.connection.query(sql3, (err, result) => {
+        this.pool.query(sql3, (err, result) => {
             if (err) throw err;
             console.log("Table scan cleared!");
         });
 
         let sql = `DELETE FROM post`;
-        this.connection.query(sql, (err, result) => {
+        this.pool.query(sql, (err, result) => {
             if (err) throw err;
             console.log("Table post cleared!");
         });
 
         let sql2 = `DELETE FROM marque`;
-        this.connection.query(sql2, (err, result) => {
+        this.pool.query(sql2, (err, result) => {
             if (err) throw err;
             console.log("Table marque cleared!");
         });
@@ -191,7 +200,7 @@ class TrackingDB {
             const attempt = () => {
                 let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
 
-                this.connection.query(sql, (err, result, fields) => {
+                this.pool.query(sql, (err, result, fields) => {
                     if (err) {
                         console.error("getData error, retrying in 1s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
@@ -236,7 +245,7 @@ class TrackingDB {
         return new Promise((resolve, reject) => {
             const attempt = () => {
                 let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
-                this.connection.query(sql, [post], (err, result, fields) => {
+                this.pool.query(sql, [post], (err, result, fields) => {
                     if (err) {
                         console.error("getActiveRow error, retrying in 1s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
@@ -289,7 +298,7 @@ class TrackingDB {
         return new Promise((resolve, reject) => {
             const attempt = () => {
                 let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
-                this.connection.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
+                this.pool.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
                                     , (err, result) => {
                     if (err) {
                         console.error("updateScan error, retrying in 1s:", err.message);
@@ -313,7 +322,7 @@ class TrackingDB {
             const attempt = () => {
                 // check if the scan is not in the database
                 let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
-                this.connection.query(sql, [scan.nof, scan.postActuel], (err, result) => {
+                this.pool.query(sql, [scan.nof, scan.postActuel], (err, result) => {
                     if (err) {
                         console.error("isScanNotExist error, retrying in 1s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
@@ -344,7 +353,7 @@ class TrackingDB {
             const attempt = () => {
                 // check if the nof is not in the database
                 let sql = `SELECT * FROM marque WHERE nof = ?`;
-                this.connection.query(sql, [scan.nof], (err, result) => {
+                this.pool.query(sql, [scan.nof], (err, result) => {
                     if (err) {
                         console.error("isNofExist error, retrying in 1s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
@@ -382,7 +391,7 @@ class TrackingDB {
             const attempt = () => {
                 // insert a row into the table scan
                 let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-                this.connection.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
+                this.pool.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
                                     , (err, result) => {
                     if (err) {
                         console.error("insertScan error, retrying in 1s:", err.message);
@@ -405,7 +414,7 @@ class TrackingDB {
             const attempt = () => {
                 // insert a row into the table marque
                 let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-                this.connection.query(sql, [post.nof, post.refProduit, post.qt]
+                this.pool.query(sql, [post.nof, post.refProduit, post.qt]
                                     , (err, result) => {
                     if (err) {
                         console.error("insertMarque error, retrying in 1s:", err.message);
