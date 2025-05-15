@@ -9,6 +9,7 @@ const path = require('path');
 const ScanData = require('./ScanData.js'); 
 const TrackingDB = require('./TrackingDB.js');
 const Post = require('./Post.js');
+const PageUI = require('./PageUI.js');
 
 
 
@@ -84,8 +85,8 @@ function createWindow() {
         //TrackingDB.createDatabase();      // create the database if not exist
         //TrackingDB.dropTables();          // drop the tables if exist
         //TrackingDB.createTables();        // create the tables if they do not exist
-        //TrackingDB.clearTables();         // clear the tables
-        //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+        TrackingDB.clearTables();         // clear the tables
+        TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
         
     }
 
@@ -99,6 +100,9 @@ function createWindow() {
     let post = new Post(); // create a new Post object
 
 
+    PageUI.connect(win, contextMenuRightClick); // connect the pageUI to the window and contextMenuRightClick
+
+
 
 
     
@@ -110,16 +114,7 @@ function createWindow() {
             // Read Scanner data that we send from the render process (page.html) (update it in the database)
             ipcMain.on("Scan Input", async (event, data) => {
 
-                // Disable UI
-                {
-                    // Disable UI (page.html some elements)
-                    win.webContents.send("Disable UI");
-                    // disable contextMenuRightClick all items
-                    contextMenuRightClick.items.forEach(item => {
-                        item.enabled = false;
-                    });
-                }
-
+                PageUI.disable(); // disable UI
 
                 //setTimeout(async function() { // to wait for some second (for testing)
 
@@ -143,15 +138,9 @@ function createWindow() {
 
                     win.reload(); // reload the page to clear the input fields
 
-                    // Enable UI
-                    {
-                        // Enable contextMenuRightClick all items
-                        contextMenuRightClick.items.forEach(item => {
-                            item.enabled = true;
-                        });
-                    }
+                    PageUI.enable(); // enable UI
 
-                //}, 5000); // to wait for some second (for testing)
+                //}, 3000); // to wait for some second (for testing)
             })
         }
 
