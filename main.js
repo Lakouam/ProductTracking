@@ -81,14 +81,16 @@ function createWindow() {
 
     // some Database operations
     {
-        //TrackingDB.createDatabase();      // create the database if not exist
-        //TrackingDB.dropTables();          // drop the tables if exist
+        (async () => {
+            //await TrackingDB.createDatabase();      // create the database if not exist
+            await TrackingDB.dropTables();          // drop the tables if exist
 
-        //setTimeout(function() { // to wait for 10 second (for test: DB failure)
-            //TrackingDB.createTables();        // create the tables if they do not exist
-            //TrackingDB.clearTables();         // clear the tables
-            //TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
-        //}, 10000); // to wait for 10 second
+            setTimeout(async function() { // to wait for 10 second (for test: DB failure)
+                await TrackingDB.createTables();        // create the tables if they do not exist
+                await TrackingDB.clearTables();         // clear the tables
+                await TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+            }, 10000); // to wait for 10 second
+        }) ();
 
     }
 

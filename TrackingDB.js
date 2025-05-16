@@ -26,96 +26,109 @@ class TrackingDB {
         password: this.password,
         database: this.database,
         waitForConnections: true,
-        connectionLimit: 1, // or higher if needed (1 if you want to perform only one query at a time)
+        connectionLimit: 3, // or higher if needed (1 if you want to perform only one query at a time)
         queueLimit: 0 // queue limit (0 for no limit)
+        /*
+                connectionLimit: x,
+                queueLimit: 0
+            This means only x queries can be processed at the same time from that app instance.
+            If more than x queries are started at once, the extra queries will be queued 
+        */
     });
 
 
+    // Helper to promisify pool.query (function to await querie) used for operations (createTables, dropTables, ...)
+    static queryAsync = (sql, values) => {
+        return new Promise((resolve, reject) => {
+            this.pool.query(sql, [values], (err, result) => {
+                if (err) throw err //return reject(err);
+                resolve(result);
+            });
+        });
+    };
+
 
     // Function to create the database if they do not exist
-    static createDatabase() {
+    static async createDatabase() {
 
         // Create the database if it doesn't exist
-        this.pool.query(`CREATE DATABASE IF NOT EXISTS ${this.database}`, (err, result) => {
-            if (err) throw err;
-            console.log("Database created or already exists!");
-        });
+        let sql = `CREATE DATABASE IF NOT EXISTS ${this.database}`;
+        await this.queryAsync(sql);
+        console.log("Database created or already exists!");
     
     }
 
 
     // Function to create the tables if it doesn't exist
-    static createTables() {
+    static async createTables() {
 
+        //return new Promise(async (resolve, reject) => {
 
-        // create table post (id, name)
-        let sql = `CREATE TABLE IF NOT EXISTS post (
-            name VARCHAR(255) PRIMARY KEY
-        )`;
+            // create table post (id, name)
+            let sql = `CREATE TABLE IF NOT EXISTS post (
+                name VARCHAR(255) PRIMARY KEY
+            )`;
 
-        this.pool.query(sql , (err, result) => {
-            if (err) throw err;
+            await this.queryAsync(sql);
             console.log("Table post created or already exists!");
-        });
+            
 
 
-        // create table marque fix (nof, refProduit, qt)
-        let sql2 = `CREATE TABLE IF NOT EXISTS marque (
-            nof VARCHAR(255) NOT NULL,
-            ref_produit VARCHAR(255) NOT NULL,
-            qt INT NOT NULL,
-            PRIMARY KEY (nof)
-        )`;
+            // create table marque fix (nof, refProduit, qt)
+            let sql2 = `CREATE TABLE IF NOT EXISTS marque (
+                nof VARCHAR(255) NOT NULL,
+                ref_produit VARCHAR(255) NOT NULL,
+                qt INT NOT NULL,
+                PRIMARY KEY (nof)
+            )`;
 
-        this.pool.query(sql2 , (err, result) => {
-            if (err) throw err;
+            await this.queryAsync(sql2);
             console.log("Table marque created or already exists!");
-        });
+            
 
 
-        // create table scan (nof, postActuel, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
-        let sql3 = `CREATE TABLE IF NOT EXISTS scan (
-            nof VARCHAR(255) NOT NULL,
-            post_actuel VARCHAR(255) NOT NULL,
-            qa INT NOT NULL,
-            moy_temps_passer INT NOT NULL,
-            etat BOOLEAN NOT NULL,
-            commentaire VARCHAR(255) NOT NULL,
-            temps_debut DATETIME NOT NULL,
-            temps_fin DATETIME,
-            scan_count INT NOT NULL,
-            temps_dernier_scan DATETIME NOT NULL,
-            PRIMARY KEY (nof, post_actuel),
-            FOREIGN KEY (nof) REFERENCES marque(nof),
-            FOREIGN KEY (post_actuel) REFERENCES post(name)
-        )`;
+            // create table scan (nof, postActuel, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
+            let sql3 = `CREATE TABLE IF NOT EXISTS scan (
+                nof VARCHAR(255) NOT NULL,
+                post_actuel VARCHAR(255) NOT NULL,
+                qa INT NOT NULL,
+                moy_temps_passer INT NOT NULL,
+                etat BOOLEAN NOT NULL,
+                commentaire VARCHAR(255) NOT NULL,
+                temps_debut DATETIME NOT NULL,
+                temps_fin DATETIME,
+                scan_count INT NOT NULL,
+                temps_dernier_scan DATETIME NOT NULL,
+                PRIMARY KEY (nof, post_actuel),
+                FOREIGN KEY (nof) REFERENCES marque(nof),
+                FOREIGN KEY (post_actuel) REFERENCES post(name)
+            )`;
 
-        this.pool.query(sql3 , (err, result) => {
-            if (err) throw err;
+            await this.queryAsync(sql3);
             console.log("Table scan created or already exists!");
-        });
+
+            //resolve(true); // Resolve the promise when all queries are done
+        //});
+        
     }
 
 
     // drop tables
-    static dropTables() {
+    static async dropTables() {
         let sql3 = `DROP TABLE IF EXISTS scan`;
-        this.pool.query(sql3, (err, result) => {
-            if (err) throw err;
-            console.log("Table scan dropped!");
-        });
+        await this.queryAsync(sql3);
+        console.log("Table scan dropped!");
+        
 
         let sql = `DROP TABLE IF EXISTS post`;
-        this.pool.query(sql, (err, result) => {
-            if (err) throw err;
-            console.log("Table post dropped!");
-        });
+        await this.queryAsync(sql);
+        console.log("Table post dropped!");
+        
 
         let sql2 = `DROP TABLE IF EXISTS marque`;
-        this.pool.query(sql2, (err, result) => {
-            if (err) throw err;
-            console.log("Table marque dropped!");
-        });
+        await this.queryAsync(sql2);
+        console.log("Table marque dropped!");
+        
     }
 
 
@@ -124,7 +137,7 @@ class TrackingDB {
 
 
     // Function to insert values into the tables if they don't exist
-    static insertValuesInitial() {
+    static async insertValuesInitial() {
         // Insert a value into the table post if it doesn't exist
         let values = [
             ['Post 1'],
@@ -134,23 +147,21 @@ class TrackingDB {
             ['Post 5']
         ];
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
-        this.pool.query(sql, [values], (err, result) => {
-            if (err) throw err;
-            console.log("Values inserted into table post if not existed!");
-        });
+        await this.queryAsync(sql, values);
+        console.log("Values inserted into table post if not existed!");
+        
 
 
-        /*
+        
         // Insert a value into the table marque if it doesn't exist
         let values2 = [
             ['2533024', 'AEG661', 3],
             ['2533100', '0EMS15', 4]
         ];
         let sql2 = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES ?`;
-        this.pool.query(sql2, [values2], (err, result) => {
-            if (err) throw err;
-            console.log("Values inserted into table marque if not existed!");
-        });
+       await this.queryAsync(sql2, values2);
+        console.log("Values inserted into table marque if not existed!");
+        
 
 
         // Insert a value into the table scan if it doesn't exist
@@ -159,35 +170,30 @@ class TrackingDB {
             ['2533100', 'Post 2', 0, 0, 0, '', new Date(), null, 1, new Date()]
         ];
         let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
-        this.pool.query(sql3, [values3], (err, result) => {
-            if (err) throw err;
-            console.log("Values inserted into table scan if not existed!");
-        });
-        */
+        await this.queryAsync(sql3, values3);
+        console.log("Values inserted into table scan if not existed!");
+        
+        
     }
 
 
 
     // clear all the tables
-    static clearTables() {
+    static async clearTables() {
 
         let sql3 = `DELETE FROM scan`;
-        this.pool.query(sql3, (err, result) => {
-            if (err) throw err;
-            console.log("Table scan cleared!");
-        });
+        await this.queryAsync(sql3);
+        console.log("Table scan cleared!");
 
         let sql = `DELETE FROM post`;
-        this.pool.query(sql, (err, result) => {
-            if (err) throw err;
-            console.log("Table post cleared!");
-        });
+        await this.queryAsync(sql);
+        console.log("Table post cleared!");
+        
 
         let sql2 = `DELETE FROM marque`;
-        this.pool.query(sql2, (err, result) => {
-            if (err) throw err;
-            console.log("Table marque cleared!");
-        });
+        await this.queryAsync(sql2);
+        console.log("Table marque cleared!");
+        
     }
 
 
