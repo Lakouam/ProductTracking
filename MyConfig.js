@@ -1,0 +1,58 @@
+// to use file system
+const fs = require('fs');
+
+// to use path
+const path = require('path');
+
+class MyConfig {
+
+     // path to the config file
+    static configPath = path.join(__dirname, "src", "config", "config.json");
+
+    // read the config file
+    static config = this.loadConfig();
+    
+    
+
+    // load the config file
+    static loadConfig() {
+        return JSON.parse(fs.readFileSync(this.configPath, 'utf-8')); // readFileSync is synchronous, which means that your code pauses and waits until the file is read before continuing
+    }
+
+    // refresh the config file
+    static refresh() {
+        this.config = this.loadConfig(); 
+    }
+
+
+    
+    // getter and setter for the config
+        // getter and setter for host
+        static get host() {
+            return this.config.db.host;
+        }
+
+        // getter and setter for user
+        static get user() {
+            return this.config.db.user;
+        }
+
+        // getter and setter for password
+        static get password() {
+            return this.config.db.password;
+        }
+
+        // getter and setter for database
+        static get database() {
+            return this.config.db.database;
+        }
+
+        // getter and setter for post name
+        static get postActuel() {
+            return this.config.post.name;
+        }
+
+
+}
+
+module.exports = MyConfig;

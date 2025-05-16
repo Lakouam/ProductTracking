@@ -1,3 +1,5 @@
+const MyConfig = require('./MyConfig.js');
+
 class TrackingDB {
 
     // Import the mysql module
@@ -8,23 +10,14 @@ class TrackingDB {
     static user = "root"; 
     static password = "muslim1997";
     static database = "trackingdb";
-
-    /*
-    // Create a connection to the database
-    static connection = this.mysql.createConnection({
-        host: this.host,
-        user: this.user,
-        password: this.password,
-        database: this.database
-    });
-    */
+    
 
     // Create a pool to the database
     static pool = this.mysql.createPool({
-        host: this.host,
-        user: this.user,
-        password: this.password,
-        database: this.database,
+        host: MyConfig.host, //this.host,
+        user: MyConfig.user, //this.user,
+        password: MyConfig.password, //this.password,
+        database: MyConfig.database, //this.database,
         waitForConnections: true,
         connectionLimit: 3, // or higher if needed (1 if you want to perform only one query at a time)
         queueLimit: 0 // queue limit (0 for no limit)
@@ -152,7 +145,7 @@ class TrackingDB {
         
 
 
-        
+        /*
         // Insert a value into the table marque if it doesn't exist
         let values2 = [
             ['2533024', 'AEG661', 3],
@@ -172,7 +165,7 @@ class TrackingDB {
         let sql3 = `INSERT IGNORE INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES ?`;
         await this.queryAsync(sql3, values3);
         console.log("Values inserted into table scan if not existed!");
-        
+        */
         
     }
 
