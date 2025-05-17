@@ -13,21 +13,39 @@ class TrackingDB {
     
 
     // Create a pool to the database
-    static pool = this.mysql.createPool({
-        host: MyConfig.host, //this.host,
-        user: MyConfig.user, //this.user,
-        password: MyConfig.password, //this.password,
-        database: MyConfig.database, //this.database,
-        waitForConnections: true,
-        connectionLimit: 3, // or higher if needed (1 if you want to perform only one query at a time)
-        queueLimit: 0 // queue limit (0 for no limit)
-        /*
-                connectionLimit: x,
-                queueLimit: 0
-            This means only x queries can be processed at the same time from that app instance.
-            If more than x queries are started at once, the extra queries will be queued 
-        */
-    });
+    static pool = this.createPool();
+
+    // create a pool to the database
+    static createPool() {
+        return this.mysql.createPool({
+            host: MyConfig.host, //this.host,
+            user: MyConfig.user, //this.user,
+            password: MyConfig.password, //this.password,
+            database: MyConfig.database, //this.database,
+            waitForConnections: true,
+            connectionLimit: 3, // or higher if needed (1 if you want to perform only one query at a time)
+            queueLimit: 0 // queue limit (0 for no limit)
+            /*
+                    connectionLimit: x,
+                    queueLimit: 0
+                This means only x queries can be processed at the same time from that app instance.
+                If more than x queries are started at once, the extra queries will be queued 
+            */
+        });
+    }
+
+    // refresh the pool
+    static refreshPool() {
+        this.pool.end((err) => {
+            if (err) {
+                console.error('Error ending the pool:', err);
+            } else {
+                console.log('Pool ended successfully.');
+            }
+        });
+
+        this.pool = this.createPool();
+    }
 
 
     // Helper to promisify pool.query (function to await querie) used for operations (createTables, dropTables, ...)
