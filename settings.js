@@ -1,0 +1,32 @@
+const { ipcRenderer } = require('electron');
+
+// Load current settings
+{
+    window.onload = () => {
+        ipcRenderer.invoke('get-db-config').then(config => {
+            document.getElementById('dbHost').value = config.host || '';
+            document.getElementById('dbUser').value = config.user || '';
+            document.getElementById('dbPassword').value = config.password || '';
+            document.getElementById('dbName').value = config.database || '';
+        });
+    };
+}
+
+
+// Save settings
+{
+    document.getElementById('settingsForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const config = {
+            host: document.getElementById('dbHost').value,
+            user: document.getElementById('dbUser').value,
+            password: document.getElementById('dbPassword').value,
+            database: document.getElementById('dbName').value
+        };
+        ipcRenderer.invoke('save-db-config', config).then(result => {
+            document.getElementById('statusMessage').textContent = result.success
+                ? "Settings saved!"
+                : "Failed to save settings.";
+        });
+    });
+}

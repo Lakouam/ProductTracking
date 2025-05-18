@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+
+        <title>Settings</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="page.css">
+
+    </head>
+    <body>
+
+        <div class="flexContainerCenter">
+            <h2>Database Settings</h2>
+            <form id="settingsForm" class="flexContainerCenter width320">
+                <label for="dbHost">Host</label>
+                <input type="text" id="dbHost" name="dbHost" required>
+
+                <label for="dbUser">User</label>
+                <input type="text" id="dbUser" name="dbUser" required>
+
+                <label for="dbPassword">Password</label>
+                <input type="text" id="dbPassword" name="dbPassword" required>
+
+                <label for="dbName">Database</label>
+                <input type="text" id="dbName" name="dbName" required>
+
+                <button type="submit" style="margin-top:20px;width:100px;">Save</button>
+            </form>
+            <div id="statusMessage" style="margin-top:15px;"></div>
+        </div>
+
+
+
+        <!-- Javascript -->
+        <script src="settings.js"></script> 
+
+    </body>
+</html>
