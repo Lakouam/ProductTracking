@@ -16,7 +16,13 @@ class MyConfig {
 
     // load the config file
     static loadConfig() {
-        return JSON.parse(fs.readFileSync(this.configPath, 'utf-8')); // readFileSync is synchronous, which means that your code pauses and waits until the file is read before continuing
+        try {
+            return JSON.parse(fs.readFileSync(this.configPath, 'utf-8')); // readFileSync is synchronous, which means that your code pauses and waits until the file is read before continuing
+        } catch (err) {
+            console.error('Error reading file:', err);
+            return this.defaultFile;
+        }
+        
     }
 
     // refresh the config file
@@ -26,8 +32,12 @@ class MyConfig {
 
     // save the config file
     static save() {
-        fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2)); // writeFileSync is synchronous, which means that your code pauses and waits 
-                                                                                 // until the file is written before continuing
+        try{
+            fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2)); // writeFileSync is synchronous, which means that your code pauses and waits
+                                                                                     // until the file is written before continuing
+        } catch (err) {
+            console.error('Error writing file:', err);
+        }
     }
 
 
@@ -76,6 +86,21 @@ class MyConfig {
 
         static set postActuel(value) {
             this.config.post.name = value;
+        }
+
+        // getter for default JSON file
+        static get defaultFile() {
+            return {
+                "db": {
+                    "host": "localhost",
+                    "user": "root",
+                    "password": "muslim1997",
+                    "database": "trackingdb"
+                },
+                "post": {
+                    "name": "Post 5"
+                }
+            };
         }
 
 
