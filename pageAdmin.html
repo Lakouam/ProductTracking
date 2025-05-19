@@ -26,42 +26,28 @@
         <br>
 
 
-        <!-- a flex container to align element on the center -->
-        <div class = "flexContainerCenter">
-            <div class="flexContainerCenter width320">
 
-
-                <!-- Scan Input -->
-                <input type="text" id="scanInput" placeholder="Scan initial">
-
-
-                
-
-
-                <!-- Etat Input -->
-                <input type="checkbox" id="etatInput" class="flexItemRight">
-
-
-                
-
-
-                <!-- Comment Input -->
-                <input type="text" id="commentInput" placeholder="Commentaire" style="display:none;">
-
-
-            </div>
+        <!-- Output Data Table -->
+         <div id="outputData" class="tablesContainer">
+            <table id="dataTable">
+                <thead id="dataHead">
+                    <!-- we want columns to be inserted here dynamically -->
+                </thead>
+                <tbody id="dataBody">
+                    <!-- we want rows to be inserted here dynamically -->
+                </tbody>
+            </table>
         </div>
 
         
 
-        
 
         <!-- Javascript -->
         <script>
             const {ipcRenderer} = require('electron');
         </script>
         <script src="postRender.js"></script>
-        <script src="page.js"></script>
+        <script src="pageAdmin.js"></script>
 
 
     </body>

@@ -35,7 +35,8 @@ function createWindow() {
 
 
     // what content that we want to load in this window
-    win.loadFile('page.html');
+    if(MyConfig.postActuel === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
+    else win.loadFile('page.html'); // load the page
 
 
 
@@ -214,7 +215,8 @@ function createWindow() {
                 
                 //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
-                    win.reload(); // reload the page to clear the input fields
+                    if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
+                    else win.loadFile('page.html'); // reload the page to clear the input fields
 
                     PageUI.enable(); // enable UI
 
