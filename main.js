@@ -264,7 +264,7 @@ function createWindow() {
     {
         // send the config file to the render process (settings.html) whenever we load the page
         ipcMain.handle('get-db-config', async () => {
-            return {host: MyConfig.host, user: MyConfig.user, password: MyConfig.password, database: MyConfig.database};
+            return MyConfig.toObject(); // send the config file to the render process
         });
 
         // save the config file whenever we change it (settings.html)

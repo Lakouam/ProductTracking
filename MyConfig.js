@@ -79,6 +79,11 @@ class MyConfig {
         }
 
 
+
+    static toObject() {
+        return {host: MyConfig.host, user: MyConfig.user, password: MyConfig.password, database: MyConfig.database};
+    }
+
 }
 
 module.exports = MyConfig;

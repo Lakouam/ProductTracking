@@ -2,6 +2,8 @@ const { ipcRenderer } = require('electron');
 
 // Load current settings
 {
+    // when the page is loaded send a request to the main process to get the current settings
+    // and fill the form with the current settings
     window.onload = () => {
         ipcRenderer.invoke('get-db-config').then(config => {
             document.getElementById('dbHost').value = config.host || '';
