@@ -33,10 +33,14 @@ class MyConfig {
     // save the config file
     static save() {
         try{
+            //throw new Error('Test Error writing file:');
             fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2)); // writeFileSync is synchronous, which means that your code pauses and waits
                                                                                      // until the file is written before continuing
+            return true;
         } catch (err) {
             console.error('Error writing file:', err);
+            this.refresh(); // refresh (load) the config file to get the latest values
+            return false;
         }
     }
 

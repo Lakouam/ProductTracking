@@ -278,9 +278,9 @@ function createWindow() {
             MyConfig.user = config.user;
             MyConfig.password = config.password;
             MyConfig.database = config.database;
-            MyConfig.save(); // save JSON file
+            let success = MyConfig.save(); // save JSON file
             TrackingDB.refreshPool(); // refresh the database connection pool
-            return {success: true};
+            return {success: success};
         });
 
 
