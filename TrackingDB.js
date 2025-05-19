@@ -225,7 +225,7 @@ class TrackingDB {
 
                 this.pool.query(sql, (err, result, fields) => {
                     if (err) {
-                        console.error("getData error, retrying in 1s:", err.message);
+                        console.error("getData error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -270,7 +270,7 @@ class TrackingDB {
                 let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
                 this.pool.query(sql, [post], (err, result, fields) => {
                     if (err) {
-                        console.error("getActiveRow error, retrying in 1s:", err.message);
+                        console.error("getActiveRow error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -324,7 +324,7 @@ class TrackingDB {
                 this.pool.query(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]
                                     , (err, result) => {
                     if (err) {
-                        console.error("updateScan error, retrying in 1s:", err.message);
+                        console.error("updateScan error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -347,7 +347,7 @@ class TrackingDB {
                 let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
                 this.pool.query(sql, [scan.nof, scan.postActuel], (err, result) => {
                     if (err) {
-                        console.error("isScanNotExist error, retrying in 1s:", err.message);
+                        console.error("isScanNotExist error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -378,7 +378,7 @@ class TrackingDB {
                 let sql = `SELECT * FROM marque WHERE nof = ?`;
                 this.pool.query(sql, [scan.nof], (err, result) => {
                     if (err) {
-                        console.error("isNofExist error, retrying in 1s:", err.message);
+                        console.error("isNofExist error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -417,7 +417,7 @@ class TrackingDB {
                 this.pool.query(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]
                                     , (err, result) => {
                     if (err) {
-                        console.error("insertScan error, retrying in 1s:", err.message);
+                        console.error("insertScan error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -440,7 +440,7 @@ class TrackingDB {
                 this.pool.query(sql, [post.nof, post.refProduit, post.qt]
                                     , (err, result) => {
                     if (err) {
-                        console.error("insertMarque error, retrying in 1s:", err.message);
+                        console.error("insertMarque error, retrying in 3s:", err.message);
                         setTimeout(attempt, retryIntervalMs);
                         return;
                     }
@@ -466,7 +466,7 @@ class TrackingDB {
                         return;
                     }
 
-                    console.log("Post name retrieved from the database!");
+                    console.log("Posts names retrieved from the database!");
 
                     // Map the result to a one-dimensional array
                     let rows = result.map(row => row.name);

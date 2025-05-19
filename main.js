@@ -229,7 +229,6 @@ function createWindow() {
         {
             win.webContents.on("did-finish-load", async () => {
                 let postsName = await TrackingDB.getPostsName();
-                console.warn("Posts Names: " + postsName); // print the post names in the console
                 win.webContents.send("Posts Names", postsName); // send the post name to the render process
             });
         }
