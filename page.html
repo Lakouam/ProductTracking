@@ -71,7 +71,11 @@
 
 
         <!-- Javascript -->
-        <script src="page.js"></script> 
+        <script>
+            const {ipcRenderer} = require('electron');
+        </script>
+        <script src="postRender.js"></script>
+        <script src="page.js"></script>
 
 
     </body>
