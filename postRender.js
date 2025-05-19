@@ -26,6 +26,7 @@
     ipcRenderer.on("Posts Names", (event, data) => {
         // get the postSelect
         const postSelect = document.getElementById("postSelect");
+        postSelect.innerHTML = ""; // clear the postSelect
         for (const post of data) {
             // create an option element
             const option = document.createElement("option");
