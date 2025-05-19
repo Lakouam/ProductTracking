@@ -206,6 +206,10 @@ function createWindow() {
                 let data = await TrackingDB.getActiveRow(postName) 
                     
                 post.fillPostName(postName); // fill the post name
+
+                MyConfig.postActuel = postName;
+                MyConfig.save(); // save the post actuel in the config file
+
                 post.fillFromDB(data); // fill the post with the data from the database
                 
                 //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
@@ -220,6 +224,16 @@ function createWindow() {
         }
         
 
+
+        // receive the post name from database whenever we load the page and send it to the render process
+        {
+            win.webContents.on("did-finish-load", async () => {
+                let postsName = await TrackingDB.getPostsName();
+                console.warn("Posts Names: " + postsName); // print the post names in the console
+                win.webContents.send("Posts Names", postsName); // send the post name to the render process
+            });
+        }
+
     }
 
 
@@ -229,14 +243,6 @@ function createWindow() {
 
     // send data to render process
     {
-        // send the post actuel whenever we load the page
-        {
-            win.webContents.on("did-finish-load", () => {
-                win.webContents.send("Post Actuel", post.postActuel);
-            });
-        }
-        
-
 
         // send a message about the scan whenever we load the page
         {
@@ -276,6 +282,12 @@ function createWindow() {
             MyConfig.save(); // save JSON file
             TrackingDB.refreshPool(); // refresh the database connection pool
             return {success: true};
+        });
+
+
+        // send the post Actuel to the render process (page.html) whenever it request it
+        ipcMain.handle('Post Actuel', async () => {
+            return MyConfig.postActuel; // send the post name to the render process
         });
 
     }

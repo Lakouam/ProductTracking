@@ -210,6 +210,12 @@ class TrackingDB {
 
 
 
+
+
+
+
+
+
     // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
     static getData(retryIntervalMs = 3000) {
 
@@ -447,6 +453,31 @@ class TrackingDB {
         });
     }
     
+
+    // get the post name from the database
+    static getPostsName(retryIntervalMs = 3000) {
+        return new Promise((resolve, reject) => {
+            const attempt = () => {
+                let sql = `SELECT name FROM post`;
+                this.pool.query(sql, (err, result) => {
+                    if (err) {
+                        console.error("getPostsName error, retrying in 3s:", err.message);
+                        setTimeout(attempt, retryIntervalMs);
+                        return;
+                    }
+
+                    console.log("Post name retrieved from the database!");
+
+                    // Map the result to a one-dimensional array
+                    let rows = result.map(row => row.name);
+                    
+                    resolve(rows); // Resolve the promise with the data
+                });
+            }
+
+            attempt();
+        });
+    }
 
 
 
