@@ -135,44 +135,169 @@ function createWindow() {
 
 
 
+
+
+    // Post Render.js
+    {
+
+        // receive data from Database
+        {
+            // receive active row (qa < qt) of the post from database whenever we change the post
+            {
+                ipcMain.on("Post Select", async (event, postName) => {
+
+                    PageUI.disable(); // disable UI
+
+
+                    let data = await TrackingDB.getActiveRow(postName) 
+                        
+                    post.fillPostName(postName); // fill the post name
+
+                    MyConfig.postActuel = postName;
+                    MyConfig.save(); // save the post actuel in the config file
+
+                    post.fillFromDB(data); // fill the post with the data from the database
+                    
+                    //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
+
+                        if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
+                        else win.loadFile('page.html'); // reload the page to clear the input fields
+
+                        PageUI.enable(); // enable UI
+
+                    //}, 1000); // to wait for one sec
+                        
+                });
+            }
+            
+
+
+            // receive the posts names from database whenever we load the page and send it to the render process
+            {
+                win.webContents.on("did-finish-load", async () => {
+                    let postsName = await TrackingDB.getPostsName();
+                    win.webContents.send("Posts Names", postsName); // send the post name to the render process
+                });
+            }
+        }
+
+
+
+
+        // local storage JSON file (settings)
+        {
+            // send the post Actuel to the render process (postRender.js) whenever it request it
+            ipcMain.handle('Post Actuel', async () => {
+                return MyConfig.postActuel; // send the post name to the render process
+            });
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+    // page.js
+    {
+
+
+        // receive data from render process
+        let scanRejected = false; // is the scan rejected?
+        {
+            // receive scan input data amd update it in the database
+            {
+                // Read Scanner data that we send from the render process (page.html) (update it in the database)
+                ipcMain.on("Scan Input", async (event, data) => {
+
+                    PageUI.disable(); // disable UI
+
+                    const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                    
+                    // check if the scan is valid
+                    if(scanData.isValide()){
+                        console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
+
+                        // update the post with the scan data
+                        let updateInformations = await post.update(scanData); // update the post with the scan data
+                        scanRejected = updateInformations.scanRejected; // get the scan rejected information
+
+                    }
+                    else {
+                        console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
+                        scanRejected = true;
+                    }
+
+
+                    setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
+
+                        win.reload(); // reload the page to clear the input fields
+
+                        PageUI.enable(); // enable UI
+
+                    }, 1000); // to wait for one second
+                })
+            }
+
+        }
+
+
+
+
+
+        // send data to render process
+        {
+
+            // send a message about the scan whenever we load the page
+            {
+                win.webContents.on("did-finish-load", () => {
+                    if (!post.isSecondScan()) {
+                        if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
+                        else win.webContents.send("Message About Scan", "Scan Initial");
+                    }
+                    else {
+                        if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
+                        else win.webContents.send("Message About Scan", "Scan Finale");
+                    }
+                    scanRejected = false // initialize scanRejected
+                });
+            }
+            
+
+        }
+
+
+    }
+
+
+
     
-    // receive data from render process
-    let scanRejected = false; // is the scan rejected?
+    
+
+
+
+
+    // page Admin.js
     {
-        // receive scan input data amd update it in the database
-        {
-            // Read Scanner data that we send from the render process (page.html) (update it in the database)
-            ipcMain.on("Scan Input", async (event, data) => {
+        // receive data from Database
+        {   
+            // receive data from database then send it to the render process whenever we load the page
+            {
+                win.webContents.on("did-finish-load", async () => {
+                    let data = await TrackingDB.getData();
+                        
+                    win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
+                    win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
+                        
+                });
+            }
+            
 
-                PageUI.disable(); // disable UI
-
-                const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
-                
-                // check if the scan is valid
-                if(scanData.isValide()){
-                    console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
-
-                    // update the post with the scan data
-                    let updateInformations = await post.update(scanData); // update the post with the scan data
-                    scanRejected = updateInformations.scanRejected; // get the scan rejected information
-
-                }
-                else {
-                    console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
-                    scanRejected = true;
-                }
-
-
-                setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
-
-                    win.reload(); // reload the page to clear the input fields
-
-                    PageUI.enable(); // enable UI
-
-                }, 1000); // to wait for one second
-            })
         }
-
     }
 
 
@@ -180,117 +305,30 @@ function createWindow() {
 
 
 
-    // receive data from Database
-    {   
-        // receive data from database then send it to the render process whenever we load the page
-        {
-            win.webContents.on("did-finish-load", async () => {
-                let data = await TrackingDB.getData();
-                    
-                win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
-                win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
-                    
-            });
-        }
-        
-        
-        
-
-        
-        // receive active row (qa < qt) of the post from database whenever we change the post
-        {
-            ipcMain.on("Post Select", async (event, postName) => {
-
-                PageUI.disable(); // disable UI
 
 
-                let data = await TrackingDB.getActiveRow(postName) 
-                    
-                post.fillPostName(postName); // fill the post name
-
-                MyConfig.postActuel = postName;
-                MyConfig.save(); // save the post actuel in the config file
-
-                post.fillFromDB(data); // fill the post with the data from the database
-                
-                //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
-
-                    if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
-                    else win.loadFile('page.html'); // reload the page to clear the input fields
-
-                    PageUI.enable(); // enable UI
-
-                //}, 1000); // to wait for one sec
-                    
-            });
-        }
-        
-
-
-        // receive the post name from database whenever we load the page and send it to the render process
-        {
-            win.webContents.on("did-finish-load", async () => {
-                let postsName = await TrackingDB.getPostsName();
-                win.webContents.send("Posts Names", postsName); // send the post name to the render process
-            });
-        }
-
-    }
-
-
-
-
-
-
-    // send data to render process
+    // settings.js
     {
-
-        // send a message about the scan whenever we load the page
+        // local storage JSON file (settings)
         {
-            win.webContents.on("did-finish-load", () => {
-                if (!post.isSecondScan()) {
-                    if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
-                    else win.webContents.send("Message About Scan", "Scan Initial");
-                }
-                else {
-                    if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
-                    else win.webContents.send("Message About Scan", "Scan Finale");
-                }
-                scanRejected = false // initialize scanRejected
+            // send the config file to the render process (settings.html) whenever we load the page
+            ipcMain.handle('get-db-config', async () => {
+                return MyConfig.toObject(); // send the config file to the render process
             });
+
+            // save the config file whenever we change it (settings.html)
+            ipcMain.handle('save-db-config', async (event, config) => {
+                MyConfig.host = config.host;
+                MyConfig.user = config.user;
+                MyConfig.password = config.password;
+                MyConfig.database = config.database;
+                let success = MyConfig.save(); // save JSON file
+                TrackingDB.refreshPool(); // refresh the database connection pool
+                return {success: success};
+            });
+
+
         }
-        
-
-    }
-
-
-
-
-
-    // local storage JSON file (settings)
-    {
-        // send the config file to the render process (settings.html) whenever we load the page
-        ipcMain.handle('get-db-config', async () => {
-            return MyConfig.toObject(); // send the config file to the render process
-        });
-
-        // save the config file whenever we change it (settings.html)
-        ipcMain.handle('save-db-config', async (event, config) => {
-            MyConfig.host = config.host;
-            MyConfig.user = config.user;
-            MyConfig.password = config.password;
-            MyConfig.database = config.database;
-            let success = MyConfig.save(); // save JSON file
-            TrackingDB.refreshPool(); // refresh the database connection pool
-            return {success: success};
-        });
-
-
-        // send the post Actuel to the render process (page.html) whenever it request it
-        ipcMain.handle('Post Actuel', async () => {
-            return MyConfig.postActuel; // send the post name to the render process
-        });
-
     }
 
 
