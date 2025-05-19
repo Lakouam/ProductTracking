@@ -65,13 +65,19 @@ function createWindow() {
         // Application menu with Settings
         const templateMenu = [
             {
-                        label: 'Setting',
+                label: 'File',
+                submenu: [
+                    {
+                        label: 'Settings',
                         submenu: [
                             {
                                 label: 'Database',
                                 click: () => openSettingsWindow()
                             }
                         ]
+                    },
+                    { role: 'quit' }
+                ]
             }
         ];
 

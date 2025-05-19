@@ -13,7 +13,7 @@ body {
     padding: 20px;
 }
 
-select, input[type="text"], input[type="checkbox"] {
+select, input[type="text"], input[type="password"], input[type="checkbox"] {
     border: 1px solid #444;
     border-radius: 5px;
     padding: 5px;
@@ -23,7 +23,7 @@ select, input[type="text"], input[type="checkbox"] {
     background-color: #2b2b3d;
 }
 
-select, input[type="text"], input[type="checkbox"]:focus {
+select, input[type="text"], input[type="password"], input[type="checkbox"]:focus {
     outline: none;
 }
 
@@ -32,7 +32,7 @@ select {
     height: 35px;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
     width: 320px;
     height: 35px;
 }
@@ -41,6 +41,36 @@ input[type="checkbox"] {
     width: 20px;
     height: 20px;
 }
+
+label {
+    margin-top: 10px;
+}
+
+button {
+    background-color: #2b2b3d;
+    color: #e0e0e0;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(30,30,47,0.08);
+}
+
+button:hover, button:focus {
+    background-color: #3a3a4f;
+    color: #fff;
+    outline: none;
+}
+
+button:active {
+    background-color: #28283d;
+}
+
+
 
 .tablesContainer {
     width: 100%;
