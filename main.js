@@ -58,7 +58,26 @@ function createWindow() {
     let contextMenuRightClick;
     {
         // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
-        Menu.setApplicationMenu(null);
+        //Menu.setApplicationMenu(null);
+
+
+
+        // Application menu with Settings
+        const templateMenu = [
+            {
+                        label: 'Setting',
+                        submenu: [
+                            {
+                                label: 'Database',
+                                click: () => openSettingsWindow()
+                            }
+                        ]
+            }
+        ];
+
+        const menu = Menu.buildFromTemplate(templateMenu);
+        Menu.setApplicationMenu(menu);
+
 
 
 
@@ -236,9 +255,26 @@ function createWindow() {
 
 
 
-    // local storage JSON file
+    // local storage JSON file (settings)
     {
+        // send the config file to the render process (settings.html) whenever we load the page
+        ipcMain.handle('get-db-config', async () => {
+            return {host: MyConfig.host, user: MyConfig.user, password: MyConfig.password, database: MyConfig.database};
+        });
 
+        // save the config file whenever we change it (settings.html)
+        ipcMain.handle('save-db-config', async (event, config) => {
+            MyConfig.host = config.host;
+            MyConfig.user = config.user;
+            MyConfig.password = config.password;
+            MyConfig.database = config.database;
+            MyConfig.save(); // save JSON file
+            TrackingDB.refreshPool(); // refresh the database connection pool
+            return {success: true};
+        });
+
+
+        /*
         // save the config file
         setTimeout(function() { // to wait for 10 second (for test: Modify JSON file)
             MyConfig.host = "localhost"; // data.host;
@@ -248,11 +284,38 @@ function createWindow() {
             MyConfig.save(); // save JSON file
             TrackingDB.refreshPool(); // refresh the database connection pool
         }, 10000); // to wait for 10 second
+        */
 
     }
 
 
 };
+
+
+
+
+
+
+// Function to Open the Settings Window
+function openSettingsWindow() {
+    const settingsWin = new BrowserWindow({
+        width: 400,
+        height: 400,
+        icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
+        title: "Settings",
+        parent: BrowserWindow.getFocusedWindow(),
+        modal: true, // prevent interaction with the main window until this window is closed
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+    settingsWin.setMenu(null); // Optional: remove menu from settings window
+    settingsWin.loadFile('settings.html');
+}
+
+
+
 
 
 
