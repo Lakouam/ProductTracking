@@ -185,7 +185,7 @@ class Post {
 
         // update setter for etat
         etatUpdate(value) {
-            this.etat = (value === true || this.etat === true);
+            this.etat = (value === true || this.etat === true || this.etat === 1);
         }
 
         // update setter for commentaire
