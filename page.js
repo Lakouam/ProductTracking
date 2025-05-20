@@ -58,13 +58,10 @@
 
 // receiving a message about the scan whenever the page is loaded and show it in scan input
 {
-    // when receiving a message about the scan, Show it in the input
-    {
-        ipcRenderer.on("Message About Scan", (event, data) => {
-            // Show the message in the scan input
-            document.getElementById("scanInput").placeholder = data;
-        });
-    }
+    ipcRenderer.invoke('Message About Scan').then(data => {
+        // Show the message in the scan input
+        document.getElementById("scanInput").placeholder = data;
+    });
 }
 
 

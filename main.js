@@ -186,9 +186,9 @@ function createWindow() {
 
         // local storage JSON file (settings)
         {
-            // send the post Actuel to the render process (postRender.js) whenever it request it
+            // send the post Actuel to the render process (postRender.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
             ipcMain.handle('Post Actuel', async () => {
-                return MyConfig.postActuel; // send the post name to the render process
+                return {name: MyConfig.postActuel, isnull: (post.postActuel === null)};
             });
         }
 
@@ -254,16 +254,19 @@ function createWindow() {
 
             // send a message about the scan whenever we load the page
             {
-                win.webContents.on("did-finish-load", () => {
+                ipcMain.handle('Message About Scan', async () => {
+
+                    let isRejected = scanRejected; // get the scan rejected information
+                    scanRejected = false // initialize scanRejected
+
                     if (!post.isSecondScan()) {
-                        if (scanRejected) win.webContents.send("Message About Scan", "Scan Initial a été rejeté");
-                        else win.webContents.send("Message About Scan", "Scan Initial");
+                        if (isRejected) return "Scan Initial a été rejeté";
+                        else return "Scan Initial";
                     }
                     else {
-                        if (scanRejected) win.webContents.send("Message About Scan", "Scan Finale a été rejeté");
-                        else win.webContents.send("Message About Scan", "Scan Finale");
+                        if (isRejected) return "Scan Finale a été rejeté";
+                        else return "Scan Finale";
                     }
-                    scanRejected = false // initialize scanRejected
                 });
             }
             
