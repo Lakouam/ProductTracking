@@ -3,19 +3,14 @@
 
 
 
-
-// register the post actuel in the main process
+// when selecting a post, send the post name to main process
 {
-    // when selecting a post, send the post name to main process
-    {
-        document.getElementById("postSelect").addEventListener("change", function(event) {
-            // get the postSelect value
-            const postSelect = document.getElementById("postSelect").value;
-            // send the postSelect value to main process
-            ipcRenderer.send("Post Select", postSelect);
-        });
-    }
-
+    document.getElementById("postSelect").addEventListener("change", function(event) {
+        // get the postSelect value
+        const postSelect = document.getElementById("postSelect").value;
+        // send the postSelect value to main process
+        ipcRenderer.send("Post Select", postSelect);
+    });
 }
 
 
@@ -23,7 +18,7 @@
 
 // receive posts names from the main process and show them in the postSelect and request the post actuel and select it
 {
-    ipcRenderer.on("Posts Names", (event, data) => {
+    ipcRenderer.invoke("Posts Names").then(data => {
         // get the postSelect
         const postSelect = document.getElementById("postSelect");
         postSelect.innerHTML = ""; // clear the postSelect

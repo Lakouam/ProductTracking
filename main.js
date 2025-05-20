@@ -174,9 +174,9 @@ function createWindow() {
 
             // receive the posts names from database whenever we load the page and send it to the render process
             {
-                win.webContents.on("did-finish-load", async () => {
+                ipcMain.handle('Posts Names', async () => {
                     let postsName = await TrackingDB.getPostsName();
-                    win.webContents.send("Posts Names", postsName); // send the post name to the render process
+                    return postsName; // send the post name to the render process
                 });
             }
         }
