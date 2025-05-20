@@ -290,12 +290,10 @@ function createWindow() {
         {   
             // receive data from database then send it to the render process whenever we load the page
             {
-                win.webContents.on("did-finish-load", async () => {
+                ipcMain.handle('Table Data', async () => {
                     let data = await TrackingDB.getData();
-                        
-                    win.webContents.send("Table Data Columns", data[0]); // send first row of the data to the render process (column names)
-                    win.webContents.send("Table Data Rows", data.slice(1)); // send the rest of the data to the render process (rows)
-                        
+                    
+                    return {columns: data[0], rows: data.slice(1)}; // send the columns and rows to the render process
                 });
             }
             
