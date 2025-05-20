@@ -131,6 +131,11 @@ tr:hover {
         align-self: flex-end;
     }
 
+    /* left flex item */
+    .flexItemLeft {
+        align-self: flex-start;
+    }
+
     /* 320px width */
     .width320 {
         width: 320px;
