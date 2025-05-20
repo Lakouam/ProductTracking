@@ -155,7 +155,8 @@ class TrackingDB {
             ['Post 2'],
             ['Post 3'],
             ['Post 4'],
-            ['Post 5']
+            ['Post 5'],
+            ['Admin'],
         ];
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
         await this.queryAsync(sql, values);
