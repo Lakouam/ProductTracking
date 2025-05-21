@@ -271,6 +271,7 @@ class Post {
     async update(scan) {
 
         let scanRejected = true; // true if the scan is rejected
+        let errorMessage = ""; // error message
 
         if(!this.isEmpty()) { // if the post is not empty
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
@@ -279,6 +280,10 @@ class Post {
                     await TrackingDB.updateScan(this); // update the scan in the database
                     scanRejected = false;
                 }
+            }
+            else {
+                if (this.nof === scan.nof) errorMessage = "NOF: " + this.nof + " Existe déjà avec un ref_produit (" + this.refProduit + ") ou qt (" + this.qt + ") différent"; // error message
+                else errorMessage = "NOF: " + this.nof + " Pas encore terminé, veuillez le terminé avant d'en scanner un nouveau"; // error message
             }
         }
         else { // if the post is empty
@@ -298,7 +303,15 @@ class Post {
                     await TrackingDB.insertScan(this); // insert the scan in the database
                     scanRejected = false;
                 }
+                else if (nofExist === -1) { // if the Nof exist in the database but scan is corrupted!
+                    errorMessage = "NOF: " + scan.nof + " Existe déjà avec un ref_produit ou qt différent"; // error message
+                }
 
+            }
+            else {
+                const nofExist = await TrackingDB.isNofExist(scan); // check if the nof exists in the database
+                if (nofExist === -1) errorMessage = "NOF: " + scan.nof + " a déjà été complété avec un ref_produit ou qt différent"; // error message
+                else errorMessage = "NOF: " + scan.nof + " déjà terminé"; // error message
             }
 
 
@@ -314,7 +327,7 @@ class Post {
 
 
         // return information about the update (scan rejected?, scan initial or final?)
-        return {scanRejected: scanRejected};
+        return {scanRejected: scanRejected, errorMessage: errorMessage};
 
 
     }

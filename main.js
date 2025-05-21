@@ -226,6 +226,7 @@ function createWindow() {
                         // update the post with the scan data
                         let updateInformations = await post.update(scanData); // update the post with the scan data
                         scanRejected = updateInformations.scanRejected; // get the scan rejected information
+                        errorMessage = updateInformations.errorMessage; // get the error message
 
                     }
                     else {
@@ -262,14 +263,17 @@ function createWindow() {
                     if (post.nof === null) noteMessage = " (Nouveau produit)"
 
                     let isRejected = scanRejected; // get the scan rejected information
+                    let errorMsg = errorMessage; // get the error message
+
                     scanRejected = false // initialize scanRejected
+                    errorMessage = ""; // initialize errorMessage
 
                     if (!post.isSecondScan()) {
-                        if (isRejected) return {message: "Scan Initial a été rejeté" + noteMessage, errorMessage: errorMessage};
+                        if (isRejected) return {message: "Scan Initial a été rejeté" + noteMessage, errorMessage: errorMsg};
                         else return {message: "Scan Initial" + noteMessage, errorMessage: ""};
                     }
                     else {
-                        if (isRejected) return {message: "Scan Finale a été rejeté" + noteMessage, errorMessage: errorMessage};
+                        if (isRejected) return {message: "Scan Finale a été rejeté" + noteMessage, errorMessage: errorMsg};
                         else return {message: "Scan Finale" + noteMessage, errorMessage: ""};
                     }
                 });
