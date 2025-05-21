@@ -256,16 +256,19 @@ function createWindow() {
             {
                 ipcMain.handle('Message About Scan', async () => {
 
+                    let noteMessage = " (Quantité: " + post.qa + "/" + post.qt + ")"; // informations about the post (qa and qt)
+                    if (post.nof === null) noteMessage = " (Nouveau produit)"
+
                     let isRejected = scanRejected; // get the scan rejected information
                     scanRejected = false // initialize scanRejected
 
                     if (!post.isSecondScan()) {
-                        if (isRejected) return "Scan Initial a été rejeté";
-                        else return "Scan Initial";
+                        if (isRejected) return "Scan Initial a été rejeté" + noteMessage;
+                        else return "Scan Initial" + noteMessage;
                     }
                     else {
-                        if (isRejected) return "Scan Finale a été rejeté";
-                        else return "Scan Finale";
+                        if (isRejected) return "Scan Finale a été rejeté" + noteMessage;
+                        else return "Scan Finale" + noteMessage;
                     }
                 });
             }
