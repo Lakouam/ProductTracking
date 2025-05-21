@@ -79,6 +79,58 @@ function createWindow() {
                     },
                     { role: 'quit' }
                 ]
+            },
+            {
+                label: 'Edit',
+                submenu: [
+                    { role: 'undo' },
+                    { role: 'redo' },
+                    { type: 'separator' },
+                    { role: 'cut' },
+                    { role: 'copy' },
+                    { role: 'paste' },
+                    { type: 'separator' },
+                    { role: 'selectAll' }
+                ]
+            },
+            {
+                label: 'View',
+                submenu: [
+                    { role: 'reload', label: 'Reload' },
+                    { role: 'forceReload', label: 'Force Reload' },
+                    { role: 'toggleDevTools', label: 'Toggle Developer Tools' },
+                    { type: 'separator' },
+                    { role: 'resetZoom', label: 'Reset Zoom' },
+                    { role: 'zoomIn', label: 'Zoom In' },
+                    { role: 'zoomOut', label: 'Zoom Out' },
+                    { type: 'separator' },
+                    { role: 'togglefullscreen', label: 'Toggle Fullscreen' }
+                ]
+            },
+            {
+                label: 'Window',
+                submenu: [
+                    { role: 'minimize', label: 'Minimize' },
+                    { role: 'close', label: 'Close Window' }
+                ]
+            },
+            {
+                label: 'Help',
+                submenu: [
+                    {
+                        label: 'Learn More',
+                        click: async () => {
+                            const { shell } = require('electron');
+                            await shell.openExternal('https://github.com/Lakouam/ProductTracking'); // app's site or repo
+                        }
+                    },
+                    {
+                        label: 'About',
+                        click: () => {
+                            // show an about dialog here
+                        }
+                    }
+                ]
             }
         ];
 
