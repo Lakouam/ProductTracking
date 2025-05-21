@@ -91,6 +91,10 @@ function createWindow() {
 
         // a menu that pop up when we right click
         let templateRightClick = [
+            {label: 'Cut', role: 'cut'},
+            {label: 'Copy', role: 'copy'},
+            {label: 'Paste', role: 'paste'},
+            {type: 'separator'},
             {label: 'Reload', role: 'reload'},
             {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
         ];
