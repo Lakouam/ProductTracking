@@ -282,7 +282,7 @@ class Post {
                 }
             }
             else {
-                if (this.nof === scan.nof) errorMessage = "NOF: " + this.nof + " Existe déjà avec un ref_produit (" + this.refProduit + ") ou qt (" + this.qt + ") différent"; // error message
+                if (this.nof === scan.nof) errorMessage = "NOF: " + this.nof + " Existe déjà avec un ref_produit ou qt différent"; // error message
                 else errorMessage = "NOF: " + this.nof + " Pas encore terminé, veuillez le terminé avant d'en scanner un nouveau"; // error message
             }
         }
