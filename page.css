@@ -149,6 +149,14 @@ tr:hover {
         font-weight: bold;
     }
 
+    /* success */
+    .success {
+        color: #4caf50;
+        margin-top: 15px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
 
 
 

@@ -29,6 +29,8 @@ const { ipcRenderer } = require('electron');
             document.getElementById('statusMessage').textContent = result.success
                 ? "Settings saved!"
                 : "Failed to save settings.";
+            // add class error to statusMessage if result.success is false
+            document.getElementById('statusMessage').classList.add(result.success ? 'success' : 'error');
         });
     });
 }
