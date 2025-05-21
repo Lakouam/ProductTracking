@@ -208,6 +208,7 @@ function createWindow() {
 
         // receive data from render process
         let scanRejected = false; // is the scan rejected?
+        let errorMessage = ""; // error message
         {
             // receive scan input data amd update it in the database
             {
@@ -230,6 +231,7 @@ function createWindow() {
                     else {
                         console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
                         scanRejected = true;
+                        errorMessage = scanData.errorMessage(); // get the error message
                     }
 
 
@@ -263,12 +265,12 @@ function createWindow() {
                     scanRejected = false // initialize scanRejected
 
                     if (!post.isSecondScan()) {
-                        if (isRejected) return "Scan Initial a été rejeté" + noteMessage;
-                        else return "Scan Initial" + noteMessage;
+                        if (isRejected) return {message: "Scan Initial a été rejeté" + noteMessage, errorMessage: errorMessage};
+                        else return {message: "Scan Initial" + noteMessage, errorMessage: ""};
                     }
                     else {
-                        if (isRejected) return "Scan Finale a été rejeté" + noteMessage;
-                        else return "Scan Finale" + noteMessage;
+                        if (isRejected) return {message: "Scan Finale a été rejeté" + noteMessage, errorMessage: errorMessage};
+                        else return {message: "Scan Finale" + noteMessage, errorMessage: ""};
                     }
                 });
             }

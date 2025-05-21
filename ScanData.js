@@ -84,6 +84,12 @@ class ScanData {
             this.commentaire + ", tempsActuel: " + this.tempsActuel.toLocaleString();
     }
 
+    // return and error message if the scan is not valid
+    errorMessage(){
+        let message = "La syntaxe du scan est incorrecte";
+        return message;
+    }
+
 }
 
 module.exports = ScanData;

@@ -60,7 +60,8 @@
 {
     ipcRenderer.invoke('Message About Scan').then(data => {
         // Show the message in the scan input
-        document.getElementById("scanInput").placeholder = data;
+        document.getElementById("scanInput").placeholder = data.message;
+        document.getElementById("errorMessage").textContent = data.errorMessage;
     });
 }
 
