@@ -61,7 +61,11 @@
     ipcRenderer.invoke('Message About Scan').then(data => {
         // Show the message in the scan input
         document.getElementById("scanInput").placeholder = data.message;
+
         document.getElementById("errorMessage").textContent = data.errorMessage;
+        // add class error to errorMessage if is not empty
+        if (data.errorMessage !== "")
+            document.getElementById('errorMessage').classList.add('error');
     });
 }
 
