@@ -202,26 +202,34 @@ function createWindow() {
             {
                 ipcMain.on("Post Select", async (event, postName) => {
 
-                    PageUI.disable(); // disable UI
+                    try {
+
+                        PageUI.disable(); // disable UI
 
 
-                    let data = await TrackingDB.getActiveRow(postName) 
+                        let data = await TrackingDB.getActiveRow(postName) 
+                            
+                        post.fillPostName(postName); // fill the post name
+
+                        MyConfig.postActuel = postName;
+                        MyConfig.save(); // save the post actuel in the config file
+
+                        post.fillFromDB(data); // fill the post with the data from the database
                         
-                    post.fillPostName(postName); // fill the post name
+                        //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
-                    MyConfig.postActuel = postName;
-                    MyConfig.save(); // save the post actuel in the config file
+                            if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
+                            else win.loadFile('page.html'); // reload the page to clear the input fields
 
-                    post.fillFromDB(data); // fill the post with the data from the database
-                    
-                    //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
+                            PageUI.enable(); // enable UI
 
-                        if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
-                        else win.loadFile('page.html'); // reload the page to clear the input fields
+                        //}, 1000); // to wait for one sec
 
-                        PageUI.enable(); // enable UI
-
-                    //}, 1000); // to wait for one sec
+                    } catch (err) {
+                        console.error("Database error in Post Select event:", err.message);
+                        // close the app
+                        app.quit();
+                    }
                         
                 });
             }
@@ -231,8 +239,18 @@ function createWindow() {
             // receive the posts names from database whenever we load the page and send it to the render process
             {
                 ipcMain.handle('Posts Names', async () => {
-                    let postsName = await TrackingDB.getPostsName();
-                    return postsName; // send the post name to the render process
+
+                    try {
+
+                        let postsName = await TrackingDB.getPostsName();
+                        return postsName; // send the post name to the render process
+
+                    } catch (err) {
+                        console.error("Database error in Posts Names event:", err.message);
+                        // close the app
+                        app.quit();
+                    }
+
                 });
             }
         }
@@ -271,34 +289,43 @@ function createWindow() {
                 // Read Scanner data that we send from the render process (page.html) (update it in the database)
                 ipcMain.on("Scan Input", async (event, data) => {
 
-                    PageUI.disable(); // disable UI
+                    try {
 
-                    const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
-                    
-                    // check if the scan is valid
-                    if(scanData.isValide()){
-                        console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
+                        PageUI.disable(); // disable UI
 
-                        // update the post with the scan data
-                        let updateInformations = await post.update(scanData); // update the post with the scan data
-                        scanRejected = updateInformations.scanRejected; // get the scan rejected information
-                        errorMessage = updateInformations.errorMessage; // get the error message
+                        const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                        
+                        // check if the scan is valid
+                        if(scanData.isValide()){
+                            console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
+                            // update the post with the scan data
+                            let updateInformations = await post.update(scanData); // update the post with the scan data
+                            scanRejected = updateInformations.scanRejected; // get the scan rejected information
+                            errorMessage = updateInformations.errorMessage; // get the error message
+
+                        }
+                        else {
+                            console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
+                            scanRejected = true;
+                            errorMessage = scanData.errorMessage(); // get the error message
+                        }
+
+
+                        setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
+
+                            win.reload(); // reload the page to clear the input fields
+
+                            PageUI.enable(); // enable UI
+
+                        }, 1000); // to wait for one second
+
+                    } catch (err) {
+                        console.error("Database error in Scan Input event:", err.message);
+                        // close the app
+                        app.quit();
                     }
-                    else {
-                        console.warn("Scan invalide: " + scanData.toString()); // print the scan data in the console
-                        scanRejected = true;
-                        errorMessage = scanData.errorMessage(); // get the error message
-                    }
 
-
-                    setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
-
-                        win.reload(); // reload the page to clear the input fields
-
-                        PageUI.enable(); // enable UI
-
-                    }, 1000); // to wait for one second
                 })
             }
 
@@ -356,9 +383,19 @@ function createWindow() {
             // receive data from database then send it to the render process whenever we load the page
             {
                 ipcMain.handle('Table Data', async () => {
-                    let data = await TrackingDB.getData();
+
+                    try {
+
+                        let data = await TrackingDB.getData();
+                        
+                        return {columns: data[0], rows: data.slice(1)}; // send the columns and rows to the render process
+
+                    } catch (err) {
+                        console.error("Database error in Table Data event:", err.message);
+                        // close the app
+                        app.quit();
+                    }
                     
-                    return {columns: data[0], rows: data.slice(1)}; // send the columns and rows to the render process
                 });
             }
             

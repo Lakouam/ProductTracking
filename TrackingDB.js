@@ -222,7 +222,7 @@ class TrackingDB {
             const attempt = () => {
                 
                 this.pool.query(query, params, (err, result, fields) => {
-                    if (!err) return resolve([result, fields]);
+                    if (!err) return resolve([result, fields]); // return is important to avoid executing the next lines
                     tryCount++;
                     
                     if (tryCount < maxRetries) {
@@ -234,7 +234,9 @@ class TrackingDB {
                         return;
                     }
                     else {
-                        //throw new Error("Max retries reached. Query failed: " + err.message);
+                        console.error("Max retries reached. Query failed: " + err.message);
+                        return reject(err); // or throw err;
+                        //throw err;
                     }
                 });
 
@@ -252,37 +254,33 @@ class TrackingDB {
 
 
     // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-    static getData() {
+    static async getData() {
 
-        return new Promise(async (resolve, reject) => {
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
 
-            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
+        let [result, fields]  = await this.runQueryWithRetry(sql);
 
-            let [result, fields]  = await this.runQueryWithRetry(sql);
+        console.log("Data retrieved from the database!");
 
-            console.log("Data retrieved from the database!");
+        // Map the result to a two-dimensional array
+        let rows = result.map(row => [
+            row.temps_debut,
+            row.temps_fin,
+            row.nof,
+            row.ref_produit,
+            row.qt,
+            row.post_actuel,
+            row.qa,
+            row.moy_temps_passer,
+            row.etat,
+            row.commentaire
+        ]);
 
-            // Map the result to a two-dimensional array
-            let rows = result.map(row => [
-                row.temps_debut,
-                row.temps_fin,
-                row.nof,
-                row.ref_produit,
-                row.qt,
-                row.post_actuel,
-                row.qa,
-                row.moy_temps_passer,
-                row.etat,
-                row.commentaire
-            ]);
+        // Add the column names as the first row
+        let columns = fields.map(field => field.name);
+        rows.unshift(columns);
 
-            // Add the column names as the first row
-            let columns = fields.map(field => field.name);
-            rows.unshift(columns);
-
-            resolve(rows); // Resolve the promise with the data
-            
-        });     
+        return rows; // Resolve the promise with the data  
         
     }
 
@@ -290,174 +288,151 @@ class TrackingDB {
 
 
     // get Active row (qa < qt) of a post
-    static getActiveRow(post) {
+    static async getActiveRow(post) {
 
-        return new Promise(async (resolve, reject) => {
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
+        
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post]);
 
-            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
-            
-            let [result, fields]  = await this.runQueryWithRetry(sql, [post]);
+        console.log("Active row retrieved from the database!");
 
-            console.log("Active row retrieved from the database!");
-
-            // Map the result to a two-dimensional array
-            let rows = result.map(row => [
-                row.temps_debut,
-                row.temps_fin,
-                row.nof,
-                row.ref_produit,
-                row.qt,
-                row.post_actuel,
-                row.qa,
-                row.moy_temps_passer,
-                row.etat,
-                row.commentaire,
-                row.scan_count,
-                row.temps_dernier_scan
-            ]);
-            
-            // resolve an object {column name: first row of that column}
-            let columns = fields.map(field => field.name);
+        // Map the result to a two-dimensional array
+        let rows = result.map(row => [
+            row.temps_debut,
+            row.temps_fin,
+            row.nof,
+            row.ref_produit,
+            row.qt,
+            row.post_actuel,
+            row.qa,
+            row.moy_temps_passer,
+            row.etat,
+            row.commentaire,
+            row.scan_count,
+            row.temps_dernier_scan
+        ]);
+        
+        // resolve an object {column name: first row of that column}
+        let columns = fields.map(field => field.name);
 
 
-            let obj = {};
-            for (let i = 0; i < columns.length; i++) {
-                if(rows.length === 0)
-                    obj[columns[i]] = null;
-                else obj[columns[i]] = rows[0][i];
-            }
+        let obj = {};
+        for (let i = 0; i < columns.length; i++) {
+            if(rows.length === 0)
+                obj[columns[i]] = null;
+            else obj[columns[i]] = rows[0][i];
+        }
 
 
-            resolve(obj); // Resolve the promise with the data
-                    
-        });
+        return obj; // Resolve the promise with the data
+        
     }
 
 
     // update the table scan by a post
-    static updateScan(post) {
+    static async updateScan(post) {
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
-        return new Promise(async (resolve, reject) => {
             
-            let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
+        let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
 
-            let [result, fields]  = await this.runQueryWithRetry(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]);
 
-            console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
-            resolve(result);
-            
-         });   
+        console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
+        return result; 
 
     }
 
 
     // check if the scan is exist in the database
-    static isScanNotExist(scan) {
-
-        return new Promise(async (resolve, reject) => {
+    static async isScanNotExist(scan) {
             
-            // check if the scan is not in the database
-            let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
+        // check if the scan is not in the database
+        let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
 
-            let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, scan.postActuel]);
-                
-            // If the scan is not in the database, resolve with true
-            if (result.length === 0) {
-                console.log("Scan Not exist in the database!");
-                resolve(true);
-            } else {
-                console.log("Scan exist in the database!");
-                resolve(false);
-            }
-
-        });
+        let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, scan.postActuel]);
+            
+        // If the scan is not in the database, resolve with true
+        if (result.length === 0) {
+            console.log("Scan Not exist in the database!");
+            return true;
+        } else {
+            console.log("Scan exist in the database!");
+            return false;
+        }
         
     }
 
 
     // check if the nof exists in the database (1: exist, 0: not exist, -1: Corrupted)
-    static isNofExist(scan) {
-
-        return new Promise(async (resolve, reject) => {
+    static async isNofExist(scan) {
             
-            // check if the nof is not in the database
-            let sql = `SELECT * FROM marque WHERE nof = ?`;
+        // check if the nof is not in the database
+        let sql = `SELECT * FROM marque WHERE nof = ?`;
 
-            let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof]);
 
-            // If the nof is not in the database, resolve with 1
-            if (result.length === 0) {
-                console.log("Nof Not exist in the database!");
-                resolve(0);
-            } else {
-                if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
-                    console.log("Nof exist in the database!");
-                    resolve(1);
-                }
-                else {
-                    console.log("Nof exist in the database but scan is corrupted!");
-                    resolve(-1);
-                }
-                    
+        // If the nof is not in the database, resolve with 1
+        if (result.length === 0) {
+            console.log("Nof Not exist in the database!");
+            return 0;
+        } else {
+            if(scan.refProduit === result[0].ref_produit && scan.qt === result[0].qt){ // nof has same ref_produit AND qt
+                console.log("Nof exist in the database!");
+                return 1;
             }
-            
-        });
+            else {
+                console.log("Nof exist in the database but scan is corrupted!");
+                return -1;
+            }
+                
+        }
         
     }
 
 
 
     // insert a row into the table scan
-    static insertScan(post) {
+    static async insertScan(post) {
+            
+        // insert a row into the table scan
+        let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
+                            
+        console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+        return result;
 
-        return new Promise(async (resolve, reject) => {
-            
-            // insert a row into the table scan
-            let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            
-            let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
-                                
-            console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
-            resolve(result);
-                
-        });
     }
 
     
     // insert a row (a new nof) into the table marque
-    static insertMarque(post) {
+    static async insertMarque(post) {
+            
+        // insert a row into the table marque
+        let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
 
-        return new Promise(async (resolve, reject) => {
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.refProduit, post.qt]);
+        
+        console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
+        return result;    
             
-            // insert a row into the table marque
-            let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-
-            let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.refProduit, post.qt]);
-            
-            console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
-            resolve(result);    
-            
-        });
     }
     
 
     // get the post name from the database
-    static getPostsName(retryIntervalMs = 3000) {
-
-        return new Promise(async (resolve, reject) => {
+    static async getPostsName(retryIntervalMs = 3000) {
             
-            let sql = `SELECT name FROM post`;
+        let sql = `SELECT name FROM post`;
 
-            let [result, fields]  = await this.runQueryWithRetry(sql);
+        let [result, fields]  = await this.runQueryWithRetry(sql);
 
-            console.log("Posts names retrieved from the database!");
+        console.log("Posts names retrieved from the database!");
 
-            // Map the result to a one-dimensional array
-            let rows = result.map(row => row.name);
-            
-            resolve(rows); // Resolve the promise with the data
-                
-        });
+        // Map the result to a one-dimensional array
+        let rows = result.map(row => row.name);
+        
+        return rows; // Resolve the promise with the data
+        
     }
 
 
