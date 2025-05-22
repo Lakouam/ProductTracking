@@ -213,49 +213,78 @@ class TrackingDB {
 
 
 
+    // run a query (Retry with Exponential Backoff & Limit the Number of Retries)
+    static runQueryWithRetry(query, params = [], maxRetries = 5, baseDelay = 3000) {
+
+        return new Promise((resolve, reject) => {
+
+            let tryCount = 0;
+            const attempt = () => {
+                
+                this.pool.query(query, params, (err, result, fields) => {
+                    if (!err) return resolve([result, fields]);
+                    tryCount++;
+                    
+                    if (tryCount < maxRetries) {
+                        
+                        const delay = Math.min(baseDelay * Math.pow(2, tryCount - 1), 60000); // max 60s
+
+                        console.error("Query error, retrying in " + delay/1000 + "s:", err.message);
+                        setTimeout(attempt, delay);
+                        return;
+                    }
+                    else {
+                        //throw new Error("Max retries reached. Query failed: " + err.message);
+                    }
+                });
+
+            }
+
+       
+            attempt();
+            
+            
+
+        });
+    }
+
+
+
 
 
 
 
     // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-    static getData(retryIntervalMs = 3000) {
+    static getData() {
 
-        return new Promise((resolve, reject) => {
-            const attempt = () => {
-                let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
+        return new Promise(async (resolve, reject) => {
+            let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
 
-                this.pool.query(sql, (err, result, fields) => {
-                    if (err) {
-                        console.error("getData error, retrying in 3s:", err.message);
-                        setTimeout(attempt, retryIntervalMs);
-                        return;
-                    }
+            let [result, fields]  = await this.runQueryWithRetry(sql);
 
-                    console.log("Data retrieved from the database!");
+            console.log("Data retrieved from the database!");
 
-                    // Map the result to a two-dimensional array
-                    let rows = result.map(row => [
-                        row.temps_debut,
-                        row.temps_fin,
-                        row.nof,
-                        row.ref_produit,
-                        row.qt,
-                        row.post_actuel,
-                        row.qa,
-                        row.moy_temps_passer,
-                        row.etat,
-                        row.commentaire
-                    ]);
+            // Map the result to a two-dimensional array
+            let rows = result.map(row => [
+                row.temps_debut,
+                row.temps_fin,
+                row.nof,
+                row.ref_produit,
+                row.qt,
+                row.post_actuel,
+                row.qa,
+                row.moy_temps_passer,
+                row.etat,
+                row.commentaire
+            ]);
 
-                    // Add the column names as the first row
-                    let columns = fields.map(field => field.name);
-                    rows.unshift(columns);
+            // Add the column names as the first row
+            let columns = fields.map(field => field.name);
+            rows.unshift(columns);
 
-                    resolve(rows); // Resolve the promise with the data
-                });
-            };
-
-            attempt();
+            resolve(rows); // Resolve the promise with the data
+            
+            
         });
         
         
