@@ -57,6 +57,7 @@ function createWindow() {
 
     // Menu
     let contextMenuRightClick;
+    let menu;
     {
         // remove the Application menu (disable all the menu shortcuts like F11 for toggling fullscreen etc.)
         //Menu.setApplicationMenu(null);
@@ -134,7 +135,7 @@ function createWindow() {
             }
         ];
 
-        const menu = Menu.buildFromTemplate(templateMenu);
+        menu = Menu.buildFromTemplate(templateMenu);
         Menu.setApplicationMenu(menu);
 
 
@@ -186,7 +187,7 @@ function createWindow() {
     let post = new Post(); // create a new Post object
 
 
-    PageUI.connect(win, contextMenuRightClick); // connect the pageUI to the window and contextMenuRightClick
+    PageUI.connect(win, contextMenuRightClick, menu); // connect the pageUI to the window and contextMenuRightClick
 
 
 
@@ -242,7 +243,12 @@ function createWindow() {
 
                     try {
 
+                        PageUI.disable(); // disable UI
+
                         let postsName = await TrackingDB.getPostsName();
+
+                        PageUI.enable(); // enable UI
+
                         return postsName; // send the post name to the render process
 
                     } catch (err) {
@@ -386,7 +392,11 @@ function createWindow() {
 
                     try {
 
+                        PageUI.disable(); // disable UI
+
                         let data = await TrackingDB.getData();
+
+                        PageUI.enable(); // enable UI
                         
                         return {columns: data[0], rows: data.slice(1)}; // send the columns and rows to the render process
 
