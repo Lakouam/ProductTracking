@@ -455,8 +455,8 @@ function createWindow() {
 // Function to Open the Settings Window
 function openSettingsWindow() {
     const settingsWin = new BrowserWindow({
-        width: 400,
-        height: 400,
+        width: 450,
+        height: 500,
         icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
         title: "Settings",
         parent: BrowserWindow.getFocusedWindow(),
