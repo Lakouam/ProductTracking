@@ -80,6 +80,9 @@
         document.getElementById('scanInput').disabled = disabled;
         document.getElementById('etatInput').disabled = disabled;
         document.getElementById('commentInput').disabled = disabled;
+
+        if (!disabled) // if the UI is enabled, focus on scanInput
+            document.getElementById("scanInput").focus();
     }
 
     ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
