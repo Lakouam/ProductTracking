@@ -34,10 +34,7 @@ function createWindow() {
     });
 
 
-    // what content that we want to load in this window
-    if(MyConfig.postActuel === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
-    else win.loadFile('page.html'); // load the page
-
+    win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
 
 
 
@@ -219,8 +216,7 @@ function createWindow() {
                         
                         //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
-                            if (postName === "Admin") win.loadFile('pageAdmin.html'); // load the admin page
-                            else win.loadFile('page.html'); // reload the page to clear the input fields
+                            win.loadFile(appropriateFile(postName)); // load the appropriate file
 
                             PageUI.enable(); // enable UI
 
@@ -471,6 +467,15 @@ function openSettingsWindow() {
 }
 
 
+
+
+
+// load the appropriate file
+function appropriateFile(postName) {
+    // what content that we want to load in this window
+    if(postName === "Admin") return 'pageAdmin.html'; // load the admin page
+    else return 'page.html'; // load the page
+}
 
 
 
