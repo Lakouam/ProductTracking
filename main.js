@@ -462,6 +462,20 @@ function createWindow() {
     }
 
 
+
+
+
+    // navigation.js
+    {
+        // receive data from render process
+        {
+            ipcMain.on('open-dashboard', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-dashboard'));
+            });
+        }
+    }
+
+
 };
 
 
@@ -496,6 +510,7 @@ function appropriateFile(postName, dashboard = "") {
     // what content that we want to load in this window
     if(postName === "Admin") {
         if (dashboard === 'open-show-data') return 'pageAdmin.html';
+        if (dashboard === 'open-dashboard') return 'dashboard.html';
         return 'dashboard.html'; // load the dashboard page
     }
     else return 'page.html'; // load the page
