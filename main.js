@@ -441,6 +441,27 @@ function createWindow() {
     }
 
 
+
+
+
+
+    // dashboard.js
+    {
+        // receive data from render process
+        {
+            ipcMain.on('open-show-data', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-data'));
+            });
+            ipcMain.on('open-modify-nof', async (event, data) => {
+
+            });
+            ipcMain.on('open-modify-posts', async (event, data) => {
+
+            });
+        }
+    }
+
+
 };
 
 
@@ -471,9 +492,12 @@ function openSettingsWindow() {
 
 
 // load the appropriate file
-function appropriateFile(postName) {
+function appropriateFile(postName, dashboard = "") {
     // what content that we want to load in this window
-    if(postName === "Admin") return 'dashboard.html'; // load the dashboard page
+    if(postName === "Admin") {
+        if (dashboard === 'open-show-data') return 'pageAdmin.html';
+        return 'dashboard.html'; // load the dashboard page
+    }
     else return 'page.html'; // load the page
 }
 
