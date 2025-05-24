@@ -473,7 +473,7 @@ function openSettingsWindow() {
 // load the appropriate file
 function appropriateFile(postName) {
     // what content that we want to load in this window
-    if(postName === "Admin") return 'pageAdmin.html'; // load the admin page
+    if(postName === "Admin") return 'dashboard.html'; // load the dashboard page
     else return 'page.html'; // load the page
 }
 

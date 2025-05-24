@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <title>Product Tracking</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="page.css">
+
+        <link rel="stylesheet" href="dashboard.css">
+        
+
+    </head>
+    <body>
+
+
+        <!-- The post that we currently in -->
+        <select id="postSelect">
+            <!--
+            <option value="Post 1">Post 1</option>
+            <option value="Post 2">Post 2</option>
+            <option value="Post 3">Post 3</option>
+            -->
+        </select>
+
+
+        
+
+
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <div class="dashboard-title">Dashboard</div>
+            </div>
+
+            <div class="action-cards">
+                <div class="action-card" tabindex="0" id="showDataCard">
+                    <div class="action-icon">📊</div>
+                    <div class="action-title">Show Data</div>
+                    <div class="action-desc">View all product tracking data in a table.</div>
+                </div>
+                <div class="action-card" tabindex="0" id="modifyNofCard">
+                    <div class="action-icon">✏️</div>
+                    <div class="action-title">Modify NOF</div>
+                    <div class="action-desc">Edit or update NOF information.</div>
+                </div>
+                <div class="action-card" tabindex="0" id="modifyPostsCard">
+                    <div class="action-icon">🛠️</div>
+                    <div class="action-title">Modify Posts</div>
+                    <div class="action-desc">Add, remove, or edit posts.</div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <!-- Javascript -->
+        <script>
+            const {ipcRenderer} = require('electron');
+        </script>
+        <script src="postRender.js"></script>
+        
+    </body>
+</html>
