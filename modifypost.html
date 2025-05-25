@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <title>Product Tracking</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="page.css">
+
+        <link rel="stylesheet" href="navigation.css">
+
+
+    </head>
+    <body>
+
+        <div class="breadcrumb">
+            <a href="#" id="goDashboard" class="breadcrumb-link">Dashboard</a> &gt; Modify Posts
+        </div>
+
+
+        <!-- The post that we currently in -->
+        <select id="postSelect">
+            <!--
+            <option value="Post 1">Post 1</option>
+            <option value="Post 2">Post 2</option>
+            <option value="Post 3">Post 3</option>
+            -->
+        </select>
+
+
+        <br>
+
+
+
+
+        <!-- Javascript -->
+        <script>
+            const {ipcRenderer} = require('electron');
+        </script>
+        <script src="postRender.js"></script>
+        <script src="navigation.js"></script>
+
+
+    </body>
+</html>
