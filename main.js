@@ -453,10 +453,10 @@ function createWindow() {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-data'));
             });
             ipcMain.on('open-modify-nof', async (event, data) => {
-
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-nof'));
             });
             ipcMain.on('open-modify-posts', async (event, data) => {
-
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-posts'));
             });
         }
     }
@@ -511,6 +511,8 @@ function appropriateFile(postName, dashboard = "") {
     if(postName === "Admin") {
         if (dashboard === 'open-show-data') return 'pageAdmin.html';
         if (dashboard === 'open-dashboard') return 'dashboard.html';
+        if (dashboard === 'open-modify-nof') return 'modifynof.html';
+        if (dashboard === 'open-modify-posts') return 'modifypost.html';
         return 'dashboard.html'; // load the dashboard page
     }
     else return 'page.html'; // load the page
