@@ -106,12 +106,3 @@ function show(nof, postCharge) {
 
 
 
-// receive a signal to disable UI or Enable it (interaction of user with some elements)
-{
-    function setInputsDisabled(disabled) { // what's elements to disable or enable
-        document.getElementById('postSelect').disabled = disabled;
-    }
-
-    ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
-    ipcRenderer.on("Enable UI", () => setInputsDisabled(false)); // Enable UI
-}

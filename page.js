@@ -76,10 +76,7 @@
 // receive a signal to disable UI or Enable it (interaction of user with some elements)
 {
     function setInputsDisabled(disabled) { // what's elements to disable or enable
-        document.getElementById('postSelect').disabled = disabled;
         document.getElementById('scanInput').disabled = disabled;
-        document.getElementById('etatInput').disabled = disabled;
-        document.getElementById('commentInput').disabled = disabled;
 
         if (!disabled) // if the UI is enabled, focus on scanInput
             document.getElementById("scanInput").focus();
