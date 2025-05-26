@@ -262,23 +262,13 @@ class TrackingDB {
 
         console.log("Data retrieved from the database!");
 
-        // Map the result to a two-dimensional array
-        let rows = result.map(row => [
-            row.temps_debut,
-            row.temps_fin,
-            row.nof,
-            row.ref_produit,
-            row.qt,
-            row.post_actuel,
-            row.qa,
-            row.moy_temps_passer,
-            row.etat,
-            row.commentaire
-        ]);
+        // Each row is an object: [{field1: value1, field2: value2, ...}]
+        let rows = result;
 
         // Add the column names as the first row
         let columns = fields.map(field => field.name);
         rows.unshift(columns);
+        
 
         return rows; // Resolve the promise with the data  
         

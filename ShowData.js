@@ -1,16 +1,4 @@
-function show(nof, postCharge) {
-
-    // nof & postCharge ids
-    let nofId = null;
-    let postChargeId = null;
-    for (let i in fullData.columns) {
-        if (fullData.columns[i] === "nof") {
-            nofId = i;
-        }
-        if (fullData.columns[i] === "post_actuel") {
-            postChargeId = i;
-        }
-    }
+function show(nof = "", postCharge = "") {
 
     // show columns in the table
     {
@@ -41,21 +29,20 @@ function show(nof, postCharge) {
             const tr = document.createElement("tr");
 
             // check if the row contains the nof and postCharge values
-            if (nof && nofId !== null)
-                if (row[nofId] !== nof)
-                    return; // skip this row
-            if (postCharge && postChargeId !== null)
-                if (row[postChargeId] !== postCharge)
-                    return; // skip this row
+            if (nof !== "" && row["nof"] !== nof)
+                return; // skip this row
+            if (postCharge !== "" && row["post_actuel"] !== postCharge)
+                return; // skip this row
             
             // show the row in the table
-            row.forEach(cell => {
+            for (let [name, cell] of Object.entries(row)) {
+
                 const td = document.createElement("td");
                 if (cell instanceof Date) 
                     td.innerText = cell.toLocaleString(); // format the date
                 else td.innerText = cell;
                 tr.appendChild(td);
-            });
+            };
             tableBody.appendChild(tr);
         });
     }
