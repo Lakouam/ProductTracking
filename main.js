@@ -384,13 +384,13 @@ function createWindow() {
         {   
             // receive data from database then send it to the render process whenever we load the page
             {
-                ipcMain.handle('Table Data', async () => {
+                ipcMain.handle('Table Data', async (event, who) => {
 
                     try {
 
                         PageUI.disable(); // disable UI
 
-                        let data = await TrackingDB.getData();
+                        let data = await TrackingDB.getData(who);
 
                         PageUI.enable(); // enable UI
                         
