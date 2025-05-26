@@ -78,16 +78,16 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}) {
 // remove value from database
 function removeRowFromDB(value, who) {
     // Use ipcRenderer to ask main process to remove by unique key (e.g., nof)
-    if (confirm("Are you sure you want to remove this row?")) {
-        ipcRenderer.invoke('remove-row', value, who).then(success => {
-            if (success) {
-                alert("Row removed successfully.");
-            } else {
-                alert("Failed to remove row from database.");
-            }
-        });
+    
+    ipcRenderer.invoke('remove-row', value, who).then(success => {
+        if (success) {
+            
+        } else {
+            
+        }
+    });
         
-    }
+    
 }
 
 

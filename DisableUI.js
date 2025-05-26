@@ -1,11 +1,33 @@
 // receive a signal to disable UI or Enable it (interaction of user with some elements)
 {
     function setInputsDisabled(disabled) { // what's elements to disable or enable  
-        // disable click events on the body
-        document.body.style.pointerEvents = disabled ? 'none' : 'auto';
+        
+        // Select all interactive elements you want to disable
+        const elements = document.querySelectorAll('input, select, .action-card');
+        elements.forEach(el => {
+            
+            if (disabled) {
+                el.classList.add('disabled');
+            } else {
+                el.classList.remove('disabled');
+            }
+        
+            el.disabled = disabled;
+            
+        });
 
     }
 
     ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
     ipcRenderer.on("Enable UI", () => setInputsDisabled(false)); // Enable UI
+
+
+
+    
+    // Block click events on .action-card when disabled
+    document.addEventListener('click', function(e) {
+        const card = e.target.closest('.action-card.disabled');
+        if (card) e.stopPropagation();
+    }, true);
+    
 }

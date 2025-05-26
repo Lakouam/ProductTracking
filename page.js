@@ -76,7 +76,6 @@
 // receive a signal to disable UI or Enable it (interaction of user with some elements)
 {
     function setInputsDisabled(disabled) { // what's elements to disable or enable
-        document.getElementById('scanInput').disabled = disabled;
 
         if (!disabled) // if the UI is enabled, focus on scanInput
             document.getElementById("scanInput").focus();
