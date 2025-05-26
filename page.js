@@ -70,20 +70,3 @@
 }
 
 
-
-
-
-// receive a signal to disable UI or Enable it (interaction of user with some elements)
-{
-    function setInputsDisabled(disabled) { // what's elements to disable or enable
-
-        if (!disabled) // if the UI is enabled, focus on scanInput
-            document.getElementById("scanInput").focus();
-    }
-
-    ipcRenderer.on("Disable UI", () => setInputsDisabled(true)); // Disable UI
-    ipcRenderer.on("Enable UI", () => setInputsDisabled(false)); // Enable UI
-}
-
-
-

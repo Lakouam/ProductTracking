@@ -13,6 +13,10 @@
             }
         
             el.disabled = disabled;
+
+            if (!disabled) // if the UI is enabled, focus on scanInput if exist
+                document.querySelector('#scanInput')?.focus();
+                
             
         });
 
