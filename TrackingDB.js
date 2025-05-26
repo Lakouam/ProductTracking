@@ -262,6 +262,9 @@ class TrackingDB {
         if (who === 'nof') // get data from marque (nof, ref_produit, qt)
             sql = `SELECT nof, ref_produit, qt FROM marque`;
 
+        if (who === 'post') // get data from post (name)
+            sql = `SELECT name FROM post`;
+
         let [result, fields]  = await this.runQueryWithRetry(sql);
 
         console.log("Data retrieved from the database!");
