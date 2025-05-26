@@ -433,6 +433,29 @@ class TrackingDB {
     }
 
 
+    static async removeRow(value, who) {
+        if (who === 'nof'){
+            // First, delete from scan table where nof = value
+            let sqlScan = `DELETE FROM scan WHERE nof = ?`;
+            await this.runQueryWithRetry(sqlScan, [value]);
+
+            // Then, delete from marque table where nof = value
+            let sqlMarque = `DELETE FROM marque WHERE nof = ?`;
+            let [result] = await this.runQueryWithRetry(sqlMarque, [value]);
+
+            // result.affectedRows > 0 means a row was deleted from marque
+            if (result && result.affectedRows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+        
+    }
+
+
 }
 
 module.exports = TrackingDB;

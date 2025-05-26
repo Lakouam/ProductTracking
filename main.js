@@ -378,7 +378,7 @@ function createWindow() {
 
 
 
-    // page Admin.js
+    // ShowData.js (page Admin.js & modifynof.js & modifypost.js)
     {
         // receive data from Database
         {   
@@ -404,8 +404,35 @@ function createWindow() {
                     
                 });
             }
-            
 
+        }
+
+
+
+        // receive data from render process
+        {
+            // receive data from render process (ShowData.js) to remove a row from the database
+            ipcMain.handle('remove-row', async (event, value, who) => {
+
+                try {
+
+                    PageUI.disable(); // disable UI
+
+                    let success = await TrackingDB.removeRow(value, who); // remove the row from the database
+
+                    win.reload(); // reload the page to refresh the table
+
+                    PageUI.enable(); // enable UI
+
+                    return success; // send the success status to the render process
+
+                } catch (err) {
+                    console.error("Database error in remove-row event:", err.message);
+                    // close the app
+                    app.quit();
+                }
+
+            });
         }
     }
 
