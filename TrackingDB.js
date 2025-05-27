@@ -490,6 +490,23 @@ class TrackingDB {
     }
 
 
+    // add nof to the database
+    static async addNof(nof, refProduit, qt) {
+        // Insert a new nof into the marque table if it doesn't already exist
+        let sql = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
+
+        let [result] = await this.runQueryWithRetry(sql, [nof, refProduit, qt]);
+        
+        // Check if the insert was successful
+        if (result && result.affectedRows > 0) {
+            return true; // Nof added successfully
+        } else {
+            return false; // Nof already exists or failed to add
+        }
+        
+    }
+
+
 }
 
 module.exports = TrackingDB;

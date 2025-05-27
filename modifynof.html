@@ -47,6 +47,17 @@
         </div>
 
 
+
+
+        <form id="addNOFForm">
+            <input type="text" id="scanNOF" name="scanNOF" placeholder="Scannez le produit" required>
+            <button type="submit" style="margin-left: 10px;">Ajouter</button>
+        </form>
+        <div id="statusMessage"></div>
+
+
+
+
         <!-- Javascript -->
         <script>
             const {ipcRenderer} = require('electron');

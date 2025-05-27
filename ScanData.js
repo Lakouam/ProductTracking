@@ -90,6 +90,27 @@ class ScanData {
         return message;
     }
 
+
+
+    // turn data in table
+    static scanToObject(data) {
+        // if data is a string
+        if(typeof data === "string"){
+            // if data is a string of length 14 (7 + 6 + 1) or more
+            if (data.length >= ScanData.NOFSIZE + ScanData.REFPSIZE + 1) {
+                return {
+                    nof: data.substring(0, ScanData.NOFSIZE), // the first 7 letters
+                    refProduit: data.substring(ScanData.NOFSIZE, ScanData.NOFSIZE + ScanData.REFPSIZE), // the next 6 letters
+                    // test if the rest of the string is a number
+                    qt: isNaN(data.substring(ScanData.NOFSIZE + ScanData.REFPSIZE)) ? 0 : parseInt(data.substring(ScanData.NOFSIZE + ScanData.REFPSIZE)), // the rest of the string is a number
+                };
+            }
+
+        }
+
+        return null;
+    }
+
 }
 
 module.exports = ScanData;

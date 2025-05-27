@@ -504,7 +504,7 @@ function createWindow() {
 
 
 
-    // modifypost.js
+    // modifypost.js & modifynof.js
     {
         // receive data from render process
         {
@@ -530,6 +530,35 @@ function createWindow() {
                 }
 
             });
+
+
+
+            // receive add post request from render process (modifynof.js)
+            ipcMain.handle('add-nof', async (event, nofscan) => {
+
+                try {
+
+                    PageUI.disable(); // disable UI
+
+                    let success = false;
+                    if(nofscan !== null) 
+                        success = await TrackingDB.addNof(nofscan.nof, nofscan.refProduit, nofscan.qt); // add the post to the database
+
+                    win.reload(); // reload the page to refresh the table
+
+                    PageUI.enable(); // enable UI
+
+                    return success; // send the success status to the render process
+
+                } catch (err) {
+                    console.error("Database error in add-nof event:", err.message);
+                    // close the app
+                    app.quit();
+                }
+
+            });
+
+
         }
     }
 
