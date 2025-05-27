@@ -503,6 +503,37 @@ function createWindow() {
     }
 
 
+
+    // modifypost.js
+    {
+        // receive data from render process
+        {
+            // receive add post request from render process (modifypost.js)
+            ipcMain.handle('add-post', async (event, postName) => {
+
+                try {
+
+                    PageUI.disable(); // disable UI
+
+                    let success = await TrackingDB.addPost(postName); // add the post to the database
+
+                    win.reload(); // reload the page to refresh the table
+
+                    PageUI.enable(); // enable UI
+
+                    return success; // send the success status to the render process
+
+                } catch (err) {
+                    console.error("Database error in add-post event:", err.message);
+                    // close the app
+                    app.quit();
+                }
+
+            });
+        }
+    }
+
+
 };
 
 

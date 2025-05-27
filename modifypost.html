@@ -49,6 +49,15 @@
 
 
 
+        <form id="addPostForm">
+            <input type="text" id="postName" name="postName" placeholder="Nom du poste" required>
+            <button type="submit" style="margin-left: 10px;">Ajouter</button>
+        </form>
+        <div id="statusMessage"></div>
+
+
+
+
         <!-- Javascript -->
         <script>
             const {ipcRenderer} = require('electron');

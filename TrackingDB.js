@@ -473,6 +473,23 @@ class TrackingDB {
     }
 
 
+    // add post to the database
+    static async addPost(postName) {
+        // Insert a new post into the post table if it doesn't already exist
+        let sql = `INSERT IGNORE INTO post (name) VALUES (?)`;
+
+        let [result] = await this.runQueryWithRetry(sql, [postName]);
+        
+        // Check if the insert was successful
+        if (result && result.affectedRows > 0) {
+            return true; // Post added successfully
+        } else {
+            return false; // Post already exists or failed to add
+        }
+        
+    }
+
+
 }
 
 module.exports = TrackingDB;
