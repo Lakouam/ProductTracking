@@ -214,7 +214,7 @@ class TrackingDB {
 
 
     // run a query (Retry with Exponential Backoff & Limit the Number of Retries)
-    static runQueryWithRetry(query, params = [], maxRetries = 5, baseDelay = 3000) {
+    static runQueryWithRetry(query, params = [], maxRetries = 7, baseDelay = 1000) {
 
         return new Promise((resolve, reject) => {
 
@@ -227,7 +227,7 @@ class TrackingDB {
                     
                     if (tryCount < maxRetries) {
                         
-                        const delay = Math.min(baseDelay * Math.pow(2, tryCount - 1), 60000); // max 60s
+                        const delay = Math.min(baseDelay * Math.pow(2, tryCount - 1), 30000); // max 30s
 
                         console.error("Query error, retrying in " + delay/1000 + "s:", err.message);
                         setTimeout(attempt, delay);
@@ -417,7 +417,7 @@ class TrackingDB {
     
 
     // get the post name from the database
-    static async getPostsName(retryIntervalMs = 3000) {
+    static async getPostsName() {
             
         let sql = `SELECT name FROM post`;
 
