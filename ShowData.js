@@ -66,7 +66,8 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}) {
                     if (removable.who === 'post')
                         removeRowFromDB(row["name"], removable.who)
                 };
-                tr.appendChild(removeTd);
+                if(row["name"] !== "Admin")
+                    tr.appendChild(removeTd);
             }
 
             tableBody.appendChild(tr);
