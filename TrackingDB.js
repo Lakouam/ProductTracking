@@ -434,7 +434,7 @@ class TrackingDB {
 
 
     static async removeRow(value, who) {
-        if (who === 'nof'){
+        if (who === 'nof') {
             // First, delete from scan table where nof = value
             let sqlScan = `DELETE FROM scan WHERE nof = ?`;
             await this.runQueryWithRetry(sqlScan, [value]);
@@ -444,6 +444,23 @@ class TrackingDB {
             let [result] = await this.runQueryWithRetry(sqlMarque, [value]);
 
             // result.affectedRows > 0 means a row was deleted from marque
+            if (result && result.affectedRows > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        if (who === 'post') {
+            // First, delete from scan table where post_actuel = value
+            let sqlScan = `DELETE FROM scan WHERE post_actuel = ?`;
+            await this.runQueryWithRetry(sqlScan, [value]);
+
+            // Then, delete from post table where name = value
+            let sqlPost = `DELETE FROM post WHERE name = ?`;
+            let [result] = await this.runQueryWithRetry(sqlPost, [value]);
+
+            // result.affectedRows > 0 means a row was deleted from post
             if (result && result.affectedRows > 0) {
                 return true;
             } else {

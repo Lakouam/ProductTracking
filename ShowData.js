@@ -63,6 +63,8 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}) {
                     // Call remove function, e.g.:
                     if (removable.who === 'nof')
                         removeRowFromDB(row["nof"], removable.who)
+                    if (removable.who === 'post')
+                        removeRowFromDB(row["name"], removable.who)
                 };
                 tr.appendChild(removeTd);
             }
