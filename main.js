@@ -12,6 +12,8 @@ const Post = require('./Post.js');
 const PageUI = require('./PageUI.js');
 const MyConfig = require('./MyConfig.js');
 
+const Gamme = require('./Gamme.js');
+
 
 
 // Gets the path of the icon to use in the tray and taskbar
@@ -162,6 +164,7 @@ function createWindow() {
 
     // some Database operations
     {
+        // some operations
         (async () => {
             //await TrackingDB.createDatabase();      // create the database if not exist
             //await TrackingDB.dropTables();          // drop the tables if exist
@@ -172,6 +175,13 @@ function createWindow() {
             
         }) ();
 
+
+
+        // insert Gammes
+        {
+            const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
+            Gamme.fileToDB(gammefilePath);
+        }
     }
 
 
