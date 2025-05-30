@@ -85,17 +85,45 @@ class TrackingDB {
             
 
 
+
+            // create table gamme (ref_gamme)
+            let sqlGamme = `CREATE TABLE IF NOT EXISTS gamme (
+                ref_gamme VARCHAR(255) PRIMARY KEY
+            )`;
+
+            await this.queryAsync(sqlGamme);
+            console.log("Table gamme created or already exists!");
+
+
+
+
+            // create table reference (ref_produit, ref_gamme)
+            let sqlRef = `CREATE TABLE IF NOT EXISTS reference (
+                ref_produit VARCHAR(255) NOT NULL,
+                ref_gamme VARCHAR(255) NOT NULL,
+                PRIMARY KEY (ref_produit),
+                FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme)
+            )`;
+
+            await this.queryAsync(sqlRef);
+            console.log("Table reference created or already exists!");
+
+
+
+
             // create table marque fix (nof, refProduit, qt)
             let sql2 = `CREATE TABLE IF NOT EXISTS marque (
                 nof VARCHAR(255) NOT NULL,
                 ref_produit VARCHAR(255) NOT NULL,
                 qt INT NOT NULL,
-                PRIMARY KEY (nof)
+                PRIMARY KEY (nof),
+                FOREIGN KEY (ref_produit) REFERENCES reference(ref_produit)
             )`;
 
             await this.queryAsync(sql2);
             console.log("Table marque created or already exists!");
             
+
 
 
             // create table scan (nof, postActuel, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
@@ -118,6 +146,24 @@ class TrackingDB {
             await this.queryAsync(sql3);
             console.log("Table scan created or already exists!");
 
+
+
+
+            // create table ope (ref_gamme, post_machine, num_ope)
+            let sqlOpe = `CREATE TABLE IF NOT EXISTS ope (
+                ref_gamme VARCHAR(255) NOT NULL,
+                post_machine VARCHAR(255) NOT NULL,
+                num_ope INT NOT NULL,
+                PRIMARY KEY (ref_gamme, post_machine),
+                FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme),
+                FOREIGN KEY (post_machine) REFERENCES post(name)
+            )`;
+
+            await this.queryAsync(sqlOpe);
+            console.log("Table ope created or already exists!");
+
+
+
             //resolve(true); // Resolve the promise when all queries are done
         //});
         
@@ -126,6 +172,11 @@ class TrackingDB {
 
     // drop tables
     static async dropTables() {
+        let sqlOpe = `DROP TABLE IF EXISTS ope`;
+        await this.queryAsync(sqlOpe);
+        console.log("Table ope dropped!");
+
+
         let sql3 = `DROP TABLE IF EXISTS scan`;
         await this.queryAsync(sql3);
         console.log("Table scan dropped!");
@@ -139,6 +190,16 @@ class TrackingDB {
         let sql2 = `DROP TABLE IF EXISTS marque`;
         await this.queryAsync(sql2);
         console.log("Table marque dropped!");
+
+
+        let sqlRef = `DROP TABLE IF EXISTS reference`;
+        await this.queryAsync(sqlRef);
+        console.log("Table reference dropped!");
+
+
+        let sqlGamme = `DROP TABLE IF EXISTS gamme`;
+        await this.queryAsync(sqlGamme);
+        console.log("Table gamme dropped!");
         
     }
 
