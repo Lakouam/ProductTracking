@@ -172,16 +172,22 @@ function createWindow() {
             //await TrackingDB.createTables();        // create the tables if they do not exist
             //await TrackingDB.clearTables();         // clear the tables
             //await TrackingDB.insertValuesInitial(); // insert initial values in the tables if they do not exist
+
+
+
+            // insert Gammes
+            (async () => {
+                try {
+                    const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
+                    await Gamme.fileToDB(gammefilePath);
+                } catch (err) {
+                    console.error("Error while inserting Gammes:", err.message);
+                    // close the app
+                    app.quit();
+                }
+            }) ();
             
         }) ();
-
-
-
-        // insert Gammes
-        {
-            const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
-            Gamme.fileToDB(gammefilePath);
-        }
     }
 
 

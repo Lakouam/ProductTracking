@@ -1,11 +1,14 @@
 const XLSX = require('xlsx');  // Use the xlsx package for reading Excel files (supports .xls and .xlsx).
+const TrackingDB = require('./TrackingDB');
 
 class Gamme {
 
-    static fileToDB(filePath) {
+    static async fileToDB(filePath) {
         const workbook = XLSX.readFile(filePath);
         const worksheet = workbook.Sheets[workbook.SheetNames[0]]; // or loop through all sheets
         const data = XLSX.utils.sheet_to_json(worksheet, {raw:true}); // Array of objects, {raw:true} for better performance.
+
+        console.log('Read file done, starting to insert gammes in database');
 
         // a two dimentional arrays
         let gamme = []; // add [column 1]
@@ -35,6 +38,9 @@ class Gamme {
                 */
 
                 // send gamme, post and ope to DB
+                if (gamme.length !== 0) 
+                    await TrackingDB.insertGamme(gamme, post, ope);
+
 
                 // clear gamme, post, ope
                 gamme = [];
@@ -50,6 +56,8 @@ class Gamme {
                 ope.push([gamme[0][0], row['Gammes'], row['Gammes de fabrication']]);
             }
         }
+
+        console.log('insertion of gammes in database finished');
     }
 
 

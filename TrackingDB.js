@@ -52,7 +52,7 @@ class TrackingDB {
     static queryAsync = (sql, values) => {
         return new Promise((resolve, reject) => {
             this.pool.query(sql, [values], (err, result) => {
-                if (err) throw err //return reject(err);
+                if (err) return reject(err); //throw err //return reject(err);
                 resolve(result);
             });
         });
@@ -206,6 +206,26 @@ class TrackingDB {
 
 
 
+    static async insertGamme(gamme, post, ope) {
+        // insert gamme into the table gamme if it doesn't exist
+        let sqlGamme = `INSERT IGNORE INTO gamme (ref_gamme) VALUES ?`;
+        await this.queryAsync(sqlGamme, gamme);
+        //console.log("Gamme inserted into table gamme if not existed!");
+
+
+        // insert post into the table post if it doesn't exist
+        let sqlPost = `INSERT IGNORE INTO post (name) VALUES ?`;
+        await this.queryAsync(sqlPost, post);
+        //console.log("Post inserted into table post if not existed!");
+
+
+        // insert ope into the table ope if it doesn't exist
+        let sqlOpe = `INSERT IGNORE INTO ope (ref_gamme, post_machine, num_ope) VALUES ?`;
+        await this.queryAsync(sqlOpe, ope);
+        //console.log("Ope inserted into table ope if not existed!");
+    }
+
+
 
 
     // Function to insert values into the tables if they don't exist
@@ -254,19 +274,33 @@ class TrackingDB {
     // clear all the tables
     static async clearTables() {
 
+        let sqlOpe = `DELETE FROM ope`;
+        await this.queryAsync(sqlOpe);
+        console.log("Table ope cleared!");
+
         let sql3 = `DELETE FROM scan`;
         await this.queryAsync(sql3);
         console.log("Table scan cleared!");
-
-        let sql = `DELETE FROM post`;
-        await this.queryAsync(sql);
-        console.log("Table post cleared!");
         
 
         let sql2 = `DELETE FROM marque`;
         await this.queryAsync(sql2);
         console.log("Table marque cleared!");
-        
+
+
+        let sqlRef = `DELETE FROM reference`;
+        await this.queryAsync(sqlRef);
+        console.log("Table reference cleared!");
+
+
+        let sqlGamme = `DELETE FROM gamme`;
+        await this.queryAsync(sqlGamme);
+        console.log("Table gamme cleared!");
+
+
+        let sql = `DELETE FROM post`;
+        await this.queryAsync(sql);
+        console.log("Table post cleared!");
     }
 
 
