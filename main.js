@@ -164,7 +164,6 @@ function createWindow() {
 
     // some Database operations
     {
-        // some operations
         (async () => {
             //await TrackingDB.createDatabase();      // create the database if not exist
             //await TrackingDB.dropTables();          // drop the tables if exist
@@ -176,6 +175,7 @@ function createWindow() {
 
 
             // insert Gammes
+            /*
             (async () => {
                 try {
                     const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
@@ -186,6 +186,7 @@ function createWindow() {
                     app.quit();
                 }
             }) ();
+            */
             
         }) ();
     }

@@ -232,12 +232,12 @@ class TrackingDB {
     static async insertValuesInitial() {
         // Insert a value into the table post if it doesn't exist
         let values = [
-            ['Post 1'],
-            ['Post 2'],
-            ['Post 3'],
-            ['Post 4'],
-            ['Post 5'],
-            ['Admin'],
+            //['Post 1'],
+            //['Post 2'],
+            //['Post 3'],
+            //['Post 4'],
+            //['Post 5'],
+            ['Admin']
         ];
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
         await this.queryAsync(sql, values);
