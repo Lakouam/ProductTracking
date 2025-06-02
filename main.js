@@ -526,6 +526,10 @@ function createWindow() {
             ipcMain.on('open-dashboard', async (event, data) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-dashboard'));
             });
+
+            ipcMain.on('open-gammes', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+            });
         }
     }
 

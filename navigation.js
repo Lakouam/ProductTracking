@@ -4,4 +4,9 @@
         e.preventDefault();
         ipcRenderer.send('open-dashboard');
     };
+
+    document.getElementById('goGammes').onclick = (e) => {
+        e.preventDefault();
+        ipcRenderer.send('open-gammes');
+    };
 }
