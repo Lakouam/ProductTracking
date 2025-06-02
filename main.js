@@ -502,6 +502,9 @@ function createWindow() {
             ipcMain.on('open-modify-posts', async (event, data) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-posts'));
             });
+            ipcMain.on('open-show-gammes', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+            });
         }
     }
 
@@ -617,6 +620,7 @@ function appropriateFile(postName, dashboard = "") {
         if (dashboard === 'open-dashboard') return 'dashboard.html';
         if (dashboard === 'open-modify-nof') return 'modifynof.html';
         if (dashboard === 'open-modify-posts') return 'modifypost.html';
+        if (dashboard === 'open-show-gammes') return 'gammes.html';
         return 'dashboard.html'; // load the dashboard page
     }
     else return 'page.html'; // load the page
