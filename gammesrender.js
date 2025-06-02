@@ -20,3 +20,23 @@ let fullData = null;
             
     });
 }
+
+
+
+
+// receiving values of inputs in 'selections' form when the user click enter in any of the input
+{
+    // click enter on inputs event
+    document.getElementById("selections").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            // get gamme value
+            const gamme = document.getElementById("gamme").value;
+
+            show(undefined, undefined, undefined, gamme);
+
+        }
+    });
+}

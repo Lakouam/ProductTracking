@@ -1,4 +1,4 @@
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}) {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "") {
 
     // show columns in the table
     {
@@ -41,6 +41,10 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}) {
             if (nof !== "" && row["nof"] !== nof)
                 return; // skip this row
             if (postCharge !== "" && row["post_actuel"] !== postCharge)
+                return; // skip this row
+
+            // check if the row contains the gamme value as a prefix
+            if (gamme !== "" && !row["ref_gamme"].startsWith(gamme))
                 return; // skip this row
             
             // show the row in the table
