@@ -154,7 +154,7 @@ class TrackingDB {
                 ref_gamme VARCHAR(255) NOT NULL,
                 post_machine VARCHAR(255) NOT NULL,
                 num_ope INT NOT NULL,
-                PRIMARY KEY (ref_gamme, post_machine),
+                PRIMARY KEY (ref_gamme, num_ope),
                 FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme),
                 FOREIGN KEY (post_machine) REFERENCES post(name)
             )`;
