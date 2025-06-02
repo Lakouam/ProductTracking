@@ -331,13 +331,13 @@ function createWindow() {
                         }
 
 
-                        setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
+                        //setTimeout(async function() { // to wait for one second (to solve: concurrent scan issue)
 
                             win.reload(); // reload the page to clear the input fields
 
                             PageUI.enable(); // enable UI
 
-                        }, 1000); // to wait for one second
+                        //}, 1000); // to wait for one second
 
                     } catch (err) {
                         console.error("Database error in Scan Input event:", err.message);
