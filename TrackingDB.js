@@ -505,14 +505,8 @@ class TrackingDB {
     
     // insert a row (a new nof) into the table marque
     static async insertMarque(post) {
-            
-        // insert a row into the table marque
-        let sql = `INSERT INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.refProduit, post.qt]);
         
-        console.log("Table marque inserted!: " + result.affectedRows + " row(s) inserted");
-        return result;    
+        return this.addNof(post.nof, post.refProduit, post.qt);    
             
     }
     
@@ -593,9 +587,29 @@ class TrackingDB {
 
     // add nof to the database
     static async addNof(nof, refProduit, qt) {
+
+        // search for the gammes where the post.refProduit is a prefix of them
+        let sqlGamme = `SELECT ref_gamme FROM gamme WHERE ref_gamme LIKE CONCAT(?, '%')`;
+        let [gammes, fieldsGamme]  = await this.runQueryWithRetry(sqlGamme, [refProduit]);
+
+        
+        
+        // if no gammes found, return false
+        if (gammes.length === 0) {
+            console.log("No gammes found for ref_produit: " + refProduit);
+            return false; // No gammes found
+        }
+
+
+        // insert a new reference into the reference table if it doesn't already exist
+        let sqlRef = `INSERT IGNORE INTO reference (ref_produit, ref_gamme) VALUES (?, ?)`;
+        let [resultRef] = await this.runQueryWithRetry(sqlRef, [refProduit, gammes[0].ref_gamme]);
+
+        console.log("Reference " + refProduit + " inserted into reference table if not existed with gamme: " + gammes[0].ref_gamme);
+
+
         // Insert a new nof into the marque table if it doesn't already exist
         let sql = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-
         let [result] = await this.runQueryWithRetry(sql, [nof, refProduit, qt]);
         
         // Check if the insert was successful
