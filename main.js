@@ -395,7 +395,7 @@ function createWindow() {
 
 
 
-    // ShowData.js (page Admin.js & modifynof.js & modifypost.js)
+    // ShowData.js (page Admin.js & modifynof.js & modifypost.js & gammesrender.js)
     {
         // receive data from Database
         {   
@@ -449,6 +449,13 @@ function createWindow() {
                     app.quit();
                 }
 
+            });
+
+
+
+            // open gammedetail.html
+            ipcMain.on('open-gamme-detail', (event, gamme) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
             });
         }
     }
@@ -621,6 +628,7 @@ function appropriateFile(postName, dashboard = "") {
         if (dashboard === 'open-modify-nof') return 'modifynof.html';
         if (dashboard === 'open-modify-posts') return 'modifypost.html';
         if (dashboard === 'open-show-gammes') return 'gammes.html';
+        if (dashboard === 'open-gamme-detail') return 'gammedetail.html';
         return 'dashboard.html'; // load the dashboard page
     }
     else return 'page.html'; // load the page

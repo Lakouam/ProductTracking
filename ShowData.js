@@ -1,4 +1,4 @@
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "") {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = false) {
 
     // show columns in the table
     {
@@ -15,7 +15,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
         });
 
         // Remove
-        if (removable.is) { // Add a header for the remove icon column
+        if (removable.is || detail) { // Add a header for the remove icon column
             const th = document.createElement("th");
             th.innerText = "";
             th.style.width = "48px"; // Set a fixed width for the remove icon column
@@ -72,6 +72,17 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                 };
                 if(row["name"] !== "Admin")
                     tr.appendChild(removeTd);
+            }
+
+            // gamme detail
+            if (detail) {
+                const detailTd = document.createElement("td");
+                detailTd.innerHTML = `<span class="detail-row" style="cursor:pointer;color:#1976d2;font-size:1.2em;" title="Voir le détail">&#128269;</span>`;
+                detailTd.onclick = () => {
+                    // Open gammedetail.html, using ipcRenderer, passing the gamme info (e.g., row.ref_gamme):
+                    ipcRenderer.send('open-gamme-detail', row["ref_gamme"]);
+                };
+                tr.appendChild(detailTd);
             }
 
             tableBody.appendChild(tr);

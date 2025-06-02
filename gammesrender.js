@@ -15,7 +15,7 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show();
+        show(undefined, undefined, undefined, undefined, true);
         
             
     });
@@ -35,7 +35,7 @@ let fullData = null;
             // get gamme value
             const gamme = document.getElementById("gamme").value;
 
-            show(undefined, undefined, undefined, gamme);
+            show(undefined, undefined, undefined, gamme, true);
 
         }
     });
