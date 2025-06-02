@@ -360,6 +360,9 @@ class TrackingDB {
         if (who === 'post') // get data from post (name)
             sql = `SELECT name FROM post`;
 
+        if (who === 'gammes') // get data from gamme (ref_gamme)
+            sql = `SELECT ref_gamme FROM gamme`;
+
         let [result, fields]  = await this.runQueryWithRetry(sql);
 
         console.log("Data retrieved from the database!");
