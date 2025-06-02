@@ -349,7 +349,7 @@ class TrackingDB {
 
 
     // get data from the database
-    static async getData(who) {
+    static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
         let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
@@ -363,7 +363,10 @@ class TrackingDB {
         if (who === 'gammes') // get data from gamme (ref_gamme)
             sql = `SELECT ref_gamme FROM gamme`;
 
-        let [result, fields]  = await this.runQueryWithRetry(sql);
+        if (who === 'gamme-detail') // get data from ope (num_ope, post_machine) where ref_gamme = value and sort by num_ope
+            sql = `SELECT num_ope, post_machine FROM ope WHERE ref_gamme = ? ORDER BY num_ope`;
+
+        let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
         console.log("Data retrieved from the database!");
 
