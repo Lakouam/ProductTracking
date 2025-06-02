@@ -38,8 +38,11 @@ class Gamme {
                 */
 
                 // send gamme, post and ope to DB
-                if (gamme.length !== 0) 
-                    await TrackingDB.insertGamme(gamme, post, ope);
+                if (gamme.length !== 0) {
+                    // check if the gamme don't end with "-REP"
+                    if (!gamme[0][0].endsWith('-REP')) 
+                        await TrackingDB.insertGamme(gamme, post, ope);
+                }
 
 
                 // clear gamme, post, ope
