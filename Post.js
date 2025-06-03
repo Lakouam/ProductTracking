@@ -294,20 +294,26 @@ class Post {
 
                 if (nofExist === 1) { // if the nof exists in the database
                     this.fillNew(scan);
-                    await TrackingDB.insertScan(this); // insert the scan in the database
-                    scanRejected = false;
+                    const isScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+
+                    if (isScanInserted) { // if the scan is inserted in the database
+                        scanRejected = false;
+                    }
+                    else this.clear(); // clear the post if the insertion failed
                 }
                 else if (nofExist === 0) { // if the nof does not exist in the database
                     this.fillNew(scan);
                     const isNofInserted = await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
 
                     if (isNofInserted) { // if the nof is inserted in the database
-                        await TrackingDB.insertScan(this); // insert the scan in the database
-                        scanRejected = false;
+                        const isScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+                        
+                        if (isScanInserted) { // if the scan is inserted in the database
+                            scanRejected = false;
+                        }
+                        else this.clear(); // clear the post if the insertion failed
                     }
-                    else {
-                        this.clear(); // clear the post if the insertion failed
-                    }
+                    else this.clear(); // clear the post if the insertion failed
                 }
                 else if (nofExist === -1) { // if the Nof exist in the database but scan is corrupted!
                     errorMessage = "NOF: " + scan.nof + " Existe déjà avec un ref_produit ou qt différent"; // error message

@@ -491,14 +491,23 @@ class TrackingDB {
 
     // insert a row into the table scan
     static async insertScan(post) {
-            
+        
+        // check if the post.postActuel exists on the ope table where ref_gamme of the ref_produit on the reference table is equal to the ref_gamme of ope
+        let sqlCheckPost = `SELECT COUNT(*) AS count FROM ope INNER JOIN reference ON ope.ref_gamme = reference.ref_gamme WHERE ope.post_machine = ? AND reference.ref_produit = ?`;
+        let [checkResult, fieldsCheck] = await this.runQueryWithRetry(sqlCheckPost, [post.postActuel, post.refProduit]);
+        if (checkResult[0].count === 0) {
+            console.log("Post " + post.postActuel + " does not exist in the ope table for the given ref_produit: " + post.refProduit);
+            return false; // Post does not exist in the ope table for the given ref_produit (post not in the gamme)
+        }
+        console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
+
         // insert a row into the table scan
         let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
         let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
-        return result;
+        return true; // Return true if the insert was successful
 
     }
 
