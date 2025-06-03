@@ -351,8 +351,13 @@ class TrackingDB {
     // get data from the database
     static async getData(who, value) {
 
-        // get data from the database (temps_debut, temps_fin, nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire FROM scan INNER JOIN marque ON scan.nof = marque.nof`;
+        // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ope.num_ope, ope.ref_gamme, marque.ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire 
+                        FROM scan 
+                        INNER JOIN marque ON scan.nof = marque.nof
+                        INNER JOIN reference ON marque.ref_produit = reference.ref_produit
+                        INNER JOIN ope ON reference.ref_gamme = ope.ref_gamme AND scan.post_actuel = ope.post_machine
+                        ORDER BY temps_debut DESC, scan.nof ASC, ope.num_ope ASC`;
 
         if (who === 'nof') // get data from marque (nof, ref_produit, qt)
             sql = `SELECT nof, ref_produit, qt FROM marque`;
