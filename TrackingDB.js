@@ -366,6 +366,31 @@ class TrackingDB {
         if (who === 'gamme-detail') // get data from ope (num_ope, post_machine) where ref_gamme = value and sort by num_ope
             sql = `SELECT num_ope, post_machine FROM ope WHERE ref_gamme = ? ORDER BY num_ope`;
 
+        if (who === 'operations') 
+            sql = `
+                SELECT
+                    m.nof,
+                    o.num_ope,
+                    CASE
+                        WHEN s.qa = m.qt THEN 'Soldee'
+                        ELSE 'En cours'
+                    END AS status_ligne,
+                    o.post_machine AS poste,
+                    s.temps_debut,
+                    s.temps_fin,
+                    m.ref_produit,
+                    m.qt,
+                    s.qa,
+                    s.moy_temps_passer,
+                    s.etat,
+                    s.commentaire
+                FROM marque m
+                JOIN reference r ON m.ref_produit = r.ref_produit
+                JOIN ope o ON o.ref_gamme = r.ref_gamme
+                LEFT JOIN scan s ON s.nof = m.nof AND s.post_actuel = o.post_machine
+                ORDER BY m.nof, o.num_ope
+                `;
+
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
         console.log("Data retrieved from the database!");
