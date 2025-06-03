@@ -4,4 +4,5 @@
     document.getElementById('modifyNofCard').onclick = () => ipcRenderer.send('open-modify-nof');
     document.getElementById('modifyPostsCard').onclick = () => ipcRenderer.send('open-modify-posts');
     document.getElementById('showGammesCard').onclick = () => ipcRenderer.send('open-show-gammes');
+    document.getElementById('showOperationsCard').onclick = () => ipcRenderer.send('open-show-operations');
 }
