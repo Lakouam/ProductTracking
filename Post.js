@@ -282,8 +282,8 @@ class Post {
                 }
             }
             else {
-                if (this.nof === scan.nof) errorMessage = "NOF: " + this.nof + " Existe déjà avec un ref_produit ou qt différent"; // error message
-                else errorMessage = "NOF: " + this.nof + " Pas encore terminé, veuillez le terminé avant d'en scanner un nouveau"; // error message
+                if (this.nof === scan.nof) errorMessage = "Le NOF « " + this.nof + " » existe déjà avec une référence produit ou une quantité différente."; // error message
+                else errorMessage = "Le NOF « " + this.nof + " » n'est pas encore terminé, veuillez le terminer avant d'en scanner un nouveau."; // error message
             }
         }
         else { // if the post is empty
@@ -299,7 +299,10 @@ class Post {
                     if (isScanInserted) { // if the scan is inserted in the database
                         scanRejected = false;
                     }
-                    else this.clear(); // clear the post if the insertion failed
+                    else {
+                        errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                        this.clear(); // clear the post if the insertion failed
+                    }
                 }
                 else if (nofExist === 0) { // if the nof does not exist in the database
                     this.fillNew(scan);
@@ -311,19 +314,25 @@ class Post {
                         if (isScanInserted) { // if the scan is inserted in the database
                             scanRejected = false;
                         }
-                        else this.clear(); // clear the post if the insertion failed
+                        else {
+                            errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                            this.clear(); // clear the post if the insertion failed
+                        }
                     }
-                    else this.clear(); // clear the post if the insertion failed
+                    else {
+                        errorMessage = `La référence produit « ${scan.refProduit} » n'est associée à aucune gamme.`; // error message
+                        this.clear(); // clear the post if the insertion failed
+                    }
                 }
                 else if (nofExist === -1) { // if the Nof exist in the database but scan is corrupted!
-                    errorMessage = "NOF: " + scan.nof + " Existe déjà avec un ref_produit ou qt différent"; // error message
+                    errorMessage = "Le NOF « " + scan.nof + " » existe déjà avec une référence produit ou une quantité différente."; // error message
                 }
 
             }
             else {
                 const nofExist = await TrackingDB.isNofExist(scan); // check if the nof exists in the database
-                if (nofExist === -1) errorMessage = "NOF: " + scan.nof + " a déjà été complété avec un ref_produit ou qt différent"; // error message
-                else errorMessage = "NOF: " + scan.nof + " déjà terminé"; // error message
+                if (nofExist === -1) errorMessage = "Le NOF « " + scan.nof + " » a déjà été complété avec une référence produit ou une quantité différente."; // error message
+                else errorMessage = "Le NOF « " + scan.nof + " » est déjà terminé."; // error message
             }
 
 
