@@ -531,6 +531,52 @@ class TrackingDB {
         }
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
+
+        // check if the previous operation (num_ope just before the current one for the same gamme) is already present in the scan table for the same NOF.
+        {
+            // Step 1: Get current num_ope and ref_gamme for this postActuel/refProduit
+            let sqlOpe = `
+                SELECT o.num_ope, o.ref_gamme
+                FROM ope o
+                INNER JOIN reference r ON o.ref_gamme = r.ref_gamme
+                WHERE o.post_machine = ? AND r.ref_produit = ?
+                LIMIT 1
+            `;
+            let [opeRows] = await this.runQueryWithRetry(sqlOpe, [post.postActuel, post.refProduit]);
+            if (!opeRows.length) {
+                // No operation found, should not happen if previous check passed
+                console.log("No operation found, should not happen if previous check passed");
+                return false;
+            }
+            const { num_ope, ref_gamme } = opeRows[0];
+
+            // Step 2: Find the previous num_ope for this gamme
+            let sqlPrevNumOpe = `
+                SELECT num_ope, post_machine
+                FROM ope
+                WHERE ref_gamme = ? AND num_ope < ?
+                ORDER BY num_ope DESC
+                LIMIT 1
+            `;
+            let [prevOpeRows] = await this.runQueryWithRetry(sqlPrevNumOpe, [ref_gamme, num_ope]);
+            if (prevOpeRows.length) {
+                // There is a previous operation, check if it exists in scan
+                const prevNumOpe = prevOpeRows[0].num_ope;
+                const prevPostMachine = prevOpeRows[0].post_machine;
+
+                let sqlPrevScan = `
+                    SELECT 1 FROM scan WHERE nof = ? AND post_actuel = ? LIMIT 1
+                `;
+                let [prevScanRows] = await this.runQueryWithRetry(sqlPrevScan, [post.nof, prevPostMachine]);
+                if (!prevScanRows.length) {
+                    // Previous operation not yet scanned
+                    console.log("Previous operation " + prevNumOpe + " not yet scanned");
+                    return false;
+                }
+            }
+        }
+
+
         // insert a row into the table scan
         let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
