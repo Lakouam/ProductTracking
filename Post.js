@@ -294,13 +294,14 @@ class Post {
 
                 if (nofExist === 1) { // if the nof exists in the database
                     this.fillNew(scan);
-                    const isScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+                    const ScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
 
-                    if (isScanInserted) { // if the scan is inserted in the database
+                    if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
                     }
                     else {
-                        errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                        if (ScanInserted.prevOpe === undefined) errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                        else errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
                         this.clear(); // clear the post if the insertion failed
                     }
                 }
@@ -309,13 +310,14 @@ class Post {
                     const isNofInserted = await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
 
                     if (isNofInserted) { // if the nof is inserted in the database
-                        const isScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+                        const ScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
                         
-                        if (isScanInserted) { // if the scan is inserted in the database
+                        if (ScanInserted.is) { // if the scan is inserted in the database
                             scanRejected = false;
                         }
                         else {
-                            errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                            if (ScanInserted.prevOpe === undefined) errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                            else errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
                             this.clear(); // clear the post if the insertion failed
                         }
                     }

@@ -527,7 +527,7 @@ class TrackingDB {
         let [checkResult, fieldsCheck] = await this.runQueryWithRetry(sqlCheckPost, [post.postActuel, post.refProduit]);
         if (checkResult[0].count === 0) {
             console.log("Post " + post.postActuel + " does not exist in the ope table for the given ref_produit: " + post.refProduit);
-            return false; // Post does not exist in the ope table for the given ref_produit (post not in the gamme)
+            return {is: false}; // Post does not exist in the ope table for the given ref_produit (post not in the gamme)
         }
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
@@ -546,7 +546,7 @@ class TrackingDB {
             if (!opeRows.length) {
                 // No operation found, should not happen if previous check passed
                 console.log("No operation found, should not happen if previous check passed");
-                return false;
+                return {is: false};
             }
             const { num_ope, ref_gamme } = opeRows[0];
 
@@ -571,7 +571,7 @@ class TrackingDB {
                 if (!prevScanRows.length) {
                     // Previous operation not yet scanned
                     console.log("Previous operation " + prevNumOpe + " not yet scanned");
-                    return false;
+                    return {is: false, prevOpe: prevNumOpe};
                 }
             }
         }
@@ -583,7 +583,7 @@ class TrackingDB {
         let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
-        return true; // Return true if the insert was successful
+        return {is: true}; // Return true if the insert was successful
 
     }
 
