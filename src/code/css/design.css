@@ -20,12 +20,17 @@ body {
 }
 
 .app-logo {
-    height: 44px;
-    margin-right: 14px;
+    height: 25px;
+    margin-right: 10px;
+    /* circular black background */
+    background: #000;
+    border-radius: 50%;
+    /* make the background slightly larger than the logo */
+    padding: 4px;
 }
 
 .app-title {
-    font-size: 1.5em;
+    font-size: 1.0em;
     font-weight: 600;
     letter-spacing: 1px;
 }
@@ -34,17 +39,17 @@ body {
     display: flex;
     align-items: center;
     background: #fff;
-    border-radius: 18px;
+    border-radius: 36px;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
-    padding: 8px 24px;
-    gap: 18px;
+    padding: 6px 18px;
+    gap: 12px;
 }
 
 .add-btn {
     background: #1976d2;
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 48px;
     padding: 8px 18px;
     font-size: 1em;
     font-weight: 500;
@@ -77,7 +82,7 @@ body {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #e0e0e0;
+    border: 1px solid #e0e0e0;
 }
 
 .user-info {
