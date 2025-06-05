@@ -46,18 +46,31 @@ body {
 }
 
 .add-btn {
-    background: #1976d2;
-    color: #fff;
+    background: #111;
+    color: #cccccc;
     border: none;
     border-radius: 48px;
     padding: 8px 18px;
     font-size: 1em;
-    font-weight: 500;
+    font-weight: 400;
     cursor: pointer;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 .add-btn:hover {
-    background: #1565c0;
+    background: #333;
+}
+
+.add-btn-icon {
+    font-size: 1.5em;
+    display: flex;
+    align-items: center;
+}
+
+.add-btn-text {
+    font-size: 0.8em;   /* Text is smaller than icon */
 }
 
 .header-icon {
