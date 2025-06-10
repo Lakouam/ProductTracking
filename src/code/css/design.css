@@ -1,3 +1,7 @@
+* { 
+    box-sizing: border-box; 
+} 
+
 body {
     background: #f4f6fb; /* Soft light blue/gray */ /* #f6f8fa before */
     color: #222;
@@ -21,7 +25,7 @@ body {
 }
 
 .app-logo {
-    height: 25px;
+    height: 32px;
     margin-right: 10px;
     /* circular black background */
     background: #000;
@@ -43,7 +47,7 @@ body {
     border-radius: 36px;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
     padding: 6px 12px;
-    height: 40px;
+    height: 50px;
     gap: 6px;
 }
 
@@ -52,7 +56,7 @@ body {
     color: #cccccc;
     border: none;
     border-radius: 48px;
-    padding: 6px 18px;
+    padding: 4px 18px;
     font-size: 1em;
     font-weight: 400;
     cursor: pointer;
@@ -60,6 +64,7 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
+    height: 40px;
 }
 .add-btn:hover {
     background: #333;
@@ -88,10 +93,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
 }
 .header-icon:hover {
     color: #777;
     background: #f6fafd;
+}
+
+.header-icon-outside {
+    height: 50px;
+    width: 50px;
+    background-color:#ebf0f3;
 }
 
 .header-right {
@@ -101,8 +114,8 @@ body {
 }
 
 .user-photo {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid #e0e0e0;
