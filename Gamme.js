@@ -14,6 +14,7 @@ class Gamme {
         let gamme = []; // add [column 1]
         let post = []; // add [column 2]
         let ope = []; // add [gamme[0][0], column 2, column 1]
+        let operation = []; // add [column 1]
 
         let nbRows = 1; // the first row is the column row, and the second one we don't need it
 
@@ -41,7 +42,7 @@ class Gamme {
                 if (gamme.length !== 0) {
                     // check if the gamme don't end with "-REP"
                     if (!gamme[0][0].endsWith('-REP')) 
-                        await TrackingDB.insertGamme(gamme, post, ope);
+                        await TrackingDB.insertGamme(gamme, post, ope, operation);
                 }
 
 
@@ -49,14 +50,18 @@ class Gamme {
                 gamme = [];
                 post = [];
                 ope = [];
+                operation = [];
 
                 gamme.push([row['Gammes de fabrication']]); // add to gamme
             } else { // if the first column is a number, it is an operation
                 // add column 2 to post
                 post.push([row['Gammes']]);
 
-                // add [gamme[0][0], column 2, column 1] to ope
-                ope.push([gamme[0][0], row['Gammes'], row['Gammes de fabrication']]);
+                // add [gamme[0][0], column 1, column 2] to ope
+                ope.push([gamme[0][0], row['Gammes de fabrication'], row['Gammes']]);
+
+                // add column 1 to operation
+                operation.push([row['Gammes de fabrication']]);
             }
         }
 

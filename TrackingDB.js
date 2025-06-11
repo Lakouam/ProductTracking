@@ -73,128 +73,107 @@ class TrackingDB {
     // Function to create the tables if it doesn't exist
     static async createTables() {
 
-        //return new Promise(async (resolve, reject) => {
+        // create table gamme (ref_gamme)
+        let sqlGamme = `CREATE TABLE IF NOT EXISTS gamme (
+            ref_gamme VARCHAR(255) NOT NULL,
+            PRIMARY KEY (ref_gamme)
+        )`;
 
-            // create table post (id, name)
-            let sql = `CREATE TABLE IF NOT EXISTS post (
-                name VARCHAR(255) PRIMARY KEY
-            )`;
-
-            await this.queryAsync(sql);
-            console.log("Table post created or already exists!");
-            
-
-
-
-            // create table gamme (ref_gamme)
-            let sqlGamme = `CREATE TABLE IF NOT EXISTS gamme (
-                ref_gamme VARCHAR(255) PRIMARY KEY
-            )`;
-
-            await this.queryAsync(sqlGamme);
-            console.log("Table gamme created or already exists!");
+        await this.queryAsync(sqlGamme);
+        console.log("Table gamme created or already exists!");
 
 
 
 
-            // create table reference (ref_produit, ref_gamme)
-            let sqlRef = `CREATE TABLE IF NOT EXISTS reference (
-                ref_produit VARCHAR(255) NOT NULL,
-                ref_gamme VARCHAR(255) NOT NULL,
-                PRIMARY KEY (ref_produit),
-                FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme)
-            )`;
+        // create table operation (num_ope)
+        let sqlOperation = `CREATE TABLE IF NOT EXISTS operation (
+            num_ope INT NOT NULL,
+            PRIMARY KEY (num_ope)
+        )`;
 
-            await this.queryAsync(sqlRef);
-            console.log("Table reference created or already exists!");
+        await this.queryAsync(sqlOperation);
+        console.log("Table operation created or already exists!");
 
 
 
 
-            // create table marque fix (nof, refProduit, qt)
-            let sql2 = `CREATE TABLE IF NOT EXISTS marque (
-                nof VARCHAR(255) NOT NULL,
-                ref_produit VARCHAR(255) NOT NULL,
-                qt INT NOT NULL,
-                PRIMARY KEY (nof),
-                FOREIGN KEY (ref_produit) REFERENCES reference(ref_produit)
-            )`;
+        // create table gamme_operations (ref_gamme, post_machine, num_ope)
+        let sqlGammeOperations = `CREATE TABLE IF NOT EXISTS gamme_operations (
+            ref_gamme VARCHAR(255) NOT NULL,
+            num_ope INT NOT NULL,
+            post_machine VARCHAR(255) NOT NULL,
+            PRIMARY KEY (ref_gamme, num_ope),
+            FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme),
+            FOREIGN KEY (num_ope) REFERENCES operation(num_ope)
+        )`;
 
-            await this.queryAsync(sql2);
-            console.log("Table marque created or already exists!");
-            
-
-
-
-            // create table scan (nof, postActuel, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
-            let sql3 = `CREATE TABLE IF NOT EXISTS scan (
-                nof VARCHAR(255) NOT NULL,
-                post_actuel VARCHAR(255) NOT NULL,
-                qa INT NOT NULL,
-                moy_temps_passer INT NOT NULL,
-                etat BOOLEAN NOT NULL,
-                commentaire VARCHAR(255) NOT NULL,
-                temps_debut DATETIME NOT NULL,
-                temps_fin DATETIME,
-                scan_count INT NOT NULL,
-                temps_dernier_scan DATETIME NOT NULL,
-                PRIMARY KEY (nof, post_actuel),
-                FOREIGN KEY (nof) REFERENCES marque(nof),
-                FOREIGN KEY (post_actuel) REFERENCES post(name)
-            )`;
-
-            await this.queryAsync(sql3);
-            console.log("Table scan created or already exists!");
+        await this.queryAsync(sqlGammeOperations);
+        console.log("Table gamme_operations created or already exists!");
 
 
 
 
-            // create table ope (ref_gamme, post_machine, num_ope)
-            let sqlOpe = `CREATE TABLE IF NOT EXISTS ope (
-                ref_gamme VARCHAR(255) NOT NULL,
-                post_machine VARCHAR(255) NOT NULL,
-                num_ope INT NOT NULL,
-                PRIMARY KEY (ref_gamme, num_ope),
-                FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme),
-                FOREIGN KEY (post_machine) REFERENCES post(name)
-            )`;
+        // create table marque fix (nof, refProduit, qt)
+        let sqlMarque = `CREATE TABLE IF NOT EXISTS marque (
+            nof VARCHAR(255) NOT NULL,
+            ref_produit VARCHAR(255) NOT NULL,
+            qt INT NOT NULL,
+            ref_gamme VARCHAR(255) NOT NULL,
+            PRIMARY KEY (nof),
+            FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme)
+        )`;
 
-            await this.queryAsync(sqlOpe);
-            console.log("Table ope created or already exists!");
+        await this.queryAsync(sqlMarque);
+        console.log("Table marque created or already exists!");
 
 
 
-            //resolve(true); // Resolve the promise when all queries are done
-        //});
+
+        // create table scan (nof, num_ope, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
+        let sqlScan = `CREATE TABLE IF NOT EXISTS scan (
+            nof VARCHAR(255) NOT NULL,
+            num_ope INT NOT NULL,
+            qa INT NOT NULL,
+            moy_temps_passer INT NOT NULL,
+            etat BOOLEAN NOT NULL,
+            commentaire VARCHAR(255) NOT NULL,
+            temps_debut DATETIME NOT NULL,
+            temps_fin DATETIME,
+            scan_count INT NOT NULL,
+            temps_dernier_scan DATETIME NOT NULL,
+            PRIMARY KEY (nof, num_ope),
+            FOREIGN KEY (nof) REFERENCES marque(nof),
+            FOREIGN KEY (num_ope) REFERENCES operation(num_ope)
+        )`;
+
+        await this.queryAsync(sqlScan);
+        console.log("Table scan created or already exists!");
+
         
     }
 
 
     // drop tables
     static async dropTables() {
-        let sqlOpe = `DROP TABLE IF EXISTS ope`;
-        await this.queryAsync(sqlOpe);
-        console.log("Table ope dropped!");
 
-
-        let sql3 = `DROP TABLE IF EXISTS scan`;
-        await this.queryAsync(sql3);
+        let sqlScan = `DROP TABLE IF EXISTS scan`;
+        await this.queryAsync(sqlScan);
         console.log("Table scan dropped!");
         
 
-        let sql = `DROP TABLE IF EXISTS post`;
-        await this.queryAsync(sql);
-        console.log("Table post dropped!");
-        
-
-        let sql2 = `DROP TABLE IF EXISTS marque`;
-        await this.queryAsync(sql2);
+        let sqlMarque = `DROP TABLE IF EXISTS marque`;
+        await this.queryAsync(sqlMarque);
         console.log("Table marque dropped!");
 
 
-        let sqlRef = `DROP TABLE IF EXISTS reference`;
-        await this.queryAsync(sqlRef);
-        console.log("Table reference dropped!");
+        let sqlGammeOperations = `DROP TABLE IF EXISTS gamme_operations`;
+        await this.queryAsync(sqlGammeOperations);
+        console.log("Table gamme_operations dropped!");
+
+
+        let sqlOperation = `DROP TABLE IF EXISTS operation`;
+        await this.queryAsync(sqlOperation);
+        console.log("Table operation dropped!");
 
 
         let sqlGamme = `DROP TABLE IF EXISTS gamme`;
@@ -206,22 +185,29 @@ class TrackingDB {
 
 
 
-    static async insertGamme(gamme, post, ope) {
+    static async insertGamme(gamme, post, gammeOperations, operation) {
         // insert gamme into the table gamme if it doesn't exist
         let sqlGamme = `INSERT IGNORE INTO gamme (ref_gamme) VALUES ?`;
         await this.queryAsync(sqlGamme, gamme);
         //console.log("Gamme inserted into table gamme if not existed!");
 
 
+        /*
         // insert post into the table post if it doesn't exist
         let sqlPost = `INSERT IGNORE INTO post (name) VALUES ?`;
         await this.queryAsync(sqlPost, post);
         //console.log("Post inserted into table post if not existed!");
+        */
+
+        // insert operation into the table operation if it doesn't exist
+        let sqlOperation = `INSERT IGNORE INTO operation (num_ope) VALUES ?`;
+        await this.queryAsync(sqlOperation, operation);
+        //console.log("Operation inserted into table operation if not existed!");
 
 
-        // insert ope into the table ope if it doesn't exist
-        let sqlOpe = `INSERT IGNORE INTO ope (ref_gamme, post_machine, num_ope) VALUES ?`;
-        await this.queryAsync(sqlOpe, ope);
+        // insert ope into the table gamme_operations if it doesn't exist
+        let sqlGammeOperations = `INSERT IGNORE INTO gamme_operations (ref_gamme, num_ope, post_machine) VALUES ?`;
+        await this.queryAsync(sqlGammeOperations, gammeOperations);
         //console.log("Ope inserted into table ope if not existed!");
     }
 
@@ -230,6 +216,7 @@ class TrackingDB {
 
     // Function to insert values into the tables if they don't exist
     static async insertValuesInitial() {
+        /*
         // Insert a value into the table post if it doesn't exist
         let values = [
             //['Post 1'],
@@ -242,7 +229,8 @@ class TrackingDB {
         let sql = `INSERT IGNORE INTO post (name) VALUES ?`;
         await this.queryAsync(sql, values);
         console.log("Values inserted into table post if not existed!");
-        
+        */
+
 
 
         /*
@@ -274,23 +262,25 @@ class TrackingDB {
     // clear all the tables
     static async clearTables() {
 
-        let sqlOpe = `DELETE FROM ope`;
-        await this.queryAsync(sqlOpe);
-        console.log("Table ope cleared!");
 
-        let sql3 = `DELETE FROM scan`;
-        await this.queryAsync(sql3);
+        let sqlScan = `DELETE FROM scan`;
+        await this.queryAsync(sqlScan);
         console.log("Table scan cleared!");
         
 
-        let sql2 = `DELETE FROM marque`;
-        await this.queryAsync(sql2);
+        let sqlMarque = `DELETE FROM marque`;
+        await this.queryAsync(sqlMarque);
         console.log("Table marque cleared!");
 
 
-        let sqlRef = `DELETE FROM reference`;
-        await this.queryAsync(sqlRef);
-        console.log("Table reference cleared!");
+        let sqlGammeOperations = `DELETE FROM gamme_operations`;
+        await this.queryAsync(sqlGammeOperations);
+        console.log("Table gamme_operations cleared!");
+
+
+        let sqlOperation = `DELETE FROM operation`;
+        await this.queryAsync(sqlOperation);
+        console.log("Table operation cleared!");
 
 
         let sqlGamme = `DELETE FROM gamme`;
@@ -298,9 +288,6 @@ class TrackingDB {
         console.log("Table gamme cleared!");
 
 
-        let sql = `DELETE FROM post`;
-        await this.queryAsync(sql);
-        console.log("Table post cleared!");
     }
 
 
