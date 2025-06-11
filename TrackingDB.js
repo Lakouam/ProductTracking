@@ -339,35 +339,36 @@ class TrackingDB {
     static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ope.num_ope, ope.ref_gamme, marque.ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, marque.ref_produit, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire 
                         FROM scan 
                         INNER JOIN marque ON scan.nof = marque.nof
-                        INNER JOIN reference ON marque.ref_produit = reference.ref_produit
-                        INNER JOIN ope ON reference.ref_gamme = ope.ref_gamme AND scan.post_actuel = ope.post_machine
-                        ORDER BY temps_debut DESC, scan.nof ASC, ope.num_ope ASC`;
+                        INNER JOIN gamme_operations 
+                            ON scan.num_ope = gamme_operations.num_ope 
+                            AND marque.ref_gamme = gamme_operations.ref_gamme
+                        ORDER BY temps_debut DESC, scan.nof ASC, scan.num_ope ASC`;
 
-        if (who === 'nof') // get data from marque (nof, ref_produit, qt)
-            sql = `SELECT nof, ref_produit, qt FROM marque`;
+        if (who === 'nof') // get data from marque (nof, ref_produit, qt, ref_gamme)
+            sql = `SELECT nof, ref_produit, qt, ref_gamme FROM marque`;
 
-        if (who === 'post') // get data from post (name)
-            sql = `SELECT name FROM post`;
+        if (who === 'post') // get data from gamme_operations (post_machine)
+            sql = `SELECT DISTINCT post_machine FROM gamme_operations ORDER BY post_machine`;
 
         if (who === 'gammes') // get data from gamme (ref_gamme)
             sql = `SELECT ref_gamme FROM gamme`;
 
-        if (who === 'gamme-detail') // get data from ope (num_ope, post_machine) where ref_gamme = value and sort by num_ope
-            sql = `SELECT num_ope, post_machine FROM ope WHERE ref_gamme = ? ORDER BY num_ope`;
+        if (who === 'gamme-detail') // get data from gamme_operations (num_ope, post_machine) where ref_gamme = value and sort by num_ope
+            sql = `SELECT num_ope, post_machine FROM gamme_operations WHERE ref_gamme = ? ORDER BY num_ope`;
 
         if (who === 'operations') 
             sql = `
                 SELECT
                     m.nof,
-                    o.num_ope,
+                    go.num_ope,
                     CASE
                         WHEN s.qa = m.qt THEN 'Soldee'
                         ELSE 'En cours'
                     END AS status_ligne,
-                    o.post_machine AS poste,
+                    go.post_machine AS poste,
                     s.temps_debut,
                     s.temps_fin,
                     m.ref_produit,
@@ -377,11 +378,10 @@ class TrackingDB {
                     s.etat,
                     s.commentaire
                 FROM marque m
-                JOIN reference r ON m.ref_produit = r.ref_produit
-                JOIN ope o ON o.ref_gamme = r.ref_gamme
-                LEFT JOIN scan s ON s.nof = m.nof AND s.post_actuel = o.post_machine
-                ORDER BY m.nof, o.num_ope
-                `;
+                JOIN gamme_operations go ON go.ref_gamme = m.ref_gamme
+                LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = go.num_ope
+                ORDER BY m.nof, go.num_ope
+            `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
@@ -405,7 +405,14 @@ class TrackingDB {
     // get Active row (qa < qt) of a post
     static async getActiveRow(post) {
 
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan FROM scan INNER JOIN marque ON scan.nof = marque.nof WHERE post_actuel = ? AND qa < qt`;
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan 
+            FROM scan 
+            INNER JOIN marque ON scan.nof = marque.nof
+            INNER JOIN gamme_operations 
+                ON scan.num_ope = gamme_operations.num_ope 
+                AND marque.ref_gamme = gamme_operations.ref_gamme
+            WHERE gamme_operations.post_machine = ? AND scan.qa < marque.qt
+        `;
         
         let [result, fields]  = await this.runQueryWithRetry(sql, [post]);
 
@@ -585,15 +592,18 @@ class TrackingDB {
 
     // get the post name from the database
     static async getPostsName() {
-            
-        let sql = `SELECT name FROM post`;
+
+        let sql = `SELECT DISTINCT post_machine FROM gamme_operations ORDER BY post_machine`;
 
         let [result, fields]  = await this.runQueryWithRetry(sql);
 
         console.log("Posts names retrieved from the database!");
 
         // Map the result to a one-dimensional array
-        let rows = result.map(row => row.name);
+        let rows = result.map(row => row.post_machine);
+
+        // Add post Admin
+        rows.unshift("Admin");
         
         return rows; // Resolve the promise with the data
         
