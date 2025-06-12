@@ -628,6 +628,7 @@ class TrackingDB {
             }
         }
 
+        /*
         if (who === 'post') {
             // First, delete from scan table where post_actuel = value
             let sqlScan = `DELETE FROM scan WHERE post_actuel = ?`;
@@ -644,6 +645,7 @@ class TrackingDB {
                 return false;
             }
         }
+        */
 
         return false;
         
@@ -652,6 +654,8 @@ class TrackingDB {
 
     // add post to the database
     static async addPost(postName) {
+
+        /*
         // Insert a new post into the post table if it doesn't already exist
         let sql = `INSERT IGNORE INTO post (name) VALUES (?)`;
 
@@ -663,6 +667,9 @@ class TrackingDB {
         } else {
             return false; // Post already exists or failed to add
         }
+        */
+
+        return false;
         
     }
 
@@ -683,16 +690,13 @@ class TrackingDB {
         }
 
 
-        // insert a new reference into the reference table if it doesn't already exist
-        let sqlRef = `INSERT IGNORE INTO reference (ref_produit, ref_gamme) VALUES (?, ?)`;
-        let [resultRef] = await this.runQueryWithRetry(sqlRef, [refProduit, gammes[0].ref_gamme]);
-
-        console.log("Reference " + refProduit + " inserted into reference table if not existed with gamme: " + gammes[0].ref_gamme);
+        console.log("Reference " + refProduit + " found in gamme: " + gammes[0].ref_gamme);
 
 
         // Insert a new nof into the marque table if it doesn't already exist
-        let sql = `INSERT IGNORE INTO marque (nof, ref_produit, qt) VALUES (?, ?, ?)`;
-        let [result] = await this.runQueryWithRetry(sql, [nof, refProduit, qt]);
+        let sql = `INSERT IGNORE INTO marque (nof, ref_produit, qt, ref_gamme) VALUES (?, ?, ?, ?)`;
+        let [result] = await this.runQueryWithRetry(sql, [nof, refProduit, qt, gammes[0].ref_gamme]);
+        
         
         // Check if the insert was successful
         if (result && result.affectedRows > 0) {
