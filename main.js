@@ -14,6 +14,8 @@ const MyConfig = require('./MyConfig.js');
 
 const Gamme = require('./Gamme.js');
 
+const TextTocsv = require('./TextTocsv.js');
+
 
 
 // Gets the path of the icon to use in the tray and taskbar
@@ -190,6 +192,19 @@ function createWindow() {
             }) ();
             */
             
+
+
+            // txt to csv
+            /*
+            {
+                const textfilePath = path.join(__dirname, "src", "texttocsv", "output.txt");
+                const csvFilePath = path.join(__dirname, "src", "texttocsv", "output.csv");
+                await TextTocsv.texttocsv(textfilePath, csvFilePath);
+            }
+            */
+
+
+
         }) ();
     }
 
