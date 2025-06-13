@@ -469,7 +469,13 @@ class TrackingDB {
     static async isScanNotExist(scan) {
             
         // check if the scan is not in the database
-        let sql = `SELECT * FROM scan WHERE nof = ? AND post_actuel = ?`;
+        let sql = `
+            SELECT s.*
+            FROM scan s
+            INNER JOIN marque m ON s.nof = m.nof
+            INNER JOIN gamme_operations go ON s.num_ope = go.num_ope AND m.ref_gamme = go.ref_gamme
+            WHERE s.nof = ? AND go.post_machine = ?
+        `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, scan.postActuel]);
             
@@ -517,7 +523,12 @@ class TrackingDB {
     static async insertScan(post) {
         
         // check if the post.postActuel exists on the ope table where ref_gamme of the ref_produit on the reference table is equal to the ref_gamme of ope
-        let sqlCheckPost = `SELECT COUNT(*) AS count FROM ope INNER JOIN reference ON ope.ref_gamme = reference.ref_gamme WHERE ope.post_machine = ? AND reference.ref_produit = ?`;
+        let sqlCheckPost = `
+            SELECT COUNT(*) AS count 
+            FROM ope 
+            INNER JOIN reference ON ope.ref_gamme = reference.ref_gamme 
+            WHERE ope.post_machine = ? AND reference.ref_produit = ?
+            `;
         let [checkResult, fieldsCheck] = await this.runQueryWithRetry(sqlCheckPost, [post.postActuel, post.refProduit]);
         if (checkResult[0].count === 0) {
             console.log("Post " + post.postActuel + " does not exist in the ope table for the given ref_produit: " + post.refProduit);
