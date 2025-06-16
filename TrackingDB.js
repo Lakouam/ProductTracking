@@ -454,10 +454,26 @@ class TrackingDB {
     // update the table scan by a post
     static async updateScan(post) {
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
-            
-        let sql = `UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? WHERE nof = ? AND post_actuel = ?`;
+        
+        // Get num_ope for this nof and postActuel (post_machine)
+        let sqlGetNumOpe = `
+            SELECT num_ope FROM gamme_operations go
+            INNER JOIN marque m ON m.ref_gamme = go.ref_gamme
+            WHERE nof = ? AND post_machine = ?
+        `;
+        let [numOpeRows] = await this.runQueryWithRetry(sqlGetNumOpe, [post.nof, post.postActuel]);
+        if (!numOpeRows.length) {
+            throw new Error("No num_ope found for this nof and post_machine");
+        }
+        const num_ope = numOpeRows[0].num_ope;
 
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, post.postActuel]);
+
+        let sql = `
+            UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? 
+            WHERE nof = ? AND num_ope = ?
+        `;
+
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, num_ope]);
 
         console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
         return result; 
@@ -524,11 +540,11 @@ class TrackingDB {
         
         // check if the post.postActuel exists on the ope table where ref_gamme of the ref_produit on the reference table is equal to the ref_gamme of ope
         let sqlCheckPost = `
-            SELECT COUNT(*) AS count 
-            FROM ope 
-            INNER JOIN reference ON ope.ref_gamme = reference.ref_gamme 
-            WHERE ope.post_machine = ? AND reference.ref_produit = ?
-            `;
+            SELECT COUNT(*) AS count
+            FROM marque m
+            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
+            WHERE go.post_machine = ? AND m.ref_produit = ?
+        `;
         let [checkResult, fieldsCheck] = await this.runQueryWithRetry(sqlCheckPost, [post.postActuel, post.refProduit]);
         if (checkResult[0].count === 0) {
             console.log("Post " + post.postActuel + " does not exist in the ope table for the given ref_produit: " + post.refProduit);
@@ -537,14 +553,17 @@ class TrackingDB {
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
 
+        // num_ope that we want to scan
+        let num_ope_to_scan = null;
+
         // check if the previous operation (num_ope just before the current one for the same gamme) is already present in the scan table for the same NOF.
         {
             // Step 1: Get current num_ope and ref_gamme for this postActuel/refProduit
             let sqlOpe = `
-                SELECT o.num_ope, o.ref_gamme
-                FROM ope o
-                INNER JOIN reference r ON o.ref_gamme = r.ref_gamme
-                WHERE o.post_machine = ? AND r.ref_produit = ?
+                SELECT go.num_ope, go.ref_gamme
+                FROM marque m
+                INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
+                WHERE go.post_machine = ? AND m.ref_produit = ?
                 LIMIT 1
             `;
             let [opeRows] = await this.runQueryWithRetry(sqlOpe, [post.postActuel, post.refProduit]);
@@ -555,10 +574,12 @@ class TrackingDB {
             }
             const { num_ope, ref_gamme } = opeRows[0];
 
+            num_ope_to_scan = num_ope; // to put it in the scan table
+
             // Step 2: Find the previous num_ope for this gamme
             let sqlPrevNumOpe = `
                 SELECT num_ope, post_machine
-                FROM ope
+                FROM gamme_operations
                 WHERE ref_gamme = ? AND num_ope < ?
                 ORDER BY num_ope DESC
                 LIMIT 1
@@ -570,9 +591,9 @@ class TrackingDB {
                 const prevPostMachine = prevOpeRows[0].post_machine;
 
                 let sqlPrevScan = `
-                    SELECT 1 FROM scan WHERE nof = ? AND post_actuel = ? LIMIT 1
+                    SELECT 1 FROM scan WHERE nof = ? AND num_ope = ? LIMIT 1
                 `;
-                let [prevScanRows] = await this.runQueryWithRetry(sqlPrevScan, [post.nof, prevPostMachine]);
+                let [prevScanRows] = await this.runQueryWithRetry(sqlPrevScan, [post.nof, prevNumOpe]);
                 if (!prevScanRows.length) {
                     // Previous operation not yet scanned
                     console.log("Previous operation " + prevNumOpe + " not yet scanned");
@@ -583,9 +604,9 @@ class TrackingDB {
 
 
         // insert a row into the table scan
-        let sql = `INSERT INTO scan (nof, post_actuel, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        let sql = `INSERT INTO scan (nof, num_ope, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, post.postActuel, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, num_ope_to_scan, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
         return {is: true}; // Return true if the insert was successful
