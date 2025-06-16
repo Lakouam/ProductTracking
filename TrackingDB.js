@@ -451,11 +451,50 @@ class TrackingDB {
     }
 
 
+
+    // get the last not completed num_ope for a post machine (if all completed, return the last one)
+    static async currentNumopeFromPost(nof, postActuel) {
+
+        /*
+            The first SELECT returns the first not-completed num_ope (if any).
+            The second SELECT returns the last num_ope (if all are completed).
+            UNION ALL ... LIMIT 1 ensures you get the not-completed one if it exists, otherwise the last one.
+        */
+
+        // Try to get the first not completed num_ope
+        const sql = `
+            (SELECT go.num_ope
+            FROM marque m
+            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
+            LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = go.num_ope
+            WHERE m.nof = ? AND go.post_machine = ? AND (s.qa IS NULL OR s.qa < m.qt)
+            ORDER BY go.num_ope ASC
+            LIMIT 1)
+            UNION ALL
+            (SELECT go.num_ope
+            FROM marque m
+            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
+            WHERE m.nof = ? AND go.post_machine = ?
+            ORDER BY go.num_ope DESC
+            LIMIT 1)
+            LIMIT 1
+        `;
+        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, nof, postActuel]);
+        if (!rows.length) {
+            throw new Error("No num_ope found for this nof and post_machine");
+        }
+        return rows[0].num_ope;
+
+    }
+
+
+
     // update the table scan by a post
     static async updateScan(post) {
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
         
         // Get num_ope for this nof and postActuel (post_machine)
+        /*
         let sqlGetNumOpe = `
             SELECT num_ope FROM gamme_operations go
             INNER JOIN marque m ON m.ref_gamme = go.ref_gamme
@@ -466,7 +505,9 @@ class TrackingDB {
             throw new Error("No num_ope found for this nof and post_machine");
         }
         const num_ope = numOpeRows[0].num_ope;
-
+        */
+        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
+        console.log("num_ope value: " + num_ope);
 
         let sql = `
             UPDATE scan SET moy_temps_passer = ?, etat = ?, commentaire = ?, scan_count = ?, qa = ?, temps_fin = ?, temps_dernier_scan = ? 
@@ -483,17 +524,19 @@ class TrackingDB {
 
     // check if the scan is exist in the database
     static async isScanNotExist(scan) {
-            
+        
+        const num_ope = await this.currentNumopeFromPost(scan.nof, scan.postActuel);
+
         // check if the scan is not in the database
         let sql = `
             SELECT s.*
             FROM scan s
             INNER JOIN marque m ON s.nof = m.nof
             INNER JOIN gamme_operations go ON s.num_ope = go.num_ope AND m.ref_gamme = go.ref_gamme
-            WHERE s.nof = ? AND go.post_machine = ?
+            WHERE s.nof = ? AND go.num_ope = ?
         `;
 
-        let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, scan.postActuel]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, num_ope]);
             
         // If the scan is not in the database, resolve with true
         if (result.length === 0) {
@@ -560,7 +603,7 @@ class TrackingDB {
         {
             // Step 1: Get current num_ope and ref_gamme for this postActuel/refProduit
             let sqlOpe = `
-                SELECT go.num_ope, go.ref_gamme
+                SELECT go.ref_gamme
                 FROM marque m
                 INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
                 WHERE go.post_machine = ? AND m.ref_produit = ?
@@ -572,7 +615,8 @@ class TrackingDB {
                 console.log("No operation found, should not happen if previous check passed");
                 return {is: false};
             }
-            const { num_ope, ref_gamme } = opeRows[0];
+            const { ref_gamme } = opeRows[0];
+            const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
 
             num_ope_to_scan = num_ope; // to put it in the scan table
 
