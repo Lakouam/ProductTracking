@@ -219,6 +219,7 @@ body {
 
 .filter-btn-text {
     margin: 0 4px;
+    color: #555;
 }
 
 .filter-btn-arrow {
@@ -244,4 +245,5 @@ body {
     background-position: right 12px center;
     background-size: 20px 20px;
     cursor: pointer;
+    color: #555;
 }
