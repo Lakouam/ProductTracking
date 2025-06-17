@@ -101,7 +101,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
+    width: var(--height-40);
     height: var(--height-40);
 }
 .header-icon:hover {
@@ -111,7 +111,7 @@ body {
 
 .header-icon-outside {
     height: var(--height-50);
-    width: 50px;
+    width: var(--height-50);
     background-color: var(--color-grey);
 }
 
@@ -122,7 +122,7 @@ body {
 }
 
 .user-photo {
-    width: 50px;
+    width: var(--height-50);
     height: var(--height-50);
     border-radius: 50%;
     object-fit: cover;
