@@ -259,6 +259,9 @@ body {
     color: #555;
 }
 
+.filter-select:focus {
+    outline: none;
+}
 
 
 
