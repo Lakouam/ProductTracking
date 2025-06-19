@@ -328,3 +328,94 @@ body {
 .custom-table tbody tr td:last-child {
     border-radius: 0 12px 12px 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+/* Table Footer / Pagination */
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 14px 12px 10px 12px;
+    font-size: 0.7em;
+}
+
+.table-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+}
+
+.rows-per-page-select {
+    border-radius: 18px;
+    border: 1px solid #ccc;
+    /*padding: 7px 9px;*/
+    font-size: 0.95em;
+    background: var(--color-white-grey);
+    /*color: #222;*/
+    outline: none;
+
+    padding: 7px 30px 7px 12px;  /* right padding for arrow */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 8L10 12L14 8" stroke="%23555" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 20px 20px;
+    cursor: pointer;
+    color: #555;
+}
+
+.table-footer-center {
+    text-align: center;
+    color: #555;
+}
+
+.table-footer-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background-color: #dee4eb;
+    border-radius: 18px;
+    padding: 2px;
+}
+
+.pagination-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    color: #222;
+    font-weight: 500;
+    font-size: 0.8em;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+/* Make only the < and > arrows larger */
+.pagination-circle:first-child,
+.pagination-circle:last-child {
+    font-size: 1.3em;
+    padding-bottom: 3px;
+}
+
+.pagination-circle.active,
+.pagination-circle:hover {
+    background: var(--color-dark);
+    color: #fff;
+    border-color: var(--color-dark);
+}
