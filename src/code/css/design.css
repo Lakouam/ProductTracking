@@ -1,11 +1,17 @@
 :root {
     --height-50: 50px;
     --height-40: 40px;
-    --color-backtable-outsideicon: #ebf0f3;
-    --color-middlehead: #fffffff6;
-    --color-btn-columns-filtericon-activepage: #111;
-    --color-filter-select-rows: #ffffffe7;
-    --color-body: #f4f6fb;
+    --color-backtable-outsideicon: #e3e9f7;         /* Soft blue background for containers */
+    --color-middlehead: #ffffffee;                  /* Slightly transparent white for header middle */
+    --color-btn-columns-filtericon-activepage: #2a4d8f; /* Deep blue for buttons, active page, table header */
+    --color-filter-select-rows: #f7faff;            /* Very light blue for table rows and selects */
+    --color-body: #f0f4fb;                          /* Light blue for page background */
+    --color-footer-right: #dee4eb;
+    --color-pagination: #fff;
+    --color-pagination-active: #2a4d8f;
+    --color-btnactive: #333;
+    --color-icon: #fff;
+    --color-iconhover: #f6fafd;
 }
 
 * { 
@@ -84,7 +90,7 @@ body {
     height: var(--height-40);
 }
 .add-btn:hover {
-    background: #333;
+    background: var(--color-btnactive);
 }
 
 .add-btn-icon {
@@ -103,7 +109,7 @@ body {
     margin: 0;
     cursor: pointer;
     transition: color 0.2s, background 0.2s;
-    background: #fff;
+    background: var(--color-icon);
     border-radius: 50%;
     padding: 6px;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
@@ -115,7 +121,7 @@ body {
 }
 .header-icon:hover {
     color: #777;
-    background: #f6fafd;
+    background: var(--color-iconhover);
 }
 
 .header-icon-outside {
@@ -386,7 +392,7 @@ body {
     display: flex;
     align-items: center;
     gap: 2px;
-    background-color: #dee4eb;
+    background-color: var(--color-footer-right);
     border-radius: 18px;
     padding: 2px;
 }
@@ -398,7 +404,7 @@ body {
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--color-pagination);
     color: #222;
     font-weight: 500;
     font-size: 0.8em;
@@ -416,7 +422,7 @@ body {
 
 .pagination-circle.active,
 .pagination-circle:hover {
-    background: var(--color-btn-columns-filtericon-activepage);
+    background: var(--color-pagination-active);
     color: #fff;
-    border-color: var(--color-btn-columns-filtericon-activepage);
+    border-color: var(--color-pagination-active);
 }
