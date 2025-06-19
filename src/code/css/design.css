@@ -1,6 +1,7 @@
 :root {
     --height-50: 50px;
     --height-40: 40px;
+
     --color-backtable-outsideicon: #e3e9f7;         /* Soft blue background for containers */
     --color-middlehead: #ffffffee;                  /* Slightly transparent white for header middle */
     --color-btn-columns-filtericon-activepage: #2a4d8f; /* Deep blue for buttons, active page, table header */
@@ -9,7 +10,7 @@
     --color-footer-right: #dee4eb;
     --color-pagination: #fff;
     --color-pagination-active: #2a4d8f;
-    --color-btnactive: #333;
+    --color-btnactive: #20386b;
     --color-icon: #fff;
     --color-iconhover: #f6fafd;
 }
