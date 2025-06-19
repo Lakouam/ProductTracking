@@ -1,10 +1,11 @@
 :root {
     --height-50: 50px;
     --height-40: 40px;
-    --color-grey: #ebf0f3;
-    --color-white: #fffffff6;
-    --color-dark: #111;
-    --color-white-grey: #ffffffe7;
+    --color-backtable-outsideicon: #ebf0f3;
+    --color-middlehead: #fffffff6;
+    --color-btn-columns-filtericon-activepage: #111;
+    --color-filter-select-rows: #ffffffe7;
+    --color-body: #f4f6fb;
 }
 
 * { 
@@ -12,7 +13,7 @@
 } 
 
 body {
-    background: #f4f6fb; /* Soft light blue/gray */ /* #f6f8fa before */
+    background: var(--color-body); /* Soft light blue/gray */ /* #f6f8fa before */
     color: #222;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -59,7 +60,7 @@ body {
 .header-middle {
     display: flex;
     align-items: center;
-    background: var(--color-white);
+    background: var(--color-middlehead);
     border-radius: 36px;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
     padding: 6px 12px;
@@ -68,7 +69,7 @@ body {
 }
 
 .add-btn {
-    background: var(--color-dark);
+    background: var(--color-btn-columns-filtericon-activepage);
     color: #cccccc;
     border: none;
     border-radius: 48px;
@@ -120,7 +121,7 @@ body {
 .header-icon-outside {
     height: var(--height-50);
     width: var(--height-50);
-    background-color: var(--color-grey);
+    background-color: var(--color-backtable-outsideicon);
 }
 
 .header-right {
@@ -191,7 +192,7 @@ body {
 .filter-btn {
     display: flex;
     align-items: center;
-    background: var(--color-white-grey);
+    background: var(--color-filter-select-rows);
     border-radius: 36px;
     border: none;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
@@ -212,7 +213,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-dark);
+    background: var(--color-btn-columns-filtericon-activepage);
     color: #fff;
     border-radius: 50%;
     width: var(--height-40);
@@ -235,7 +236,7 @@ body {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background: var(--color-white-grey);
+    background: var(--color-filter-select-rows);
     border-radius: 36px;
     border: none;
     box-shadow: 0 1px 4px rgba(30,30,47,0.06);
@@ -263,7 +264,7 @@ body {
 
 /* Table container with color-grey background and border-radius */
 .table-container {
-    background: var(--color-grey);
+    background: var(--color-backtable-outsideicon);
     border-radius: 12px;
     padding: 4px;
     margin: 24px 24px;
@@ -280,17 +281,17 @@ body {
 
 /* Add more space after header (before first row) */
 .custom-table tbody tr:first-child td {
-    border-top: 12px solid var(--color-grey); /* or transparent for no color */
+    border-top: 12px solid var(--color-backtable-outsideicon); /* or transparent for no color */
 }
 
 /* Add less space between body rows */
 .custom-table tbody tr:not(:first-child) td {
-    border-top: 8px solid var(--color-grey); /* or transparent for no color */
+    border-top: 8px solid var(--color-backtable-outsideicon); /* or transparent for no color */
 }
 
 /* Table header cells */
 .custom-table th {
-    background: var(--color-dark);
+    background: var(--color-btn-columns-filtericon-activepage);
     color: #cccccc;
     padding: 14px 12px;
     font-weight: 600;
@@ -305,7 +306,7 @@ body {
 
 /* Table body cells */
 .custom-table td {
-    background: var(--color-white-grey);
+    background: var(--color-filter-select-rows);
     color: #222;
     padding: 12px 12px;
     border: none;
@@ -360,7 +361,7 @@ body {
     border: 1px solid #ccc;
     /*padding: 7px 9px;*/
     font-size: 0.95em;
-    background: var(--color-white-grey);
+    background: var(--color-filter-select-rows);
     /*color: #222;*/
     outline: none;
 
@@ -415,7 +416,7 @@ body {
 
 .pagination-circle.active,
 .pagination-circle:hover {
-    background: var(--color-dark);
+    background: var(--color-btn-columns-filtericon-activepage);
     color: #fff;
-    border-color: var(--color-dark);
+    border-color: var(--color-btn-columns-filtericon-activepage);
 }
