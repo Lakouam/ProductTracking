@@ -480,8 +480,8 @@ class TrackingDB {
             LIMIT 1
         `;
         let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, nof, postActuel]);
-        if (!rows.length) {
-            throw new Error("No num_ope found for this nof and post_machine");
+        if (!rows.length) { // No num_ope found for this nof and post_machine
+            return -1;
         }
         return rows[0].num_ope;
 
@@ -617,6 +617,12 @@ class TrackingDB {
             }
             const { ref_gamme } = opeRows[0];
             const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
+
+            if (num_ope === -1) {  
+                // No num_ope found for this nof and post_machine
+                console.log("No num_ope found for this nof and post_machine");
+                return {is: false};
+            }
 
             num_ope_to_scan = num_ope; // to put it in the scan table
 
