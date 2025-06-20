@@ -4,13 +4,13 @@
 
     --color-backtable-outsideicon: #e3e9f7;         /* Soft blue background for containers */
     --color-middlehead: #ffffffee;                  /* Slightly transparent white for header middle */
-    --color-btn-columns-filtericon-activepage: #2a4d8f; /* Deep blue for buttons, active page, table header */
+    --color-btn-filtericon-columns: #23272f;        /* Dark charcoal */
     --color-filter-select-rows: #f7faff;            /* Very light blue for table rows and selects */
     --color-body: #f0f4fb;                          /* Light blue for page background */
     --color-footer-right: #dee4eb;
     --color-pagination: #fff;
-    --color-pagination-active: #2a4d8f;
-    --color-btnactive: #20386b;
+    --color-paginationactive: #009688;              /* Modern teal accent */
+    --color-btnactive: #38404a;                     /* Slightly lighter charcoal for hover */
     --color-icon: #fff;
     --color-iconhover: #f6fafd;
 }
@@ -20,7 +20,7 @@
 } 
 
 body {
-    background: var(--color-body); /* Soft light blue/gray */ /* #f6f8fa before */
+    background: var(--color-body);
     color: #222;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -76,7 +76,7 @@ body {
 }
 
 .add-btn {
-    background: var(--color-btn-columns-filtericon-activepage);
+    background: var(--color-btn-filtericon-columns);
     color: #cccccc;
     border: none;
     border-radius: 48px;
@@ -220,7 +220,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-btn-columns-filtericon-activepage);
+    background: var(--color-btn-filtericon-columns);
     color: #fff;
     border-radius: 50%;
     width: var(--height-40);
@@ -301,7 +301,7 @@ body {
 
 /* Table header cells */
 .custom-table th {
-    background: var(--color-btn-columns-filtericon-activepage);
+    background: var(--color-btn-filtericon-columns);
     color: #cccccc;
     padding: 14px 12px;
     font-weight: 600;
@@ -426,7 +426,7 @@ body {
 
 .pagination-circle.active,
 .pagination-circle:hover {
-    background: var(--color-pagination-active);
+    background: var(--color-paginationactive);
     color: #fff;
-    border-color: var(--color-pagination-active);
+    border-color: var(--color-paginationactive);
 }
