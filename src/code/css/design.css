@@ -2,11 +2,11 @@
     --height-50: 50px;
     --height-40: 40px;
 
-    --color-backtable-outsideicon: #e3e9f7;         /* Soft blue background for containers */
+    --color-backtable: #e3e9f7;         /* Soft blue background for containers */
     --color-middlehead: #ffffffee;                  /* Slightly transparent white for header middle */
     --color-btn-filtericon-columns: #23272f;        /* Dark charcoal */
     --color-filter-select-rows: #f7faff;            /* Very light blue for table rows and selects */
-    --color-body: #f0f4fb;                          /* Light blue for page background */
+    --color-body-outsideicon: #f0f4fb;                          /* Light blue for page background */
     --color-footer-right: #dee4eb;
     --color-pagination: #fff;
     --color-paginationactive: #009688;              /* Modern teal accent */
@@ -20,7 +20,7 @@
 } 
 
 body {
-    background: var(--color-body);
+    background: var(--color-body-outsideicon);
     color: #222;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
@@ -128,7 +128,7 @@ body {
 .header-icon-outside {
     height: var(--height-50);
     width: var(--height-50);
-    background-color: var(--color-backtable-outsideicon);
+    background-color: var(--color-body-outsideicon);
 }
 
 .header-right {
@@ -274,7 +274,7 @@ body {
 
 /* Table container with color-grey background and border-radius */
 .table-container {
-    background: var(--color-backtable-outsideicon);
+    background: var(--color-backtable);
     border-radius: 12px;
     padding: 4px;
     margin: 24px 24px;
@@ -291,12 +291,12 @@ body {
 
 /* Add more space after header (before first row) */
 .custom-table tbody tr:first-child td {
-    border-top: 12px solid var(--color-backtable-outsideicon); /* or transparent for no color */
+    border-top: 12px solid var(--color-backtable); /* or transparent for no color */
 }
 
 /* Add less space between body rows */
 .custom-table tbody tr:not(:first-child) td {
-    border-top: 8px solid var(--color-backtable-outsideicon); /* or transparent for no color */
+    border-top: 8px solid var(--color-backtable); /* or transparent for no color */
 }
 
 /* Table header cells */
