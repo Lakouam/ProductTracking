@@ -175,7 +175,7 @@ body {
     justify-content: space-between;
     padding: 0 24px;
     height: 64px;
-    margin-bottom: 18px;
+    margin-bottom: 8px;
     margin-top: 8px;
 }
 
@@ -277,7 +277,7 @@ body {
     background: var(--color-backtable);
     border-radius: 12px;
     padding: 4px;
-    margin: 24px 24px;
+    margin: 18px 24px;
     border: 1px solid #c3c9cc;
 }
 
