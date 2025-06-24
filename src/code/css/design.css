@@ -447,7 +447,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 6px;
     margin-top: 18px;
     margin-bottom: 8px;
 }
@@ -465,7 +465,6 @@ body {
 .scanner-page-header-title {
     font-size: 1.5em;
     font-weight: 600;
-    color: var(--color-btn-filtericon-columns);
     letter-spacing: 1px;
 }
 
@@ -481,7 +480,7 @@ body {
 /* design for scanner page */
 .scanner-container {
     max-width: 480px;
-    margin: 18px auto 0 auto;
+    margin: 18px auto 18px auto;
     background: var(--color-backtable);
     border-radius: 18px;
     box-shadow: 0 2px 16px rgba(30,30,47,0.08);
@@ -490,6 +489,9 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+
+/* OF Info Card */
 .of-info {
     width: 100%;
     background: var(--color-filter-select-rows);
@@ -508,8 +510,11 @@ body {
 }
 .of-info-value {
     font-weight: 600;
-    color: var(--color-btn-filtericon-columns);
+    color: #23272f;
 }
+
+
+/* Progress Bar */
 .progress-section {
     width: 100%;
     margin-bottom: 24px;
@@ -533,75 +538,6 @@ body {
     border-radius: 9px 0 0 9px;
     transition: width 0.4s;
 }
-.scan-input-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 18px;
-}
-.scan-label {
-    font-size: 1.1em;
-    color: var(--color-btn-filtericon-columns);
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-.scan-input-row {
-    display: flex;
-    width: 100%;
-    gap: 8px;
-}
-.scan-input {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 36px;
-    border: 1.5px solid var(--color-btn-filtericon-columns);
-    font-size: 1.1em;
-    outline: none;
-    background: #fff;
-    color: #222;
-    transition: border 0.2s;
-}
-.scan-input:focus {
-    border-color: var(--color-paginationactive);
-}
-.scan-btn {
-    background: var(--color-paginationactive);
-    color: #fff;
-    border: none;
-    border-radius: 36px;
-    padding: 0 22px;
-    font-size: 1.1em;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-}
-.scan-btn:hover {
-    background: var(--color-btn-filtericon-columns);
-}
-.scan-btn svg {
-    margin-right: 6px;
-}
-@media (max-width: 600px) {
-    .scanner-container {
-        padding: 18px 6px 16px 6px;
-    }
-    .of-info {
-        padding: 10px 6px 8px 6px;
-        font-size: 0.98em;
-    }
-}
-
-
-
-
-
-
-
-
-
 
 
 /* Scan Step Indicator (scan initial or final) */
@@ -644,17 +580,38 @@ body {
 }
 
 
-
-
-
-
-
-
-
-
-
+/* Scan Input */
+.scan-input-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.scan-label {
+    font-size: 1.1em;
+    color: #23272f;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.scan-input-row {
+    width: 100%;
+}
+.scan-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 36px;
+    border: 1.5px solid #23272f;
+    font-size: 1.0em;
+    outline: none;
+    background: var(--color-filter-select-rows);
+    color: #222;
+    transition: border 0.2s;
+}
+.scan-input:focus {
+    border-color: var(--color-paginationactive);
+}
 /* error message */
-.scan-error-message {
+.scan-error-message { 
     margin-top: 10px;
     color: #d32f2f;
     background: #fff0f0;
@@ -665,4 +622,13 @@ body {
     display: block; /* Set to none by default, show with JS if error */
 }
 
+@media (max-width: 600px) {
+    .scanner-container {
+        padding: 18px 6px 16px 6px;
+    }
+    .of-info {
+        padding: 10px 6px 8px 6px;
+        font-size: 0.98em;
+    }
+}
 
