@@ -46,6 +46,7 @@ body {
 .header-left {
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .app-logo {
