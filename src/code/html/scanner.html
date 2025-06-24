@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <title>Product Tracking</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/design.css">
+        
+
+    </head>
+    <body>
+
+        <!-- Header Row -->
+        <div class="app-header">
+            <!-- Left: Logo and App Name -->
+            <div class="header-left">
+                <img src="../../icons/applogo.png" alt="Logo" class="app-logo">
+                <span class="app-title">ProductTracking</span>
+            </div>
+            <!-- Middle: White background with Add, Settings, Employees -->
+            <div class="header-middle">
+                <button class="add-btn">
+                    <span class="add-btn-icon">
+                        <!-- QR Code Icon SVG -->
+                        <svg width="15" height="15" viewBox="0 0 20 20" fill="none">
+                            <rect x="2" y="2" width="5" height="5" rx="1" stroke="#fff" stroke-width="1.5" fill="none"/>
+                            <rect x="13" y="2" width="5" height="5" rx="1" stroke="#fff" stroke-width="1.5" fill="none"/>
+                            <rect x="2" y="13" width="5" height="5" rx="1" stroke="#fff" stroke-width="1.5" fill="none"/>
+                            <rect x="8" y="8" width="4" height="4" fill="#fff"/>
+                            <rect x="14" y="14" width="2" height="2" fill="#fff"/>
+                        </svg>
+                    </span>
+                    <span class="add-btn-text">Scanner</span>
+                </button>
+                <span class="header-icon" title="Paramètres">&#9881;</span>
+                <span class="header-icon" title="Employés">&#128100;</span>
+            </div>
+            <!-- Right: Notification, User Photo, Name, Post -->
+            <div class="header-right">
+                <span class="header-icon header-icon-outside" title="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.63-5.64-5-6.32V4a1 1 0 1 0-2 0v.68C7.63 5.36 6 7.92 6 11v5l-1.29 1.29A1 1 0 0 0 6 19h12a1 1 0 0 0 .71-1.71L18 16z" stroke="#555" stroke-width="1.5" fill="none"/>
+                    </svg>
+                </span>
+                <img src="../../icons/guestuser.png" alt="Utilisateur" class="user-photo">
+                <div class="user-info">
+                    <span class="user-name">Guest</span>
+                    <span class="user-post">Admin</span>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="scanner-page-header">
+            <span class="scanner-page-header-icon">
+                <!-- QR code icon SVG -->
+                <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
+                    <rect x="2" y="2" width="5" height="5" rx="1" stroke="#009688" stroke-width="1.5" fill="none"/>
+                    <rect x="13" y="2" width="5" height="5" rx="1" stroke="#009688" stroke-width="1.5" fill="none"/>
+                    <rect x="2" y="13" width="5" height="5" rx="1" stroke="#009688" stroke-width="1.5" fill="none"/>
+                    <rect x="8" y="8" width="4" height="4" fill="#009688"/>
+                    <rect x="14" y="14" width="2" height="2" fill="#009688"/>
+                </svg>
+            </span>
+            <span class="scanner-page-header-title">Scanner des cartes</span>
+        </div>
+
+
+
+
+
+
+        <div class="scanner-container">
+            <!-- OF Info Card -->
+            <div class="of-info">
+                <div class="of-info-label">Numéro OF</div>
+                <div class="of-info-value">OF123456</div>
+                <div class="of-info-label">Poste</div>
+                <div class="of-info-value">Poste 3</div>
+                <div class="of-info-label">Quantité actuelle</div>
+                <div class="of-info-value">12</div>
+                <div class="of-info-label">Quantité totale</div>
+                <div class="of-info-value">20</div>
+                <div class="of-info-label">Moyen temps passé</div>
+                <div class="of-info-value">00:08</div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+                <div class="progress-labels">
+                    <span>Progression</span>
+                    <span>12 / 20</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" style="width: 60%;"></div>
+                </div>
+            </div>
+
+            <!-- Scan Input -->
+            <form class="scan-input-section" autocomplete="off">
+                <label class="scan-label" for="scan-input">Scanner une carte</label>
+                <div class="scan-input-row">
+                    <input class="scan-input" id="scan-input" type="text" placeholder="Scannez ici..." autofocus>
+                </div>
+            </form>
+        </div>
+
+
+
+    </body>
+</html>
