@@ -102,11 +102,28 @@
                 </div>
             </div>
 
+            <!-- Scan Step Indicator -->
+            <div class="scan-step-indicator">
+                <div class="scan-step-badge active">
+                    <span class="scan-step-badge-icon">&#128439;</span>
+                    <span>Scan initial</span>
+                </div>
+                <div class="scan-step-separator"></div>
+                <div class="scan-step-badge">
+                    <span class="scan-step-badge-icon">&#128274;</span>
+                    <span>Scan final</span>
+                </div>
+            </div>
+
             <!-- Scan Input -->
             <form class="scan-input-section" autocomplete="off">
                 <label class="scan-label" for="scan-input">Scanner une carte</label>
                 <div class="scan-input-row">
                     <input class="scan-input" id="scan-input" type="text" placeholder="Scannez ici..." autofocus>
+                </div>
+                <div class="scan-error-message">
+                    <!-- Example error message, show/hide with JS as needed -->
+                    Code non reconnu, veuillez réessayer.
                 </div>
             </form>
         </div>

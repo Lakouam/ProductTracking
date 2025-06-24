@@ -478,8 +478,6 @@ body {
 
 
 
-
-
 .scanner-container {
     max-width: 480px;
     margin: 18px auto 0 auto;
@@ -593,4 +591,75 @@ body {
         padding: 10px 6px 8px 6px;
         font-size: 0.98em;
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.scan-step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    margin-top: 6px;
+}
+
+.scan-step-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #e0e3e7;
+    color: #888;
+    border-radius: 18px;
+    padding: 6px 18px;
+    font-weight: 500;
+    font-size: 1em;
+    transition: background 0.2s, color 0.2s;
+}
+
+.scan-step-badge-icon {
+    font-size: 1.2em;
+}
+
+.scan-step-badge.active {
+    background: var(--color-paginationactive);
+    color: #fff;
+}
+
+.scan-step-separator {
+    width: 32px;
+    height: 3px;
+    background: #e0e3e7;
+    border-radius: 2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.scan-error-message {
+    margin-top: 10px;
+    color: #d32f2f;
+    background: #fff0f0;
+    border: 1px solid #f8bcbc;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 0.98em;
+    display: block; /* Set to none by default, show with JS if error */
 }
