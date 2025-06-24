@@ -441,7 +441,7 @@ body {
 
 
 
-
+/* scanner page header */
 .scanner-page-header {
     display: flex;
     align-items: center;
@@ -477,7 +477,7 @@ body {
 
 
 
-
+/* design for scanner page */
 .scanner-container {
     max-width: 480px;
     margin: 18px auto 0 auto;
@@ -603,7 +603,7 @@ body {
 
 
 
-
+/* Scan Step Indicator (scan initial or final) */
 .scan-step-indicator {
     display: flex;
     align-items: center;
@@ -652,7 +652,7 @@ body {
 
 
 
-
+/* error message */
 .scan-error-message {
     margin-top: 10px;
     color: #d32f2f;
@@ -663,3 +663,5 @@ body {
     font-size: 0.98em;
     display: block; /* Set to none by default, show with JS if error */
 }
+
+
