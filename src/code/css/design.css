@@ -1,8 +1,31 @@
+:root {
+    /* height */
+    --height-50: 50px;
+
+    /* colors */
+    --color-rightback: #e3e9f7;
+}
+
+* { 
+    box-sizing: border-box; 
+}
+
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f4f5f7;
 }
+
+
+
+
+
+
+
+
+
+
+/* left-side content */
 .sidebar {
     position: fixed;
     left: 0; top: 0; bottom: 0;
@@ -27,6 +50,7 @@ body {
 }
 
 
+/* section 1 */
 .sidebar-logo-notif {
     display: flex;
     align-items: center;
@@ -52,6 +76,9 @@ body {
     letter-spacing: 1px;
     color: #fff;
 }
+
+
+/* section 2 */
 .sidebar-menu-section {
     display: flex;
     flex-direction: column;
@@ -110,6 +137,9 @@ body {
     color: #fff;
     border: 1.5px solid #009688;
 }
+
+
+/* section 3 */
 .sidebar-user-section {
     display: flex;
     align-items: center;
@@ -140,6 +170,20 @@ body {
     font-size: 0.98em;
     color: #b0b8c9;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* right-side content */
 .main-content {
     margin-left: 250px;
     padding: 36px 36px 0 36px;
