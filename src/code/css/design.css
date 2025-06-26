@@ -4,10 +4,15 @@
     /* Background colors */
     --background-body-postselect-menuitemhover: #f9f6fa;
     --background-sidebar-table-filter-sort-head: #ffffff;
-    --background-button: #7d13e0;
+    --background-button-logoname-buttonnoactivetext-buttonnoactivehover: #7d13e0;
     --background-buttonhover: #9019ff;
+    --background-buttonnoactive: #f2e4f7;
+
 
     /* colors */
+    --color-black: #000;
+    --color-grey: #777;
+    --color-button: #ebebeb;
 }
 
 * { 
@@ -35,7 +40,7 @@ body {
     left: 0; top: 0; bottom: 0;
     width: 250px;
     background: var(--background-sidebar-table-filter-sort-head);
-    color: #fff;
+    color: var(--color-grey);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -78,7 +83,7 @@ body {
     font-size: 1.25em;
     font-weight: 700;
     letter-spacing: 1px;
-    color: #fff;
+    color: var(--background-button-logoname-buttonnoactivetext-buttonnoactivehover);
 }
 
 
@@ -104,7 +109,7 @@ body {
     padding: 10px 18px;
     border-radius: 8px;
     font-size: 1.08em;
-    color: #cfd8e3;
+    color: var(--color-grey);
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
     user-select: none;
@@ -112,7 +117,7 @@ body {
 .sidebar-menu-item.active,
 .sidebar-menu-item:hover {
     background: var(--background-body-postselect-menuitemhover);
-    color: #fff;
+    color: var(--color-black);
 }
 .sidebar-menu-icon {
     font-size: 1.25em;
@@ -121,8 +126,8 @@ body {
 }
 .sidebar-scanner-btn {
     width: 80%;
-    background: var(--background-button);
-    color: #fff;
+    background: var(--background-button-logoname-buttonnoactivetext-buttonnoactivehover);
+    color: var(--color-button);
     border: none;
     border-radius: 24px;
     padding: 12px 0;
@@ -138,7 +143,7 @@ body {
 }
 .sidebar-scanner-btn:hover {
     background: var(--background-buttonhover);
-    color: #fff;
+    color: var(--color-button);
     border: 1.5px solid #009688;
 }
 
@@ -168,11 +173,11 @@ body {
 .sidebar-user-name {
     font-weight: 600;
     font-size: 1.05em;
-    color: #fff;
+    color: var(--color-black);
 }
 .sidebar-user-role {
     font-size: 0.98em;
-    color: #b0b8c9;
+    color: var(--color-grey);
 }
 
 
