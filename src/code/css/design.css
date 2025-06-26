@@ -1,9 +1,13 @@
 :root {
     /* height */
-    --height-50: 50px;
+
+    /* Background colors */
+    --background-body-postselect-menuitemhover: #f9f6fa;
+    --background-sidebar-table-filter-sort-head: #ffffff;
+    --background-button: #7d13e0;
+    --background-buttonhover: #9019ff;
 
     /* colors */
-    --color-rightback: #e3e9f7;
 }
 
 * { 
@@ -13,7 +17,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f5f7;
+    background: var(--background-body-postselect-menuitemhover);
 }
 
 
@@ -30,7 +34,7 @@ body {
     position: fixed;
     left: 0; top: 0; bottom: 0;
     width: 250px;
-    background: #23272f;
+    background: var(--background-sidebar-table-filter-sort-head);
     color: #fff;
     display: flex;
     flex-direction: column;
@@ -40,13 +44,13 @@ body {
     height: 100vh;
 }
 .sidebar-section {
-    background: #23272f;
+    background: var(--background-sidebar-table-filter-sort-head);
     padding: 0;
 }
 .sidebar-section + .sidebar-section {
     margin-top: 2px;
-    background: #23272f;
-    border-top: 1px solid #f4f5f7;
+    background: var(--background-sidebar-table-filter-sort-head);
+    border-top: 3px solid #f4f5f7;
 }
 
 
@@ -67,7 +71,7 @@ body {
     width: 38px;
     height: 38px;
     border-radius: 8px;
-    background: #fff;
+    background: var(--background-sidebar-table-filter-sort-head);
     object-fit: cover;
 }
 .sidebar-logo-name {
@@ -107,7 +111,7 @@ body {
 }
 .sidebar-menu-item.active,
 .sidebar-menu-item:hover {
-    background: #009688;
+    background: var(--background-body-postselect-menuitemhover);
     color: #fff;
 }
 .sidebar-menu-icon {
@@ -117,7 +121,7 @@ body {
 }
 .sidebar-scanner-btn {
     width: 80%;
-    background: #009688;
+    background: var(--background-button);
     color: #fff;
     border: none;
     border-radius: 24px;
@@ -133,7 +137,7 @@ body {
     gap: 8px;
 }
 .sidebar-scanner-btn:hover {
-    background: #23272f;
+    background: var(--background-buttonhover);
     color: #fff;
     border: 1.5px solid #009688;
 }
@@ -144,7 +148,7 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #20232a;
+    background: var(--background-sidebar-table-filter-sort-head);
     border-radius: 12px;
     padding: 12px 16px;
     width: 80%;
@@ -155,7 +159,7 @@ body {
     height: 38px;
     border-radius: 50%;
     object-fit: cover;
-    background: #fff;
+    background: var(--background-sidebar-table-filter-sort-head);
 }
 .sidebar-user-info {
     display: flex;
