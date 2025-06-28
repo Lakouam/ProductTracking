@@ -12,7 +12,7 @@
     /* colors */
     --color-black: #000;
     --color-grey: #777;
-    --color-button: #ebebeb;
+    --color-button: #f3f3f3;
 }
 
 * { 
@@ -80,9 +80,9 @@ body {
     object-fit: cover;
 }
 .sidebar-logo-name {
-    font-size: 1.25em;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 1.2em;
+    font-weight: 650;
+    letter-spacing: 0.9px;
     color: var(--background-button-logoname-buttonnoactivetext-buttonnoactivehover);
 }
 
@@ -103,10 +103,10 @@ body {
     display: flex;
     align-items: center;
     height: 47px;
-    gap: 14px;
+    gap: 9px;
     padding: 10px 16px;
     border-radius: 8px;
-    font-size: 1.08em;
+    font-size: 1.0em;
     color: var(--color-grey);
     cursor: pointer;
     transition: background 0.18s, color 0.18s;
@@ -118,7 +118,7 @@ body {
     color: var(--color-black);
 }
 .sidebar-menu-icon {
-    font-size: 1.25em;
+    font-size: 1.20em;
     width: 24px;
     text-align: center;
 }
@@ -130,8 +130,8 @@ body {
     border: none;
     border-radius: 8px;
     padding: 12px 0;
-    font-size: 1.08em;
-    font-weight: 600;
+    font-size: 0.98em;
+    font-weight: 540;
     cursor: pointer;
     margin: 18px auto 0 auto;
     transition: background 0.18s;
@@ -166,11 +166,11 @@ body {
 }
 .sidebar-user-name {
     font-weight: 600;
-    font-size: 1.05em;
+    font-size: 1.00em;
     color: var(--color-black);
 }
 .sidebar-user-role {
-    font-size: 0.98em;
+    font-size: 0.85em;
     color: var(--color-grey);
 }
 
