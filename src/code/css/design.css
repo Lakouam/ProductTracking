@@ -121,6 +121,7 @@ body {
     font-size: 1.20em;
     width: 24px;
     text-align: center;
+    padding-top: 6px;
 }
 .sidebar-scanner-btn {
     width: 100%;
