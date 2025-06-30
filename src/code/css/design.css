@@ -174,7 +174,24 @@ body {
     font-size: 0.85em;
     color: var(--color-grey);
 }
-
+.sidebar-user-menu-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    margin-left: auto;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sidebar-user-menu-btn:hover {
+    background: #f2e4f7;
+}
+.sidebar-user-menu-btn svg {
+    display: block;
+}
 
 
 
