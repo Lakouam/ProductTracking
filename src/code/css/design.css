@@ -1,5 +1,8 @@
 :root {
     /* height */
+    --height-logo-userimg: 38px;
+    --height-menuitem: 47px;
+    --height-scannerbtn: 56px;
 
     /* Background colors */
     --background-body-postselect-menuitemhover-userbtn: #f9f6fa;
@@ -73,8 +76,8 @@ body {
     gap: 12px;
 }
 .sidebar-logo img {
-    width: 38px;
-    height: 38px;
+    width: var(--height-logo-userimg);
+    height: var(--height-logo-userimg);
     border-radius: 8px;
     background: var(--background-sidebar-table-filter-sort-head);
     object-fit: cover;
@@ -102,7 +105,7 @@ body {
 .sidebar-menu-item {
     display: flex;
     align-items: center;
-    height: 47px;
+    height: var(--height-menuitem);
     gap: 9px;
     padding: 10px 16px;
     border-radius: 8px;
@@ -127,7 +130,7 @@ body {
     width: 100%;
     background: var(--background-button-logoname-buttonnoactivetext-buttonnoactivehover);
     color: var(--color-button);
-    height: 56px;
+    height: var(--height-scannerbtn);
     border: none;
     border-radius: 8px;
     padding: 12px 0;
@@ -155,8 +158,8 @@ body {
     width: 100%;
 }
 .sidebar-user-img {
-    width: 38px;
-    height: 38px;
+    width: var(--height-logo-userimg);
+    height: var(--height-logo-userimg);
     border-radius: 50%;
     object-fit: cover;
     background: var(--background-sidebar-table-filter-sort-head);
