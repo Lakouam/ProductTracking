@@ -2,7 +2,7 @@
     /* height */
 
     /* Background colors */
-    --background-body-postselect-menuitemhover: #f9f6fa;
+    --background-body-postselect-menuitemhover-userbtn: #f9f6fa;
     --background-sidebar-table-filter-sort-head: #ffffff;
     --background-button-logoname-buttonnoactivetext-buttonnoactivehover: #7d13e0;
     --background-buttonhover: #9019ff;
@@ -22,7 +22,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: var(--background-body-postselect-menuitemhover);
+    background: var(--background-body-postselect-menuitemhover-userbtn);
 }
 
 
@@ -114,7 +114,7 @@ body {
 }
 .sidebar-menu-item.active,
 .sidebar-menu-item:hover {
-    background: var(--background-body-postselect-menuitemhover);
+    background: var(--background-body-postselect-menuitemhover-userbtn);
     color: var(--color-black);
 }
 .sidebar-menu-icon {
@@ -181,13 +181,14 @@ body {
     margin-left: auto;
     cursor: pointer;
     border-radius: 50%;
+    color: var(--color-black);
     transition: background 0.15s;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .sidebar-user-menu-btn:hover {
-    background: #f2e4f7;
+    background: var(--background-body-postselect-menuitemhover-userbtn);
 }
 .sidebar-user-menu-btn svg {
     display: block;
