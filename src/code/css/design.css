@@ -229,13 +229,28 @@ body {
 .main-toolbar-left {
     flex: 1;
 }
-.main-search-input {
+.main-search-wrapper {
+    position: relative;
+    display: inline-block;
     width: 260px;
+}
+.main-search-icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-grey);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+.main-search-input {
+    width: 100%;
     border: none;
     font-size: 1em;
     background: var(--background-sidebar-table-filter-sort-head);
     color: var(--color-grey);
     outline: none;
+    padding-left: 36px; /* space for icon on the left */
 }
 .main-toolbar-right {
     display: flex;
