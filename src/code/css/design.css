@@ -275,7 +275,7 @@ body {
     background-color: transparent;
     color: var(--color-black);
     font-size: 0.95em;
-    font-weight: 545;
+    font-weight: 549;
     padding-top: 1px;
     outline: none;
     cursor: pointer;
@@ -314,7 +314,7 @@ body {
     border: none;
     border-radius: 7px;
     padding: 0 18px;
-    font-size: 1em;
+    font-size: 0.95em;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
@@ -343,16 +343,16 @@ body {
 }
 .main-subtoolbar-sort-label {
     color: var(--color-grey);
-    font-size: 1em;
-    font-weight: 500;
+    font-size: 0.95em;
+    font-weight: 400;
 }
 .main-subtoolbar-sort-select {
     border: none;
     background: transparent;
     color: var(--color-black);
-    font-size: 1em;
-    font-weight: 600;
-    padding: 2px 0 0 2px;
+    font-size: 0.95em;
+    font-weight: 549;
+    padding: 1px 0 0 2px;
     outline: none;
     cursor: pointer;
 }
