@@ -356,3 +356,45 @@ body {
     outline: none;
     cursor: pointer;
 }
+
+
+/* main-table */
+.main-table-wrapper {
+    margin-top: 40px;
+    background: transparent;
+}
+
+.main-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 2px; /* 2px vertical space between rows */
+    background: transparent;
+}
+
+.main-table thead tr {
+    background: var(--background-sidebar-table-filter-sort-head);
+    height: 50px;
+}
+
+.main-table th {
+    color: var(--color-grey);
+    font-weight: 600;
+    font-size: 1em;
+    text-align: left;
+    padding: 0 22px;
+    background: var(--background-sidebar-table-filter-sort-head);
+    border: none;
+}
+
+.main-table tbody tr {
+    background: var(--background-sidebar-table-filter-sort-head);
+    height: 59px;
+}
+
+.main-table td {
+    color: var(--color-black);
+    font-size: 1em;
+    padding: 0 22px;
+    border: none;
+    background: var(--background-sidebar-table-filter-sort-head);
+}
