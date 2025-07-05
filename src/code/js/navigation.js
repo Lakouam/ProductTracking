@@ -1,6 +1,6 @@
 // go to scans.html
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the "Scans" button in the sidebar
+    // Find the "Scans" button in the subtoolbar
     const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
         item.textContent.trim().toLowerCase().includes('scans')
     );
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // go to marque.html
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the "marque" button in the sidebar
+    // Find the "marque" button in the subtoolbar
     const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
         item.textContent.trim().toLowerCase().includes('marque')
     );
@@ -28,13 +28,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // go to operations.html
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the "Scans" button in the sidebar
+    // Find the "operations" button in the subtoolbar
     const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
         item.textContent.trim().toLowerCase().includes('operations')
     );
     if (scansBtn) {
         scansBtn.addEventListener('click', function() {
             window.location.href = 'operations.html';
+        });
+    }
+});
+
+
+// go to marque.html when clicking on nof
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the "Nof" element in the sidebar
+    const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
+        item.textContent.trim().toLowerCase().includes('nof')
+    );
+    if (scansBtn) {
+        scansBtn.addEventListener('click', function() {
+            window.location.href = 'marque.html';
         });
     }
 });
