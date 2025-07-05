@@ -175,40 +175,24 @@
         <!-- main table -->
         <div class="main-table-wrapper">
             <table class="main-table">
-                <thead>
-                    <tr>
-                        <th>Numéro OF</th>
-                        <th>Poste</th>
-                        <th>Quantité</th>
-                        <th>Date</th>
-                        <th>Statut</th>
-                    </tr>
+                <thead id="dataHead">
+                    <!-- we want columns to be inserted here dynamically -->
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>OF123456</td>
-                        <td>Magasin</td>
-                        <td>20</td>
-                        <td>2025-06-15</td>
-                        <td>Terminé</td>
-                    </tr>
-                    <tr>
-                        <td>OF123457</td>
-                        <td>Production</td>
-                        <td>15</td>
-                        <td>2025-06-14</td>
-                        <td>En cours</td>
-                    </tr>
-                    <tr>
-                        <td>OF123458</td>
-                        <td>Contrôle</td>
-                        <td>10</td>
-                        <td>2025-06-13</td>
-                        <td>En attente</td>
-                    </tr>
+                <tbody id="dataBody">
+                    <!-- we want rows to be inserted here dynamically -->
                 </tbody>
             </table>
         </div>
     </div>
+
+
+
+
+
+    <!-- Javascript -->
+    <script>
+        const {ipcRenderer} = require('electron');
+    </script>
+    <script src="../js/marque.js"></script>
 </body>
 </html>
