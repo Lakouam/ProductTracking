@@ -5,7 +5,7 @@
     --height-scannerbtn: 56px;
     --height-subtoolbar_btn-subtoolbar_sort: 41px;
     --height-table_head: 50px;
-    --height-table_row: 59px;
+    --height-table_row: 63px;
 
     /* Background colors */
     --background-body-postselect-menuitemhover-userbtn: #f9f6fa;
@@ -13,6 +13,7 @@
     --background-button-logoname-buttonnoactivetext-buttonnoactivehover: #7d13e0;
     --background-buttonhover: #9019ff;
     --background-buttonnoactive: #f2e4f7;
+    --background-sidbar_border-table_distance: #edeef0;
 
 
     /* colors */
@@ -59,7 +60,7 @@ body {
 }
 .sidebar-section + .sidebar-section {
     background: var(--background-sidebar-table-filter-sort-head);
-    border-top: 2px solid #edeef0;
+    border-top: 2px solid var(--background-sidbar_border-table_distance);
 }
 
 
@@ -370,13 +371,19 @@ body {
 .main-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 2px; /* 2px vertical space between rows */
+    border-spacing: 0 0; /* 2px vertical space between rows */
     background: transparent;
 }
 
 .main-table thead tr {
     background: var(--background-sidebar-table-filter-sort-head);
     height: var(--height-table_head);
+}
+
+.main-table thead::after {
+    content: "";
+    display: table-row;
+    height: 18px;
 }
 
 .main-table th {
@@ -392,6 +399,12 @@ body {
 .main-table tbody tr {
     background: var(--background-sidebar-table-filter-sort-head);
     height: var(--height-table_row);
+}
+
+
+/* Add background color between rows */
+.main-table tbody tr + tr td {
+    border-top: 2px solid var(--background-sidbar_border-table_distance);
 }
 
 .main-table td {
