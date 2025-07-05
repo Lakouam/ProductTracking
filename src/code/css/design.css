@@ -3,6 +3,9 @@
     --height-logo-userimg: 38px;
     --height-menuitem: 47px;
     --height-scannerbtn: 56px;
+    --height-subtoolbar_btn-subtoolbar_sort: 41px;
+    --height-table_head: 50px;
+    --height-table_row: 59px;
 
     /* Background colors */
     --background-body-postselect-menuitemhover-userbtn: #f9f6fa;
@@ -310,7 +313,7 @@ body {
 .main-subtoolbar-btn {
     background: #eee8fa;
     color: #7314cc;
-    height: 41px;
+    height: var(--height-subtoolbar_btn-subtoolbar_sort);
     border: none;
     border-radius: 7px;
     padding: 0 18px;
@@ -336,7 +339,7 @@ body {
 .main-subtoolbar-sort{
     display: flex;
     align-items: center;
-    height: 41px;
+    height: var(--height-subtoolbar_btn-subtoolbar_sort);
     background-color: var(--background-sidebar-table-filter-sort-head);
     border-radius: 7px;
     padding: 0 12px;
@@ -373,7 +376,7 @@ body {
 
 .main-table thead tr {
     background: var(--background-sidebar-table-filter-sort-head);
-    height: 50px;
+    height: var(--height-table_head);
 }
 
 .main-table th {
@@ -388,7 +391,7 @@ body {
 
 .main-table tbody tr {
     background: var(--background-sidebar-table-filter-sort-head);
-    height: 59px;
+    height: var(--height-table_row);
 }
 
 .main-table td {
