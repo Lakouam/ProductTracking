@@ -272,7 +272,7 @@ body {
 .main-toolbar-post-label {
     color: var(--color-grey);
     font-weight: 400;
-    font-size: 0.95em;
+    font-size: 0.90em;
 }
 .main-toolbar-post-select {
     border: none;
@@ -347,7 +347,7 @@ body {
 }
 .main-subtoolbar-sort-label {
     color: var(--color-grey);
-    font-size: 0.95em;
+    font-size: 0.90em;
     font-weight: 400;
 }
 .main-subtoolbar-sort-select {
@@ -388,8 +388,8 @@ body {
 
 .main-table th {
     color: var(--color-grey);
-    font-weight: 600;
-    font-size: 1em;
+    font-size: 0.90em;
+    font-weight: 400;
     text-align: left;
     padding: 0 22px;
     background: var(--background-sidebar-table-filter-sort-head);
@@ -410,6 +410,7 @@ body {
 .main-table td {
     color: var(--color-black);
     font-size: 1em;
+    font-weight: 500;
     padding: 0 22px;
     border: none;
     background: var(--background-sidebar-table-filter-sort-head);
