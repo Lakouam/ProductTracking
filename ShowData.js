@@ -1,3 +1,6 @@
+const { columnName } = require('./src/code/js/tools/columnsnames.js');
+
+
 function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = false) {
 
     // show columns in the table
@@ -10,7 +13,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
         const tr = document.createElement("tr");
         fullData.columns.forEach(column => {
             const th = document.createElement("th");
-            th.innerText = column;
+            th.innerText = columnName(column);
             tr.appendChild(th);
         });
 
