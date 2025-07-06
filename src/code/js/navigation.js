@@ -54,6 +54,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+// go to gamme.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the "gamme" button in the subtoolbar
+    const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
+        item.textContent.trim().toLowerCase().includes('gamme')
+    );
+    if (scansBtn) {
+        scansBtn.addEventListener('click', function() {
+            window.location.href = 'gamme.html';
+        });
+    }
+});
+
+
 // go to marque.html when clicking on Nof on the sidebar
 document.addEventListener('DOMContentLoaded', function() {
     // Find the "Nof" element in the sidebar
@@ -77,6 +91,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (scansBtn) {
         scansBtn.addEventListener('click', function() {
             window.location.href = 'post.html';
+        });
+    }
+});
+
+
+// go to gamme.html when clicking on Gamme on the sidebar
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the "gamme" element in the sidebar
+    const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
+        item.textContent.trim().toLowerCase().includes('gamme')
+    );
+    if (scansBtn) {
+        scansBtn.addEventListener('click', function() {
+            window.location.href = 'gamme.html';
         });
     }
 });
