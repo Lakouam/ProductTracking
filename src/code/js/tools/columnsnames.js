@@ -12,7 +12,7 @@ function columnName(name) {
         case 'post_actuel':
             return 'Poste actuel';
         case 'post_machine':
-            return 'Poste name';
+            return 'Nom du poste';
         case 'ref_gamme':
             return 'Reference gamme';
         case 'num_ope':
