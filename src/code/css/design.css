@@ -8,11 +8,10 @@
     --height-table_row: 63px;
 
     /* Background colors */
-    --background-body-postselect-menuitemhover-userbtn: #f9f6fa;
+    --background-body-postselect-menuitemhover-userbtn: #f7f7fc;
     --background-sidebar-table-filter-sort-head: #ffffff;
-    --background-button-logoname-buttonnoactivetext-buttonnoactivehover: #7d13e0;
-    --background-buttonhover: #9019ff;
-    --background-buttonnoactive: #f2e4f7;
+    --background-button-logoname-buttonnoactivetext-buttonnoactivehover: #7e58e6;
+    --background-buttonhover: #724ad6;
     --background-sidbar_border-table_distance: #edeef0;
 
 
