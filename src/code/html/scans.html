@@ -138,10 +138,7 @@
             <div class="main-toolbar-right">
                 <div class="main-toolbar-post">
                     <span class="main-toolbar-post-label">Poste:</span>
-                    <select class="main-toolbar-post-select">
-                        <option selected>Magasin</option>
-                        <option>Production</option>
-                        <option>Contrôle</option>
+                    <select class="main-toolbar-post-select" id="posteSelect">
                     </select>
                 </div>
                 <div class="main-toolbar-date">
@@ -195,6 +192,7 @@
     <script>
         const {ipcRenderer} = require('electron');
     </script>
+    <script src="../js/posteselect.js"></script>
     <script src="../js/scans.js"></script>
     <script src="../js/navigation.js"></script>
 </body>

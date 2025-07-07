@@ -250,7 +250,7 @@ function createWindow() {
                         
                         //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
-                            win.loadFile(appropriateFile(postName)); // load the appropriate file
+                            //win.loadFile(appropriateFile(postName)); // load the appropriate file
 
                             PageUI.enable(); // enable UI
 
