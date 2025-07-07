@@ -1,29 +1,14 @@
 // go to scans.html
-document.addEventListener('DOMContentLoaded', function() {
-    // Find the "Scans" button in the subtoolbar
-    const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
-        item.textContent.trim().toLowerCase().includes('scans')
-    );
-    if (scansBtn) {
-        scansBtn.addEventListener('click', function() {
-            window.location.href = 'scans.html';
-        });
-    }
-});
-
-
-
-// go to marque.html
 {
-    // When clicking on 'marque' button on the subtoolbar
+    // When clicking on 'scans' button on the subtoolbar
     document.addEventListener('DOMContentLoaded', function() {
-        // Find the "marque" button in the subtoolbar
+        // Find the "Scans" button in the subtoolbar
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
-            item.textContent.trim().toLowerCase().includes('marque')
+            item.textContent.trim().toLowerCase().includes('scans')
         );
         if (scansBtn) {
             scansBtn.addEventListener('click', function() {
-                window.location.href = 'marque.html';
+                window.location.href = 'scans.html';
             });
         }
     });
@@ -34,6 +19,24 @@ document.addEventListener('DOMContentLoaded', function() {
         // Find the "Nof" element in the sidebar
         const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
             item.textContent.trim().toLowerCase().includes('nof')
+        );
+        if (scansBtn) {
+            scansBtn.addEventListener('click', function() {
+                window.location.href = 'scans.html';
+            });
+        }
+    });
+}
+
+
+
+// go to marque.html
+{
+    // When clicking on 'marque' button on the subtoolbar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "marque" button in the subtoolbar
+        const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
+            item.textContent.trim().toLowerCase().includes('marque')
         );
         if (scansBtn) {
             scansBtn.addEventListener('click', function() {

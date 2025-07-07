@@ -41,7 +41,7 @@ function createWindow() {
     win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
 
     // load page.html in src/code/html
-    win.loadFile(path.join(__dirname, "src", "code", "html", "marque.html"));
+    win.loadFile(path.join(__dirname, "src", "code", "html", "scans.html"));
     //win.loadFile(path.join(__dirname, "src", "code", "test", "html", "show.html"));
 
 
