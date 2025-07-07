@@ -2,21 +2,23 @@ function columnName(name) {
 
     switch (name) {
         case 'nof':
-            return 'Numero of';
+            return 'Numéro O.F';
         case 'ref_produit':
-            return 'Reference produit';
+            return 'Référence produit';
         case 'qt':
             return 'Quantité totale';
         case 'qa':
             return 'Quantité actuelle';
         case 'post_actuel':
-            return 'Poste actuel';
+            return 'Poste';
+        case 'poste':
+            return 'Poste';
         case 'post_machine':
             return 'Nom du poste';
         case 'ref_gamme':
-            return 'Reference gamme';
+            return 'Gammes de fabrication';
         case 'num_ope':
-            return 'Numero d\'opération';
+            return 'Opération';
         case 'status_ligne':
             return 'Statut';
         case 'temps_debut':
