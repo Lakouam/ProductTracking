@@ -32,11 +32,11 @@
 
 // go to marque.html
 {
-    // When clicking on 'marque' button on the subtoolbar
+    // When clicking on 'nof' button on the subtoolbar
     document.addEventListener('DOMContentLoaded', function() {
-        // Find the "marque" button in the subtoolbar
+        // Find the "nof" button in the subtoolbar
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
-            item.textContent.trim().toLowerCase().includes('marque')
+            item.textContent.trim().toLowerCase().includes('nof')
         );
         if (scansBtn) {
             scansBtn.addEventListener('click', function() {
