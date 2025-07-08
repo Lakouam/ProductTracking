@@ -1,4 +1,4 @@
-const { show } = require('../../../ShowData.js');
+const { show } = require('../js/tools/ShowData.js');
 
 
 // write data in table
