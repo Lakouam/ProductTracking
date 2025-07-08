@@ -1,6 +1,7 @@
 :root {
     /* height */
-    --height-logo-userimg: 38px;
+    --height-logo: 38px;
+    --height-userimg: 38px;
     --height-menuitem: 47px;
     --height-scannerbtn: 56px;
     --height-subtoolbar_btn-subtoolbar_sort: 41px;
@@ -76,14 +77,15 @@ body {
 .sidebar-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
 }
 .sidebar-logo img {
-    width: var(--height-logo-userimg);
-    height: var(--height-logo-userimg);
+    width: var(--height-logo);
+    height: var(--height-logo);
     border-radius: 8px;
     background: var(--background-sidebar-table-filter-sort-head);
     object-fit: cover;
+    padding-top: 4px;
 }
 .sidebar-logo-name {
     font-size: 1.2em;
@@ -161,8 +163,8 @@ body {
     width: 100%;
 }
 .sidebar-user-img {
-    width: var(--height-logo-userimg);
-    height: var(--height-logo-userimg);
+    width: var(--height-userimg);
+    height: var(--height-userimg);
     border-radius: 50%;
     object-fit: cover;
     background: var(--background-sidebar-table-filter-sort-head);
