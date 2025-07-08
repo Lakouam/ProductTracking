@@ -20,7 +20,7 @@ function columnName(name) {
         case 'num_ope':
             return 'Opération';
         case 'status_ligne':
-            return 'Statut';
+            return 'Statut ligne';
         case 'temps_debut':
             return 'Temps de début';
         case 'temps_fin':

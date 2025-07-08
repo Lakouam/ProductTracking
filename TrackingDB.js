@@ -339,7 +339,7 @@ class TrackingDB {
     static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, marque.ref_produit, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire 
                         FROM scan 
                         INNER JOIN marque ON scan.nof = marque.nof
                         INNER JOIN gamme_operations 
@@ -348,7 +348,7 @@ class TrackingDB {
                         ORDER BY temps_debut DESC, scan.nof ASC, scan.num_ope ASC`;
 
         if (who === 'nof') // get data from marque (nof, ref_produit, qt, ref_gamme)
-            sql = `SELECT nof, ref_produit, qt, ref_gamme FROM marque`;
+            sql = `SELECT nof, ref_gamme, qt, ref_produit FROM marque`;
 
         if (who === 'post') // get data from gamme_operations (post_machine)
             sql = `SELECT DISTINCT post_machine FROM gamme_operations ORDER BY post_machine`;
@@ -371,7 +371,6 @@ class TrackingDB {
                     go.post_machine AS poste,
                     s.temps_debut,
                     s.temps_fin,
-                    m.ref_produit,
                     m.qt,
                     s.qa,
                     s.moy_temps_passer,
