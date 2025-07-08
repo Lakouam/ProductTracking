@@ -684,7 +684,7 @@ class TrackingDB {
         let rows = result.map(row => row.post_machine);
 
         // Add post Admin
-        rows.unshift("Admin");
+        //rows.unshift("Admin");
         
         return rows; // Resolve the promise with the data
         
