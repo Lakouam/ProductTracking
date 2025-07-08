@@ -30,12 +30,17 @@ function createWindow() {
 
         icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
         
+        show: false, // Don't show until maximized
+
         webPreferences: {
             // to use node in the render process (page.html)
             nodeIntegration: true,
             contextIsolation: false, 
         }
     });
+
+    win.maximize(); // Add this line to maximize the window
+    win.show();     // Now show the maximized window
 
 
     win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
