@@ -339,7 +339,7 @@ class TrackingDB {
     static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, qt, post_machine AS post_actuel, qa, moy_temps_passer, commentaire 
                         FROM scan 
                         INNER JOIN marque ON scan.nof = marque.nof
                         INNER JOIN gamme_operations 
@@ -363,6 +363,7 @@ class TrackingDB {
             sql = `
                 SELECT
                     m.nof,
+                    m.ref_gamme,
                     go.num_ope,
                     CASE
                         WHEN s.qa = m.qt THEN 'Soldee'
@@ -374,7 +375,6 @@ class TrackingDB {
                     m.qt,
                     s.qa,
                     s.moy_temps_passer,
-                    s.etat,
                     s.commentaire
                 FROM marque m
                 JOIN gamme_operations go ON go.ref_gamme = m.ref_gamme
