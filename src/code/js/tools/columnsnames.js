@@ -4,7 +4,7 @@ function columnName(name) {
         case 'nof':
             return 'Numéro O.F';
         case 'ref_produit':
-            return 'Référence produit';
+            return 'Brève référence du produit';
         case 'qt':
             return 'Quantité totale';
         case 'qa':
@@ -16,7 +16,7 @@ function columnName(name) {
         case 'post_machine':
             return 'Nom du poste';
         case 'ref_gamme':
-            return 'Gammes de fabrication';
+            return 'Référence produit';
         case 'num_ope':
             return 'Opération';
         case 'status_ligne':
