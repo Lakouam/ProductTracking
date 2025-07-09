@@ -54,7 +54,20 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
             for (let [name, cell] of Object.entries(row)) {
 
                 const td = document.createElement("td");
-                if (cell instanceof Date) 
+
+                // Special style for status_ligne column
+                if (name === "status_ligne") {
+                    td.classList.add("status-ligne");
+                    let badge = document.createElement("span");
+                    badge.classList.add("status-badge");
+                    badge.innerText = cell;
+                    if (cell === "Soldee") {
+                        td.classList.add("status-soldee");
+                    } else if (cell === "En cours") {
+                        td.classList.add("status-encours");
+                    }
+                    td.appendChild(badge);
+                } else if (cell instanceof Date) 
                     td.innerText = cell.toLocaleString(); // format the date
                 else td.innerText = cell;
                 tr.appendChild(td);

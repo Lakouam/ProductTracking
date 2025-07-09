@@ -417,3 +417,24 @@ body {
     border: none;
     background: var(--background-sidebar-table-filter-sort-head);
 }
+
+
+/* Status Ligne Styles */
+.status-ligne .status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.94em;
+    font-weight: 600;
+    background: #eee;
+    white-space: nowrap; /* Prevent line break */
+}
+
+.status-soldee .status-badge {
+    color: #219653;
+    background: #eafaf1;
+}
+.status-encours .status-badge {
+    color: #ddaf16;
+    background: #fff6e5;
+}
