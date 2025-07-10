@@ -1,4 +1,4 @@
-const { show } = require('../js/tools/ShowData.js');
+const { show } = require('../js/renderprocess/tools/ShowData.js');
 
 
 // write data in table
@@ -10,7 +10,7 @@ let fullData = null;
 // receiving Table Data columns and rows
 {
 
-    ipcRenderer.invoke('Table Data', 'gammes').then(data => {
+    ipcRenderer.invoke('Table Data', 'operations').then(data => {
 
         // store data in the page
         fullData = data;
@@ -24,18 +24,16 @@ let fullData = null;
 
 
 
+
 // receiving value of input in 'search' when the user click enter in the input
 {
     // click enter on input event
     document.getElementById("search").addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
+            // get nof value
+            const nof = document.getElementById("search").value;
 
-            event.preventDefault();
-
-            // get gamme value
-            const gamme = document.getElementById("search").value;
-
-            show(undefined, undefined, undefined, gamme);
+            show(nof);
 
         }
     });
