@@ -123,3 +123,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 }
+
+
+
+// go to scanner.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the "scanner" button in the subtoolbar
+    const scansBtn = Array.from(document.querySelectorAll('.sidebar-scanner-btn')).find(item =>
+        item.textContent.trim().toLowerCase().includes('scanner')
+    );
+    if (scansBtn) {
+        scansBtn.addEventListener('click', function() {
+            window.location.href = 'scanner.html';
+        });
+    }
+});
