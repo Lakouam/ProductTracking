@@ -438,3 +438,208 @@ body {
     color: #ddaf16;
     background: #fff6e5;
 }
+
+
+
+
+
+
+
+
+
+
+/* scan info  */
+.scan-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 540px;
+    margin: 40px auto 0 auto;
+}
+
+.scan-product-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(30,30,47,0.07);
+    padding: 28px 32px 18px 32px;
+    position: relative;
+    overflow: hidden;
+}
+.scan-product-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+.scan-product-shape {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #7e58e6 60%, #edeef0 100%);
+    border-radius: 16px 50% 50% 16px;
+    margin-right: 8px;
+}
+.scan-product-title {
+    font-size: 1.08em;
+    color: #888;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.scan-product-value {
+    font-size: 1.45em;
+    font-weight: 700;
+    color: #7e58e6;
+    letter-spacing: 1px;
+}
+.scan-product-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+}
+.scan-product-label {
+    color: #888;
+    font-size: 0.98em;
+    margin-right: 6px;
+}
+.scan-product-detail-value {
+    color: #23272f;
+    font-weight: 600;
+    font-size: 1.01em;
+}
+
+.scan-progress-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(30,30,47,0.07);
+    padding: 22px 32px 18px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.scan-progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.scan-progress-title {
+    color: #888;
+    font-size: 1.08em;
+    font-weight: 500;
+}
+.scan-progress-count {
+    color: #23272f;
+    font-weight: 600;
+    font-size: 1.08em;
+}
+.scan-progress-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: #edeef0;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    overflow: hidden;
+}
+.scan-progress-bar-fill {
+    height: 100%;
+    background-color: #43c97f;
+    border-radius: 6px;
+    transition: width 0.3s;
+}
+
+.scan-steps {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    justify-content: center;
+    margin-top: 8px;
+}
+.scan-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 110px;
+}
+.scan-step-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #d4d5d6;
+    color: #fff;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+.scan-step-complet {
+    background: #43c97f;
+}
+.scan-step-label {
+    font-size: 0.98em;
+    color: #888;
+    margin-bottom: 2px;
+}
+.scan-step-value {
+    color: #23272f;
+    min-height: 22px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.94em;
+    font-weight: 600;
+}
+.scan-step-value-complet {
+    color: #219653;
+    background: #eafaf1;
+}
+.scan-step-value-attente {
+    color: #ddaf16;
+    background: #fff6e5;
+}
+.scan-step-divider {
+    width: 36px;
+    height: 3px;
+    background: #edeef0;
+    border-radius: 2px;
+    margin-top: 10px;
+}
+
+.scan-input-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(30,30,47,0.07);
+    padding: 28px 32px 24px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.scan-input-label {
+    font-size: 1.08em;
+    color: #888;
+    margin-bottom: 8px;
+}
+.scan-input-field {
+    width: 100%;
+    max-width: 320px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: 1.5px solid #e0e3e7;
+    font-size: 1.08em;
+    background: #f7f7fc;
+    color: #23272f;
+    outline: none;
+    transition: border 0.18s;
+}
+.scan-input-field:focus {
+    border-color: #7e58e6;
+}
+.scan-error-message {
+    color: #d32f2f;
+    background: #fff0f0;
+    border: 1px solid #f8bcbc;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 0.98em;
+    margin-top: 6px;
+    display: block;
+}
