@@ -45,7 +45,6 @@ function createWindow() {
 
     // load page.html in src/code/html
     win.loadFile(path.join(__dirname, "src", "code", "html", "scans.html"));
-    //win.loadFile(path.join(__dirname, "src", "code", "test", "html", "show.html"));
 
 
     // when loading the page
@@ -217,7 +216,7 @@ function createWindow() {
 
 
 
-    // Post Render.js
+    // poste select.js
     {
 
         // receive data from Database
@@ -288,7 +287,7 @@ function createWindow() {
 
         // local storage JSON file (settings)
         {
-            // send the post Actuel to the render process (postRender.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
+            // send the post Actuel to the render process (posteselect.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
             ipcMain.handle('Post Actuel', async () => {
                 return {name: MyConfig.postActuel, isnull: (post.postActuel === null)};
             });
@@ -304,7 +303,7 @@ function createWindow() {
 
 
 
-    // page.js
+    // scanner.js
     {
 
 
@@ -314,7 +313,7 @@ function createWindow() {
         {
             // receive scan input data amd update it in the database
             {
-                // Read Scanner data that we send from the render process (page.html) (update it in the database)
+                // Read Scanner data that we send from the render process (scanner.html) (update it in the database)
                 ipcMain.on("Scan Input", async (event, data) => {
 
                     try {
@@ -404,7 +403,7 @@ function createWindow() {
 
 
 
-    // ShowData.js (page Admin.js & modifynof.js & modifypost.js & gammesrender.js)
+    // ShowData.js (page scans.js & marque.js & post.js & gamme.js & operations.js)
     {
         // receive data from Database
         {   
@@ -505,7 +504,7 @@ function createWindow() {
 
 
 
-    // dashboard.js
+    // navigation.js
     {
         // receive data from render process
         {
@@ -525,20 +524,10 @@ function createWindow() {
                 //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-operations'));
             });
         }
-    }
 
 
-
-
-
-    // navigation.js
-    {
         // receive data from render process
         {
-            ipcMain.on('open-dashboard', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-dashboard'));
-            });
-
             ipcMain.on('open-gammes', async (event, data) => {
                 //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
             });
@@ -547,7 +536,7 @@ function createWindow() {
 
 
 
-    // modifypost.js & modifynof.js
+    // post.js & marque.js
     {
         // receive data from render process
         {
