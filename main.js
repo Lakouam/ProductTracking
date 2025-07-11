@@ -6,15 +6,13 @@ const path = require('path');
 
 
 // import our classes
-const ScanData = require('./ScanData.js'); 
-const TrackingDB = require('./TrackingDB.js');
-const Post = require('./Post.js');
-const PageUI = require('./PageUI.js');
-const MyConfig = require('./MyConfig.js');
+const ScanData = require('./src/code/js/mainprocess/ScanData.js'); 
+const TrackingDB = require('./src/code/js/mainprocess/TrackingDB.js');
+const Post = require('./src/code/js/mainprocess/Post.js');
+const PageUI = require('./src/code/js/mainprocess/PageUI.js');
+const MyConfig = require('./src/code/js/mainprocess/MyConfig.js');
 
-const Gamme = require('./Gamme.js');
-
-const TextTocsv = require('./TextTocsv.js');
+const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
 
 
@@ -195,17 +193,6 @@ function createWindow() {
                     app.quit();
                 }
             }) ();
-            */
-            
-
-
-            // txt to csv
-            /*
-            {
-                const textfilePath = path.join(__dirname, "src", "texttocsv", "output.txt");
-                const csvFilePath = path.join(__dirname, "src", "texttocsv", "output.csv");
-                await TextTocsv.texttocsv(textfilePath, csvFilePath);
-            }
             */
 
 

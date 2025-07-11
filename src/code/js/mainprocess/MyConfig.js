@@ -7,7 +7,7 @@ const path = require('path');
 class MyConfig {
 
      // path to the config file
-    static configPath = path.join(__dirname, "src", "config", "config.json");
+    static configPath = path.join(__dirname, "..", "..", "..", "config", "config.json");
 
     // read the config file
     static config = this.loadConfig();
