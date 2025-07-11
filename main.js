@@ -41,7 +41,7 @@ function createWindow() {
     win.show();     // Now show the maximized window
 
 
-    win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
+    //win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
 
     // load page.html in src/code/html
     win.loadFile(path.join(__dirname, "src", "code", "html", "scans.html"));
@@ -464,7 +464,7 @@ function createWindow() {
 
             // open gammedetail.html
             ipcMain.on('open-gamme-detail', (event, gamme) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
             });
         }
     }
@@ -510,19 +510,19 @@ function createWindow() {
         // receive data from render process
         {
             ipcMain.on('open-show-data', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-data'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-data'));
             });
             ipcMain.on('open-modify-nof', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-nof'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-nof'));
             });
             ipcMain.on('open-modify-posts', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-posts'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-posts'));
             });
             ipcMain.on('open-show-gammes', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
             });
             ipcMain.on('open-show-operations', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-operations'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-operations'));
             });
         }
     }
@@ -536,11 +536,11 @@ function createWindow() {
         // receive data from render process
         {
             ipcMain.on('open-dashboard', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-dashboard'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-dashboard'));
             });
 
             ipcMain.on('open-gammes', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
             });
         }
     }
