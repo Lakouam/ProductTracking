@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <title>Product Tracking</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="page.css">
+        
+
+    </head>
+    <body>
+
+
+        <!-- The post that we currently in -->
+        <select id="postSelect">
+            <!--
+            <option value="Post 1">Post 1</option>
+            <option value="Post 2">Post 2</option>
+            <option value="Post 3">Post 3</option>
+            -->
+        </select>
+
+
+        <br>
+
+
+        <!-- a flex container to align element on the center -->
+        <div class = "flexContainerCenter">
+            <div class="flexContainerCenter width320">
+
+
+                <!-- Scan Input -->
+                <input type="text" id="scanInput" placeholder="Scan initial">
+
+                <div id="errorMessage" class="flexItemLeft"></div>
+
+                
+
+
+                <!-- Etat Input -->
+                <input type="checkbox" id="etatInput" class="flexItemRight">
+
+
+                
+
+
+                <!-- Comment Input -->
+                <input type="text" id="commentInput" placeholder="Commentaire" style="display:none;">
+
+
+            </div>
+        </div>
+
+        
+
+        
+
+        <!-- Javascript -->
+        <script>
+            const {ipcRenderer} = require('electron');
+        </script>
+        <script src="postRender.js"></script>
+        <script src="page.js"></script>
+        <script src="DisableUI.js"></script>
+
+
+    </body>
+</html>

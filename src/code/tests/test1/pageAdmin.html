@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+        <title>Product Tracking</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="page.css">
+
+        <link rel="stylesheet" href="navigation.css">
+
+
+    </head>
+    <body>
+
+        <div class="breadcrumb">
+            <a href="#" id="goDashboard" class="breadcrumb-link">Tableau de bord</a> &gt; Data
+        </div>
+
+
+        <!-- The post that we currently in -->
+        <select id="postSelect">
+            <!--
+            <option value="Post 1">Post 1</option>
+            <option value="Post 2">Post 2</option>
+            <option value="Post 3">Post 3</option>
+            -->
+        </select>
+
+
+        <br>
+
+
+
+        <!-- add inputs Numero O F, Post de charge -->
+        <div class = "flexContainerCenter">
+            <form id="selections" class="flexContainerCenter width320">
+                <label for="nof" class="flexItemLeft">Numero O F</label>
+                <input type="text" id="nof" name="nof">
+
+                <label for="postCharge" class="flexItemLeft">Post de charge</label>
+                <input type="text" id="postCharge" name="postCharge">
+            </form>
+        </div>
+
+
+
+
+        <br>
+
+
+
+        <!-- Output Data Table -->
+         <div id="outputData" class="tablesContainer">
+            <table id="dataTable">
+                <thead id="dataHead">
+                    <!-- we want columns to be inserted here dynamically -->
+                </thead>
+                <tbody id="dataBody">
+                    <!-- we want rows to be inserted here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+        
+
+
+        <!-- Javascript -->
+        <script>
+            const {ipcRenderer} = require('electron');
+        </script>
+        <script src="postRender.js"></script>
+        <script src="pageAdmin.js"></script>
+        <script src="navigation.js"></script>
+        <script src="DisableUI.js"></script>
+
+
+    </body>
+</html>
