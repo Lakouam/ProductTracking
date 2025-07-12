@@ -6,11 +6,8 @@
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
             item.textContent.trim().toLowerCase().includes('scans')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'scans.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-scans');
     });
 
 
@@ -20,11 +17,8 @@
         const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
             item.textContent.trim().toLowerCase().includes('nof')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'scans.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-scans');
     });
 }
 
@@ -38,11 +32,8 @@
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
             item.textContent.trim().toLowerCase().includes('nof')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'marque.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-nof');
     });
 }
 
@@ -54,11 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
         item.textContent.trim().toLowerCase().includes('operations')
     );
-    if (scansBtn) {
-        scansBtn.addEventListener('click', function() {
-            window.location.href = 'operations.html';
-        });
-    }
+    if (scansBtn) 
+        scansBtn.onclick = () => ipcRenderer.send('open-operations');
 });
 
 
@@ -70,11 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
             item.textContent.trim().toLowerCase().includes('post')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'post.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-post');
     });
 
 
@@ -84,11 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
             item.textContent.trim().toLowerCase().includes('post')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'post.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-post');
     });
 }
 
@@ -102,11 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
             item.textContent.trim().toLowerCase().includes('gamme')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'gamme.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-gamme');
     });
 
 
@@ -116,11 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
             item.textContent.trim().toLowerCase().includes('gamme')
         );
-        if (scansBtn) {
-            scansBtn.addEventListener('click', function() {
-                window.location.href = 'gamme.html';
-            });
-        }
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-gamme');
     });
 }
 
@@ -132,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const scansBtn = Array.from(document.querySelectorAll('.sidebar-scanner-btn')).find(item =>
         item.textContent.trim().toLowerCase().includes('scanner')
     );
-    if (scansBtn) {
-        scansBtn.addEventListener('click', function() {
-            window.location.href = 'scanner.html';
-        });
-    }
+    if (scansBtn) 
+        scansBtn.onclick = () => ipcRenderer.send('open-scanner');
 });

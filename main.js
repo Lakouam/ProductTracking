@@ -41,10 +41,7 @@ function createWindow() {
     win.show();     // Now show the maximized window
 
 
-    //win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
-
-    // load page.html in src/code/html
-    win.loadFile(path.join(__dirname, "src", "code", "html", "scans.html"));
+    win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
 
 
     // when loading the page
@@ -238,14 +235,10 @@ function createWindow() {
                         MyConfig.save(); // save the post actuel in the config file
 
                         post.fillFromDB(data); // fill the post with the data from the database
-                        
-                        //setTimeout(async function() { // to wait for one sec (For test: DB Delay)
 
-                            //win.loadFile(appropriateFile(postName)); // load the appropriate file
+                        win.reload();
 
-                            PageUI.enable(); // enable UI
-
-                        //}, 1000); // to wait for one sec
+                        PageUI.enable(); // enable UI
 
                     } catch (err) {
                         console.error("Database error in Post Select event:", err.message);
@@ -508,28 +501,23 @@ function createWindow() {
     {
         // receive data from render process
         {
-            ipcMain.on('open-show-data', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-data'));
+            ipcMain.on('open-scans', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scans'));
             });
-            ipcMain.on('open-modify-nof', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-nof'));
+            ipcMain.on('open-nof', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof'));
             });
-            ipcMain.on('open-modify-posts', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-modify-posts'));
+            ipcMain.on('open-post', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-post'));
             });
-            ipcMain.on('open-show-gammes', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+            ipcMain.on('open-gamme', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme'));
             });
-            ipcMain.on('open-show-operations', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-operations'));
+            ipcMain.on('open-operations', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-operations'));
             });
-        }
-
-
-        // receive data from render process
-        {
-            ipcMain.on('open-gammes', async (event, data) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-show-gammes'));
+            ipcMain.on('open-scanner', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scanner'));
             });
         }
     }
@@ -627,17 +615,15 @@ function openSettingsWindow() {
 // load the appropriate file
 function appropriateFile(postName, dashboard = "") {
     // what content that we want to load in this window
-    if(postName === "Admin") {
-        if (dashboard === 'open-show-data') return 'pageAdmin.html';
-        if (dashboard === 'open-dashboard') return 'dashboard.html';
-        if (dashboard === 'open-modify-nof') return 'modifynof.html';
-        if (dashboard === 'open-modify-posts') return 'modifypost.html';
-        if (dashboard === 'open-show-gammes') return 'gammes.html';
-        if (dashboard === 'open-gamme-detail') return 'gammedetail.html';
-        if (dashboard === 'open-show-operations') return 'operations.html';
-        return 'dashboard.html'; // load the dashboard page
-    }
-    else return 'page.html'; // load the page
+    
+    if (dashboard === 'open-scans') return 'src/code/html/scans.html';
+    if (dashboard === 'open-nof') return 'src/code/html/marque.html';
+    if (dashboard === 'open-post') return 'src/code/html/post.html';
+    if (dashboard === 'open-gamme') return 'src/code/html/gamme.html';
+    if (dashboard === 'open-gamme-detail') return 'src/code/html/gammedetail.html';
+    if (dashboard === 'open-operations') return 'src/code/html/operations.html';
+    if (dashboard === 'open-scanner') return 'src/code/html/scanner.html';
+    return 'src/code/html/scans.html'; // load the nof page by default
 }
 
 
