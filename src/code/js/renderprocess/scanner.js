@@ -2,9 +2,9 @@
 {
     // focus on scanInput when the page loads
     document.getElementById("scanInput").focus();
-    // focus on scanInput when the page is clicked execpt when we click on commentInput or posteSelect
+    // focus on scanInput when the page is clicked execpt when we click on search or commentInput or posteSelect
     document.addEventListener("click", function(event) {
-        if (event.target.id !== "commentInput" && event.target.id !== "posteSelect") {
+        if (event.target.id !== "search" && event.target.id !== "commentInput" && event.target.id !== "posteSelect") {
             document.getElementById("scanInput").focus();
         }
     });
