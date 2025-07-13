@@ -440,6 +440,12 @@ body {
 }
 
 
+/* remove row */
+.remove-row {
+    cursor: pointer;
+}
+
+
 
 
 

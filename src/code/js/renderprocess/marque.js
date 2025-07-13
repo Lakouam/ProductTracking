@@ -15,7 +15,7 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show();
+        show(undefined, undefined, {is: true, who: 'nof'});
         
             
     });
