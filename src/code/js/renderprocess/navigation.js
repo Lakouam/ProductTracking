@@ -98,6 +98,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-gamme');
     });
+
+
+    // When clicking on Gamme on the breadcrumb
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "gamme" element on the breadcrumb
+        const scansBtn = Array.from(document.querySelectorAll('.breadcrumb-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('gamme')
+        );
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-gamme');
+    });
 }
 
 

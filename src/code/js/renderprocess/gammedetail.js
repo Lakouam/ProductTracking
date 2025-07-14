@@ -13,8 +13,11 @@ let fullData = null;
 
 // fill the HTML element 'gammeRef' with the value of 'gamme' if it exists
 {
-    if (gamme) // Check if 'gamme' parameter exists
-        document.getElementById('gammeRef').textContent = gamme;
+    // fill all the HTML element '.gammeRef' with the value of 'gamme'
+    const gammeRefs = document.querySelectorAll('.gammeRef');
+    gammeRefs.forEach(element => {
+        element.textContent = gamme;
+    });
 }
 
 
