@@ -456,7 +456,7 @@ function createWindow() {
 
             // open gammedetail.html
             ipcMain.on('open-gamme-detail', (event, gamme) => {
-                //win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
             });
         }
     }
