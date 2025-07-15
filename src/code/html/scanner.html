@@ -165,21 +165,21 @@
                     <div class="scan-product-shape"></div>
                     <div>
                         <div class="scan-product-title">Numéro O.F</div>
-                        <div class="scan-product-value">2533024</div>
+                        <div id="scan-product-nof" class="scan-product-value">N/A</div>
                     </div>
                 </div>
                 <div class="scan-product-details">
                     <div>
                         <span class="scan-product-label">Référence produit</span>
-                        <span class="scan-product-detail-value">ABB645526R2500</span>
+                        <span id="scan-product-gamme" class="scan-product-detail-value">N/A</span>
                     </div>
                     <div>
                         <span class="scan-product-label">Opération</span>
-                        <span class="scan-product-detail-value">10</span>
+                        <span id="scan-product-operation" class="scan-product-detail-value">N/A</span>
                     </div>
                     <div>
                         <span class="scan-product-label">Poste</span>
-                        <span class="scan-product-detail-value">MAGASIN</span>
+                        <span id="scan-product-poste" class="scan-product-detail-value">N/A</span>
                     </div>
                 </div>
             </div>
@@ -188,22 +188,22 @@
             <div class="scan-progress-card">
                 <div class="scan-progress-header">
                     <span class="scan-progress-title">Progression du scan</span>
-                    <span class="scan-progress-count">7 / 20</span>
+                    <span class="scan-progress-count"><span id="scan-progress-qa">0</span> / <span id="scan-progress-qt">0</span></span>
                 </div>
                 <div class="scan-progress-bar-bg">
-                    <div class="scan-progress-bar-fill" style="width: 35%;"></div>
+                    <div class="scan-progress-bar-fill" style="width: 0%;"></div>
                 </div>
                 <div class="scan-steps">
                     <div class="scan-step">
-                        <div class="scan-step-circle scan-step-complet">&#9679;</div>
+                        <div id="scanInitialCircle" class="scan-step-circle">&#9679;</div>
                         <div class="scan-step-label">Scan initial</div>
-                        <div class="scan-step-value scan-step-value-complet" id="scanInitialValue">Complet</div>
+                        <div id="scanInitialValue" class="scan-step-value scan-step-value-attente">En attente...</div>
                     </div>
                     <div class="scan-step-divider"></div>
                     <div class="scan-step">
                         <div class="scan-step-circle">&#9679;</div>
                         <div class="scan-step-label">Scan final</div>
-                        <div class="scan-step-value scan-step-value-attente" id="scanFinalValue">En attente...</div>
+                        <div class="scan-step-value scan-step-value-attente">En attente...</div>
                     </div>
                 </div>
             </div>

@@ -549,7 +549,6 @@ body {
     height: 100%;
     background-color: #43c97f;
     border-radius: 6px;
-    transition: width 0.3s;
 }
 
 .scan-steps {

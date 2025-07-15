@@ -382,6 +382,15 @@ class TrackingDB {
                 ORDER BY m.nof, go.num_ope
             `;
 
+        if (who === 'scanner') // get data (nof, ref_gamme, num_ope, post_machine, qa, qt, scan_count) where post_machine = value && qt > qa
+            sql = `
+                SELECT m.nof, m.ref_gamme, go.num_ope, go.post_machine, s.qa, m.qt, s.scan_count
+                FROM scan s
+                INNER JOIN marque m ON s.nof = m.nof
+                INNER JOIN gamme_operations go ON s.num_ope = go.num_ope AND m.ref_gamme = go.ref_gamme
+                WHERE go.post_machine = ? AND m.qt > s.qa
+            `;
+
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
         console.log("Data retrieved from the database!");
