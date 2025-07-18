@@ -85,30 +85,17 @@ class TrackingDB {
 
 
 
-        // create table operation (num_ope)
-        let sqlOperation = `CREATE TABLE IF NOT EXISTS operation (
-            num_ope INT NOT NULL,
-            PRIMARY KEY (num_ope)
-        )`;
-
-        await this.queryAsync(sqlOperation);
-        console.log("Table operation created or already exists!");
-
-
-
-
-        // create table gamme_operations (ref_gamme, post_machine, num_ope)
-        let sqlGammeOperations = `CREATE TABLE IF NOT EXISTS gamme_operations (
+        // create table operation (ref_gamme, post_machine, num_ope)
+        let sqlGammeOperations = `CREATE TABLE IF NOT EXISTS operation (
             ref_gamme VARCHAR(255) NOT NULL,
             num_ope INT NOT NULL,
-            post_machine VARCHAR(255) NOT NULL,
+            poste_machine VARCHAR(255) NOT NULL,
             PRIMARY KEY (ref_gamme, num_ope),
-            FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme),
-            FOREIGN KEY (num_ope) REFERENCES operation(num_ope)
+            FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme)
         )`;
 
         await this.queryAsync(sqlGammeOperations);
-        console.log("Table gamme_operations created or already exists!");
+        console.log("Table operation created or already exists!");
 
 
 
@@ -132,6 +119,7 @@ class TrackingDB {
         // create table scan (nof, num_ope, qa, moytempspasser, etat, commentaire, tempsDebut, tempsFin, scanCount, tempsDernierScan)
         let sqlScan = `CREATE TABLE IF NOT EXISTS scan (
             nof VARCHAR(255) NOT NULL,
+            ref_gamme VARCHAR(255) NOT NULL,
             num_ope INT NOT NULL,
             qa INT NOT NULL,
             moy_temps_passer INT NOT NULL,
@@ -141,9 +129,9 @@ class TrackingDB {
             temps_fin DATETIME,
             scan_count INT NOT NULL,
             temps_dernier_scan DATETIME NOT NULL,
-            PRIMARY KEY (nof, num_ope),
+            PRIMARY KEY (nof, ref_gamme, num_ope),
             FOREIGN KEY (nof) REFERENCES marque(nof),
-            FOREIGN KEY (num_ope) REFERENCES operation(num_ope)
+            FOREIGN KEY (ref_gamme, num_ope) REFERENCES operation(ref_gamme, num_ope)
         )`;
 
         await this.queryAsync(sqlScan);
@@ -164,11 +152,6 @@ class TrackingDB {
         let sqlMarque = `DROP TABLE IF EXISTS marque`;
         await this.queryAsync(sqlMarque);
         console.log("Table marque dropped!");
-
-
-        let sqlGammeOperations = `DROP TABLE IF EXISTS gamme_operations`;
-        await this.queryAsync(sqlGammeOperations);
-        console.log("Table gamme_operations dropped!");
 
 
         let sqlOperation = `DROP TABLE IF EXISTS operation`;
@@ -199,15 +182,10 @@ class TrackingDB {
         //console.log("Post inserted into table post if not existed!");
         */
 
-        // insert operation into the table operation if it doesn't exist
-        let sqlOperation = `INSERT IGNORE INTO operation (num_ope) VALUES ?`;
-        await this.queryAsync(sqlOperation, operation);
-        //console.log("Operation inserted into table operation if not existed!");
-
 
         // insert ope into the table gamme_operations if it doesn't exist
-        let sqlGammeOperations = `INSERT IGNORE INTO gamme_operations (ref_gamme, num_ope, post_machine) VALUES ?`;
-        await this.queryAsync(sqlGammeOperations, gammeOperations);
+        let sqlOperation = `INSERT IGNORE INTO operation (ref_gamme, num_ope, poste_machine) VALUES ?`;
+        await this.queryAsync(sqlOperation, gammeOperations);
         //console.log("Ope inserted into table ope if not existed!");
     }
 
@@ -273,11 +251,6 @@ class TrackingDB {
         console.log("Table marque cleared!");
 
 
-        let sqlGammeOperations = `DELETE FROM gamme_operations`;
-        await this.queryAsync(sqlGammeOperations);
-        console.log("Table gamme_operations cleared!");
-
-
         let sqlOperation = `DELETE FROM operation`;
         await this.queryAsync(sqlOperation);
         console.log("Table operation cleared!");
@@ -339,37 +312,37 @@ class TrackingDB {
     static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, gamme_operations.ref_gamme, qt, post_machine AS post_actuel, qa, moy_temps_passer, commentaire 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, operation.ref_gamme, qt, poste_machine AS post_actuel, qa, moy_temps_passer, commentaire 
                         FROM scan 
                         INNER JOIN marque ON scan.nof = marque.nof
-                        INNER JOIN gamme_operations 
-                            ON scan.num_ope = gamme_operations.num_ope 
-                            AND marque.ref_gamme = gamme_operations.ref_gamme
+                        INNER JOIN operation
+                            ON scan.num_ope = operation.num_ope 
+                            AND marque.ref_gamme = operation.ref_gamme
                         ORDER BY temps_debut DESC, scan.nof ASC, scan.num_ope ASC`;
 
         if (who === 'nof') // get data from marque (nof, ref_produit, qt, ref_gamme)
             sql = `SELECT nof, ref_gamme, qt, ref_produit FROM marque`;
 
-        if (who === 'post') // get data from gamme_operations (post_machine)
-            sql = `SELECT DISTINCT post_machine FROM gamme_operations ORDER BY post_machine`;
+        if (who === 'post') // get data from operation (poste_machine)
+            sql = `SELECT DISTINCT poste_machine FROM operation ORDER BY poste_machine`;
 
         if (who === 'gammes') // get data from gamme (ref_gamme)
             sql = `SELECT ref_gamme FROM gamme`;
 
         if (who === 'gamme-detail') // get data from gamme_operations (num_ope, post_machine) where ref_gamme = value and sort by num_ope
-            sql = `SELECT num_ope, post_machine FROM gamme_operations WHERE ref_gamme = ? ORDER BY num_ope`;
+            sql = `SELECT num_ope, poste_machine FROM operation WHERE ref_gamme = ? ORDER BY num_ope`;
 
         if (who === 'operations') 
             sql = `
                 SELECT
                     m.nof,
                     m.ref_gamme,
-                    go.num_ope,
+                    o.num_ope,
                     CASE
                         WHEN s.qa = m.qt THEN 'Soldee'
                         ELSE 'En cours'
                     END AS status_ligne,
-                    go.post_machine AS poste,
+                    o.poste_machine AS poste,
                     s.temps_debut,
                     s.temps_fin,
                     m.qt,
@@ -377,18 +350,18 @@ class TrackingDB {
                     s.moy_temps_passer,
                     s.commentaire
                 FROM marque m
-                JOIN gamme_operations go ON go.ref_gamme = m.ref_gamme
-                LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = go.num_ope
-                ORDER BY m.nof, go.num_ope
+                JOIN operation o ON o.ref_gamme = m.ref_gamme
+                LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = o.num_ope
+                ORDER BY m.nof, o.num_ope
             `;
 
         if (who === 'scanner') // get data (nof, ref_gamme, num_ope, post_machine, qa, qt, scan_count) where post_machine = value && qt > qa
             sql = `
-                SELECT m.nof, m.ref_gamme, go.num_ope, go.post_machine, s.qa, m.qt, s.scan_count
+                SELECT m.nof, m.ref_gamme, o.num_ope, o.poste_machine, s.qa, m.qt, s.scan_count
                 FROM scan s
                 INNER JOIN marque m ON s.nof = m.nof
-                INNER JOIN gamme_operations go ON s.num_ope = go.num_ope AND m.ref_gamme = go.ref_gamme
-                WHERE go.post_machine = ? AND m.qt > s.qa
+                INNER JOIN operation o ON s.num_ope = o.num_ope AND m.ref_gamme = o.ref_gamme
+                WHERE o.poste_machine = ? AND m.qt > s.qa
             `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
@@ -413,13 +386,13 @@ class TrackingDB {
     // get Active row (qa < qt) of a post
     static async getActiveRow(post) {
 
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, post_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, poste_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan 
             FROM scan 
             INNER JOIN marque ON scan.nof = marque.nof
-            INNER JOIN gamme_operations 
-                ON scan.num_ope = gamme_operations.num_ope 
-                AND marque.ref_gamme = gamme_operations.ref_gamme
-            WHERE gamme_operations.post_machine = ? AND scan.qa < marque.qt
+            INNER JOIN operation 
+                ON scan.num_ope = operation.num_ope 
+                AND marque.ref_gamme = operation.ref_gamme
+            WHERE operation.poste_machine = ? AND scan.qa < marque.qt
         `;
         
         let [result, fields]  = await this.runQueryWithRetry(sql, [post]);
@@ -471,19 +444,19 @@ class TrackingDB {
 
         // Try to get the first not completed num_ope
         const sql = `
-            (SELECT go.num_ope
+            (SELECT o.num_ope
             FROM marque m
-            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
-            LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = go.num_ope
-            WHERE m.nof = ? AND go.post_machine = ? AND (s.qa IS NULL OR s.qa < m.qt)
-            ORDER BY go.num_ope ASC
+            INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+            LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = o.num_ope
+            WHERE m.nof = ? AND o.poste_machine = ? AND (s.qa IS NULL OR s.qa < m.qt)
+            ORDER BY o.num_ope ASC
             LIMIT 1)
             UNION ALL
-            (SELECT go.num_ope
+            (SELECT o.num_ope
             FROM marque m
-            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
-            WHERE m.nof = ? AND go.post_machine = ?
-            ORDER BY go.num_ope DESC
+            INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+            WHERE m.nof = ? AND o.poste_machine = ?
+            ORDER BY o.num_ope DESC
             LIMIT 1)
             LIMIT 1
         `;
@@ -540,8 +513,8 @@ class TrackingDB {
             SELECT s.*
             FROM scan s
             INNER JOIN marque m ON s.nof = m.nof
-            INNER JOIN gamme_operations go ON s.num_ope = go.num_ope AND m.ref_gamme = go.ref_gamme
-            WHERE s.nof = ? AND go.num_ope = ?
+            INNER JOIN operation o ON s.num_ope = o.num_ope AND m.ref_gamme = o.ref_gamme
+            WHERE s.nof = ? AND o.num_ope = ?
         `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [scan.nof, num_ope]);
@@ -593,8 +566,8 @@ class TrackingDB {
         let sqlCheckPost = `
             SELECT COUNT(*) AS count
             FROM marque m
-            INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
-            WHERE go.post_machine = ? AND m.ref_produit = ?
+            INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+            WHERE o.poste_machine = ? AND m.ref_produit = ?
         `;
         let [checkResult, fieldsCheck] = await this.runQueryWithRetry(sqlCheckPost, [post.postActuel, post.refProduit]);
         if (checkResult[0].count === 0) {
@@ -606,15 +579,16 @@ class TrackingDB {
 
         // num_ope that we want to scan
         let num_ope_to_scan = null;
+        let ref_gamme_to_scan = null;
 
         // check if the previous operation (num_ope just before the current one for the same gamme) is already present in the scan table for the same NOF.
         {
             // Step 1: Get current num_ope and ref_gamme for this postActuel/refProduit
             let sqlOpe = `
-                SELECT go.ref_gamme
+                SELECT o.ref_gamme
                 FROM marque m
-                INNER JOIN gamme_operations go ON m.ref_gamme = go.ref_gamme
-                WHERE go.post_machine = ? AND m.ref_produit = ?
+                INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+                WHERE o.poste_machine = ? AND m.ref_produit = ?
                 LIMIT 1
             `;
             let [opeRows] = await this.runQueryWithRetry(sqlOpe, [post.postActuel, post.refProduit]);
@@ -633,11 +607,12 @@ class TrackingDB {
             }
 
             num_ope_to_scan = num_ope; // to put it in the scan table
+            ref_gamme_to_scan = ref_gamme; // to put it in the scan table
 
             // Step 2: Find the previous num_ope for this gamme
             let sqlPrevNumOpe = `
-                SELECT num_ope, post_machine
-                FROM gamme_operations
+                SELECT num_ope, poste_machine
+                FROM operation
                 WHERE ref_gamme = ? AND num_ope < ?
                 ORDER BY num_ope DESC
                 LIMIT 1
@@ -662,9 +637,9 @@ class TrackingDB {
 
 
         // insert a row into the table scan
-        let sql = `INSERT INTO scan (nof, num_ope, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        let sql = `INSERT INTO scan (nof, ref_gamme, num_ope, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, num_ope_to_scan, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, ref_gamme_to_scan, num_ope_to_scan, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
         return {is: true}; // Return true if the insert was successful
@@ -683,14 +658,14 @@ class TrackingDB {
     // get the post name from the database
     static async getPostsName() {
 
-        let sql = `SELECT DISTINCT post_machine FROM gamme_operations ORDER BY post_machine`;
+        let sql = `SELECT DISTINCT poste_machine FROM operation ORDER BY poste_machine`;
 
         let [result, fields]  = await this.runQueryWithRetry(sql);
 
         console.log("Posts names retrieved from the database!");
 
         // Map the result to a one-dimensional array
-        let rows = result.map(row => row.post_machine);
+        let rows = result.map(row => row.poste_machine);
 
         // Add post Admin
         //rows.unshift("Admin");

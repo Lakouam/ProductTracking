@@ -13,7 +13,7 @@ function columnName(name) {
             return 'Poste';
         case 'poste':
             return 'Poste';
-        case 'post_machine':
+        case 'poste_machine':
             return 'Nom du poste';
         case 'ref_gamme':
             return 'Référence produit';
