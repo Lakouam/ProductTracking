@@ -15,7 +15,7 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show(undefined, undefined, {is: true, who: 'nof'});
+        show(undefined, undefined, {is: true, who: 'nof'}, undefined, undefined, true);
         
             
     });
@@ -33,7 +33,7 @@ let fullData = null;
             // get nof value
             const nof = document.getElementById("search").value;
 
-            show(nof);
+            show(nof, undefined, {is: true, who: 'nof'}, undefined, undefined, true);
 
         }
     });

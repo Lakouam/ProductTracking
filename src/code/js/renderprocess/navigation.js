@@ -35,6 +35,17 @@
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-nof');
     });
+
+
+    // When clicking on NOF on the breadcrumb
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "nof" element on the breadcrumb
+        const scansBtn = Array.from(document.querySelectorAll('.breadcrumb-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('nof')
+        );
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-nof');
+    });
 }
 
 

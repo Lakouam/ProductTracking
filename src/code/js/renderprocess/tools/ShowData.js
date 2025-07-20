@@ -1,7 +1,7 @@
 const { columnName } = require('./columnsnames.js');
 
 
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = false) {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = false, nof_detail = false) {
     
     // show columns in the table
     {
@@ -103,6 +103,15 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                 tr.onclick = () => {
                     // Open gammedetail.html, using ipcRenderer, passing the gamme info (e.g., row.ref_gamme):
                     ipcRenderer.send('open-gamme-detail', row["ref_gamme"]);
+                };
+            }
+
+            // nof detail
+            if (nof_detail) {
+                tr.style.cursor = "pointer";
+                tr.onclick = () => {
+                    // Open carte.html, using ipcRenderer, passing the nof info (e.g., row.nof):
+                    ipcRenderer.send('open-nof-detail', row["nof"]);
                 };
             }
 

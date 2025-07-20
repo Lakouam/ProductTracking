@@ -458,6 +458,13 @@ function createWindow() {
             ipcMain.on('open-gamme-detail', (event, gamme) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
             });
+
+
+
+            // open carte.html
+            ipcMain.on('open-nof-detail', (event, nof) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof-detail'), { query: { nof } });
+            });
         }
     }
 
@@ -623,6 +630,7 @@ function appropriateFile(postName, dashboard = "") {
     if (dashboard === 'open-gamme-detail') return 'src/code/html/gammedetail.html';
     if (dashboard === 'open-operations') return 'src/code/html/operations.html';
     if (dashboard === 'open-scanner') return 'src/code/html/scanner.html';
+    if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
     return 'src/code/html/scans.html'; // load the nof page by default
 }
 
