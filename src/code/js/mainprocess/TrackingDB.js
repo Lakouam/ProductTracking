@@ -137,12 +137,35 @@ class TrackingDB {
         await this.queryAsync(sqlScan);
         console.log("Table scan created or already exists!");
 
+
+
+
+        // create table carte (nof, n_serie, num_ope, temps_debut, temps_fin, commentaire, scan_count)
+        let sqlCarte = `CREATE TABLE IF NOT EXISTS carte (
+            nof VARCHAR(255) NOT NULL,
+            n_serie INT NOT NULL,
+            num_ope INT NOT NULL,
+            temps_debut DATETIME NOT NULL,
+            temps_fin DATETIME,
+            commentaire VARCHAR(255) NOT NULL,
+            scan_count INT NOT NULL,
+            PRIMARY KEY (nof, n_serie),
+            FOREIGN KEY (nof) REFERENCES marque(nof)
+        )`;
+
+        await this.queryAsync(sqlCarte);
+        console.log("Table carte created or already exists!");
+
         
     }
 
 
     // drop tables
     static async dropTables() {
+
+        let sqlCarte = `DROP TABLE IF EXISTS carte`;
+        await this.queryAsync(sqlCarte);
+        console.log("Table carte dropped!");
 
         let sqlScan = `DROP TABLE IF EXISTS scan`;
         await this.queryAsync(sqlScan);
@@ -239,6 +262,11 @@ class TrackingDB {
 
     // clear all the tables
     static async clearTables() {
+        
+        
+        let sqlCarte = `DELETE FROM carte`;
+        await this.queryAsync(sqlCarte);
+        console.log("Table carte cleared!");
 
 
         let sqlScan = `DELETE FROM scan`;
