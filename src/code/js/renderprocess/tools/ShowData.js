@@ -110,8 +110,8 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
             if (nof_detail) {
                 tr.style.cursor = "pointer";
                 tr.onclick = () => {
-                    // Open carte.html, using ipcRenderer, passing the nof info (e.g., row.nof):
-                    ipcRenderer.send('open-nof-detail', row["nof"]);
+                    // Open carte.html, using ipcRenderer, passing the nof info (e.g., row.nof, row.gamme, row.qt):
+                    ipcRenderer.send('open-nof-detail', row["nof"], row["ref_gamme"], row["qt"]);
                 };
             }
 

@@ -392,6 +392,9 @@ class TrackingDB {
                 WHERE o.poste_machine = ? AND m.qt > s.qa
             `;
 
+        if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
+            sql = `SELECT n_serie, num_ope, temps_debut, temps_fin, commentaire FROM carte WHERE nof = ? ORDER BY n_serie DESC`;
+
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
         console.log("Data retrieved from the database!");

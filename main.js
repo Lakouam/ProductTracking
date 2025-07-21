@@ -462,8 +462,8 @@ function createWindow() {
 
 
             // open carte.html
-            ipcMain.on('open-nof-detail', (event, nof) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof-detail'), { query: { nof } });
+            ipcMain.on('open-nof-detail', (event, nof, gamme, qt) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof-detail'), { query: { nof, gamme, qt } });
             });
         }
     }

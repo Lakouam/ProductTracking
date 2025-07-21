@@ -27,6 +27,8 @@ function columnName(name) {
             return 'Temps de fin';
         case 'moy_temps_passer':
             return 'Moyenne temps passé';
+        case 'n_serie':
+            return 'Numéro de série';
         default:
             return name;
     }
