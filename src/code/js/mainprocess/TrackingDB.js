@@ -144,8 +144,8 @@ class TrackingDB {
         let sqlCarte = `CREATE TABLE IF NOT EXISTS carte (
             nof VARCHAR(255) NOT NULL,
             n_serie INT NOT NULL,
-            num_ope INT NOT NULL,
-            temps_debut DATETIME NOT NULL,
+            num_ope INT,
+            temps_debut DATETIME,
             temps_fin DATETIME,
             commentaire VARCHAR(255) NOT NULL,
             scan_count INT NOT NULL,
@@ -393,7 +393,7 @@ class TrackingDB {
             `;
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
-            sql = `SELECT n_serie, num_ope, temps_debut, temps_fin, commentaire FROM carte WHERE nof = ? ORDER BY n_serie DESC`;
+            sql = `SELECT n_serie, num_ope, temps_debut, temps_fin, commentaire FROM carte WHERE nof = ?`;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
@@ -796,11 +796,30 @@ class TrackingDB {
         
         // Check if the insert was successful
         if (result && result.affectedRows > 0) {
+
+            await this.addCartes(nof, qt); // Add cartes for the new nof
+
             return true; // Nof added successfully
         } else {
             return false; // Nof already exists or failed to add
         }
         
+    }
+
+
+
+    // add cartes for the new nof
+    static async addCartes(nof, qt) {
+        // Insert cartes into the carte table for the new nof
+        let values = [];
+        for (let i = 1; i <= qt; i++) {
+            values.push([nof, i, null, null, null, '', 0]); // n_serie starts from 1 to qt
+        }
+
+        let sql = `INSERT INTO carte (nof, n_serie, num_ope, temps_debut, temps_fin, commentaire, scan_count) VALUES ?`;
+        let [result] = await this.runQueryWithRetry(sql, [values]);
+
+        console.log("Cartes added for nof: " + nof + ", " + result.affectedRows + " cartes inserted.");
     }
 
 
