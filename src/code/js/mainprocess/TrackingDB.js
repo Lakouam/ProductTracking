@@ -712,6 +712,9 @@ class TrackingDB {
             let sqlScan = `DELETE FROM scan WHERE nof = ?`;
             await this.runQueryWithRetry(sqlScan, [value]);
 
+            // Then, delete from carte table where nof = value
+            await this.removeCartes(value);
+
             // Then, delete from marque table where nof = value
             let sqlMarque = `DELETE FROM marque WHERE nof = ?`;
             let [result] = await this.runQueryWithRetry(sqlMarque, [value]);
@@ -745,6 +748,14 @@ class TrackingDB {
 
         return false;
         
+    }
+
+
+    // remove cartes for the nof
+    static async removeCartes(nof) {
+        // Delete cartes from the carte table where nof = value
+        let sql = `DELETE FROM carte WHERE nof = ?`;
+        let [result] = await this.runQueryWithRetry(sql, [nof]);
     }
 
 
