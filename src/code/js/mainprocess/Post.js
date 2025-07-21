@@ -18,6 +18,7 @@ class Post {
         this._moytempspasser = null;
         this._etat = null;
         this._commentaire = null;
+        this._nSerie = null;
 
 
         // can be updated, don't show in the UI
@@ -110,6 +111,14 @@ class Post {
             this._commentaire = value;
         }
 
+        // getter and setter for nSerie
+        get nSerie() {
+            return this._nSerie;
+        }
+        set nSerie(value) {
+            this._nSerie = value;
+        }
+
         // getter and setter for scanCount
         get scanCount() {
             return this._scanCount;
@@ -154,6 +163,7 @@ class Post {
             this.moytempspasser = null;
             this.etat = null;
             this.commentaire = null;
+            this.nSerie = null;
             this.scanCount = null;
             this.tempsDernierScan = null;
         }
@@ -195,6 +205,10 @@ class Post {
             this.commentaire += value // update the commentaire value
         }
 
+        nSerieUpdate(value) {
+            this.nSerie = value; // set the nSerie to the current value
+        }
+
         // update setter for scanCount
         scanCountUpdate() {
             if (this.scanCount < this.qt * 2)
@@ -211,6 +225,7 @@ class Post {
             this.moytempspasserUpdate(scan.tempsActuel);
             this.etatUpdate(scan.etat);
             this.commentaireUpdate(scan.commentaire);
+            this.nSerieUpdate(scan.n_serie);
 
             this.scanCountUpdate();
             this.qaUpdate();
@@ -243,6 +258,7 @@ class Post {
         this.moytempspasser = row.moy_temps_passer;
         this.etat = row.etat;
         this.commentaire = row.commentaire;
+        this.nSerie = null; // set nSerie to null, it will be filled later if needed
         this.scanCount = row.scan_count;
         this.tempsDernierScan = row.temps_dernier_scan;
     }
@@ -257,6 +273,7 @@ class Post {
         this.moytempspasser = 0;
         this.etat = scan.etat;
         this.commentaire = scan.commentaire;
+        this.nSerie = scan.n_serie;
 
         this.tempsDebut = scan.tempsActuel;
         this.tempsFin = null;

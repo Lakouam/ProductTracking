@@ -143,7 +143,7 @@ class TrackingDB {
         // create table carte (nof, n_serie, num_ope, temps_debut, temps_fin, commentaire, scan_count)
         let sqlCarte = `CREATE TABLE IF NOT EXISTS carte (
             nof VARCHAR(255) NOT NULL,
-            n_serie INT NOT NULL,
+            n_serie VARCHAR(255) NOT NULL,
             num_ope INT,
             temps_debut DATETIME,
             temps_fin DATETIME,
@@ -529,6 +529,9 @@ class TrackingDB {
         let [result, fields]  = await this.runQueryWithRetry(sql, [post.moytempspasser, post.etat, post.commentaire, post.scanCount, post.qa, post.tempsFin, post.tempsDernierScan, post.nof, num_ope]);
 
         console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
+
+        this.updateCarte(post, num_ope); // Update the carte table with the updated scan
+
         return result; 
 
     }
@@ -673,7 +676,42 @@ class TrackingDB {
         let [result, fields]  = await this.runQueryWithRetry(sql, [post.nof, ref_gamme_to_scan, num_ope_to_scan, post.qa, post.moytempspasser, post.etat, post.commentaire, post.tempsDebut, post.tempsFin, post.scanCount, post.tempsDernierScan]);
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
+
+        this.updateCarte(post, num_ope_to_scan); // Update the carte table with the new scan
+
         return {is: true}; // Return true if the insert was successful
+
+    }
+
+
+    // update a carte
+    static async updateCarte(post, num_ope) {
+
+        // get carte scan_count and num_ope
+        let sqlGetScanCount = `SELECT scan_count, num_ope FROM carte WHERE nof = ? AND n_serie = ?`;
+        let [scanCountRows] = await this.runQueryWithRetry(sqlGetScanCount, [post.nof, post.nSerie]);
+
+        // If carte found, update it
+        if (scanCountRows.length) {
+            let currentScanCount = scanCountRows[0].scan_count;
+            let current_num_ope = scanCountRows[0].num_ope;
+
+            // update the carte
+            if (current_num_ope !== num_ope) { // If num_ope is different
+                let sqlUpdateCarte = `UPDATE carte SET num_ope = ?, temps_debut = ?, temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
+                let valuesUpdateCarte = [num_ope, post.tempsDernierScan, null, '', 1, post.nof, post.nSerie];
+
+                let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
+                console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+            } else if (currentScanCount === 1) { // If scan_count is 1
+                let sqlUpdateCarte = `UPDATE carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
+                let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie];
+
+                let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
+                console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+            }
+            
+        }
 
     }
 
@@ -824,7 +862,9 @@ class TrackingDB {
         // Insert cartes into the carte table for the new nof
         let values = [];
         for (let i = 1; i <= qt; i++) {
-            values.push([nof, i, null, null, null, '', 0]); // n_serie starts from 1 to qt
+            // n_serie is a string of lenght 4 (ex: 0001)
+            let n_serie = String(i).padStart(4, '0'); // Pad with leading zeros to make it 4 digits
+            values.push([nof, n_serie, null, null, null, '', 0]); // n_serie starts from 1 to qt
         }
 
         let sql = `INSERT INTO carte (nof, n_serie, num_ope, temps_debut, temps_fin, commentaire, scan_count) VALUES ?`;
