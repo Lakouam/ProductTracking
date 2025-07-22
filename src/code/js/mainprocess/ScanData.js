@@ -94,7 +94,7 @@ class ScanData {
 
     // return and error message if the scan is not valid
     errorMessage(){
-        let message = "La syntaxe du scan est incorrecte";
+        let message = "La syntaxe du scan est incorrecte.";
         return message;
     }
 

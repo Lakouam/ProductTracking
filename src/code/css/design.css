@@ -638,6 +638,7 @@ body {
 .scan-input-field:focus {
     border-color: #7e58e6;
 }
+/*
 .scan-error-message {
     color: #d32f2f;
     background: #fff0f0;
@@ -648,7 +649,23 @@ body {
     margin-top: 6px;
     display: block;
 }
-
+*/
+.scan-error-message-bottom {
+    position: fixed;
+    left: 300px; /* width of your sidebar */
+    bottom: 0;
+    width: calc(100vw - 300px); /* full width minus sidebar */
+    padding: 10px 18px;
+    background: #ff2929;
+    border-radius: 4px 4px 0 0 ;
+    color: #f8f8f8;
+    font-weight: 550;
+    font-size: 1.00em;
+    box-shadow: 0 -2px 12px rgba(211,47,47,0.08);
+    letter-spacing: 0.5px;
+    margin: 0;
+    z-index: 9999;
+}
 
 
 
@@ -687,3 +704,4 @@ body {
     color: #bbb;
     font-weight: 400;
 }
+
