@@ -290,6 +290,12 @@ class Post {
         let scanRejected = true; // true if the scan is rejected
         let errorMessage = ""; // error message
 
+
+        let data = await TrackingDB.getActiveRow(this.postActuel); // get the active row from the database
+        this.fillFromDB(data); // fill the post with the data from the database
+
+
+
         if(!this.isEmpty()) { // if the post is not empty
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
