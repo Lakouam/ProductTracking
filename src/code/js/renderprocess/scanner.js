@@ -81,7 +81,7 @@
                 document.getElementById("scan-product-nof").textContent = data.rows[0].nof;
                 document.getElementById("scan-product-gamme").textContent = data.rows[0].ref_gamme;
                 document.getElementById("scan-product-operation").textContent = data.rows[0].num_ope;
-                document.getElementById("scan-product-poste").textContent = data.rows[0].post_machine;
+                document.getElementById("scan-product-poste").textContent = data.rows[0].poste_machine;
                 document.getElementById("scan-progress-qa").textContent = data.rows[0].qa;
                 document.getElementById("scan-progress-qt").textContent = data.rows[0].qt;
 
