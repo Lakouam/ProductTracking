@@ -29,6 +29,10 @@ function columnName(name) {
             return 'Moyenne temps passé';
         case 'n_serie':
             return 'Numéro de série';
+        case 'temps_prevu':
+            return 'Temps prévu';
+        case 'tps_oper':
+            return 'Temps opération';
         default:
             return name;
     }

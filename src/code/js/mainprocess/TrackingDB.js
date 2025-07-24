@@ -359,7 +359,7 @@ class TrackingDB {
             sql = `SELECT ref_gamme FROM gamme`;
 
         if (who === 'gamme-detail') // get data from gamme_operations (num_ope, post_machine) where ref_gamme = value and sort by num_ope
-            sql = `SELECT num_ope, poste_machine FROM operation WHERE ref_gamme = ? ORDER BY num_ope`;
+            sql = `SELECT num_ope, poste_machine, tps_oper FROM operation WHERE ref_gamme = ? ORDER BY num_ope`;
 
         if (who === 'operations') 
             sql = `
@@ -374,6 +374,11 @@ class TrackingDB {
                     o.poste_machine AS poste,
                     s.temps_debut,
                     s.temps_fin,
+                    CASE 
+                        WHEN s.temps_debut IS NOT NULL AND o.tps_oper > 0 THEN
+                            DATE_ADD(s.temps_debut, INTERVAL (o.tps_oper * m.qt * 3600) SECOND)
+                        ELSE NULL
+                    END AS temps_prevu,
                     m.qt,
                     s.qa,
                     s.moy_temps_passer,
