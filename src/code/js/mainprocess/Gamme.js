@@ -24,6 +24,16 @@ class Gamme {
             // column 1 is 'Gammes de fabrication' and column 2 is 'Gammes'
 
             if (nbRows < 3) continue; // skip second row in excel
+
+            // to identify columns
+            /*
+            if (nbRows === 11) {
+                // show the name and value of each column in this row (name: value)
+                for (const key in row) {
+                    console.log(`${key}: ${row[key]}`);
+                }
+            }
+            */
             
             // if the first column is not a number, it is a new gamme (send the gamme precedent to the database) (the last gamme is sent from here because the last row in excel column 1 is 'Page -1 sur 1')
             if (isNaN(row['Gammes de fabrication'])) {
@@ -57,8 +67,8 @@ class Gamme {
                 // add column 2 to post
                 post.push([row['Gammes']]);
 
-                // add [gamme[0][0], column 1, column 2] to ope
-                ope.push([gamme[0][0], row['Gammes de fabrication'], row['Gammes']]);
+                // add [gamme[0][0], column 1, column 2, column 6] to ope
+                ope.push([gamme[0][0], row['Gammes de fabrication'], row['Gammes'], row['71']]);
 
                 // add column 1 to operation
                 operation.push([row['Gammes de fabrication']]);

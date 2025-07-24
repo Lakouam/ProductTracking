@@ -85,11 +85,12 @@ class TrackingDB {
 
 
 
-        // create table operation (ref_gamme, post_machine, num_ope)
+        // create table operation (ref_gamme, num_ope, poste_machine, tps_oper (ex: 0.0002))
         let sqlGammeOperations = `CREATE TABLE IF NOT EXISTS operation (
             ref_gamme VARCHAR(255) NOT NULL,
             num_ope INT NOT NULL,
             poste_machine VARCHAR(255) NOT NULL,
+            tps_oper FLOAT NOT NULL,
             PRIMARY KEY (ref_gamme, num_ope),
             FOREIGN KEY (ref_gamme) REFERENCES gamme(ref_gamme)
         )`;
@@ -207,7 +208,7 @@ class TrackingDB {
 
 
         // insert ope into the table gamme_operations if it doesn't exist
-        let sqlOperation = `INSERT IGNORE INTO operation (ref_gamme, num_ope, poste_machine) VALUES ?`;
+        let sqlOperation = `INSERT IGNORE INTO operation (ref_gamme, num_ope, poste_machine, tps_oper) VALUES ?`;
         await this.queryAsync(sqlOperation, gammeOperations);
         //console.log("Ope inserted into table ope if not existed!");
     }
