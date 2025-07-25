@@ -23,7 +23,10 @@ let fullData = null;
         // set the input value to the shared 'nof'
         document.getElementById("search").value = sharedNof;
 
-        show(sharedNof);
+        if (sharedNof === "") 
+            show(" "); // Show only the columns
+        else 
+            show(sharedNof);
         
             
     });
@@ -44,7 +47,11 @@ let fullData = null;
             // Save the value in localStorage
             localStorage.setItem('shared_nof', nof);
 
-            show(nof);
+
+            if (nof === "") 
+                show(" "); // Show only the columns
+            else 
+                show(nof);
 
         }
     });
