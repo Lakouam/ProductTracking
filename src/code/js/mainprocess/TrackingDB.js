@@ -341,7 +341,7 @@ class TrackingDB {
     static async getData(who, value) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
-        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, operation.ref_gamme, qt, poste_machine AS post_actuel, qa, moy_temps_passer, commentaire 
+        let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, operation.ref_gamme, qt, poste_machine AS post_actuel, qa, moy_temps_passer / 60 AS moy_temps_passer, commentaire 
                         FROM scan 
                         INNER JOIN marque ON scan.nof = marque.nof
                         INNER JOIN operation
@@ -381,7 +381,7 @@ class TrackingDB {
                     END AS temps_prevu,
                     m.qt,
                     s.qa,
-                    s.moy_temps_passer,
+                    s.moy_temps_passer / 60 AS moy_temps_passer,
                     s.commentaire
                 FROM marque m
                 JOIN operation o ON o.ref_gamme = m.ref_gamme
