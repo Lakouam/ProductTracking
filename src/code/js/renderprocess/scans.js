@@ -15,7 +15,15 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show();
+        // Retrieve the shared 'nof' value from localStorage
+        let sharedNof = localStorage.getItem('shared_nof');
+        if (sharedNof === null) 
+            sharedNof = "";
+
+        // set the input value to the shared 'nof'
+        document.getElementById("search").value = sharedNof;
+
+        show(sharedNof);
         
             
     });
@@ -32,6 +40,9 @@ let fullData = null;
         if (event.key === "Enter") {
             // get nof value
             const nof = document.getElementById("search").value;
+
+            // Save the value in localStorage
+            localStorage.setItem('shared_nof', nof);
 
             show(nof);
 
