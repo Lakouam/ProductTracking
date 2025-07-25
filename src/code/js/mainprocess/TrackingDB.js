@@ -400,7 +400,12 @@ class TrackingDB {
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
             sql = `
-                SELECT n_serie, num_ope, temps_debut, temps_fin,
+                SELECT n_serie, num_ope, 
+                CASE 
+                    WHEN scan_count = 1 THEN 'En cours'
+                    WHEN scan_count = 0 OR scan_count = 2 THEN 'En attente'
+                END AS statut,
+                temps_debut, temps_fin,
                 CASE 
                     WHEN temps_fin IS NULL THEN NULL
                     WHEN scan_count = 1 THEN TIMESTAMPDIFF(SECOND, temps_fin, temps_debut) / 60

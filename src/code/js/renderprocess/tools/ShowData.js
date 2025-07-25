@@ -67,6 +67,17 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                         td.classList.add("status-encours");
                     }
                     td.appendChild(badge);
+                } else if (name === "statut") { // Special style for statut column
+                    td.classList.add("status-ligne");
+                    let badge = document.createElement("span");
+                    badge.classList.add("status-badge");
+                    badge.innerText = cell;
+                    if (cell === "En cours") {
+                        td.classList.add("status-soldee");
+                    } else if (cell === "En attente") {
+                        td.classList.add("status-encours");
+                    }
+                    td.appendChild(badge);
                 } else if (cell instanceof Date) 
                     td.innerText = cell.toLocaleString(); // format the date
                 else td.innerText = cell;

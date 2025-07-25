@@ -35,6 +35,8 @@ function columnName(name) {
             return 'Temps opération';
         case 'temps_realise':
             return 'Temps réalisé (min)';
+        case 'statut':
+            return 'Statut';
         default:
             return name;
     }
