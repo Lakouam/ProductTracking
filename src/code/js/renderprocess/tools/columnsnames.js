@@ -33,6 +33,8 @@ function columnName(name) {
             return 'Temps prévu';
         case 'tps_oper':
             return 'Temps opération';
+        case 'temps_realise':
+            return 'Temps réalisé (min)';
         default:
             return name;
     }

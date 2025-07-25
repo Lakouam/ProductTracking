@@ -399,7 +399,18 @@ class TrackingDB {
             `;
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
-            sql = `SELECT n_serie, num_ope, temps_debut, temps_fin, commentaire FROM carte WHERE nof = ?`;
+            sql = `
+                SELECT n_serie, num_ope, temps_debut, temps_fin,
+                CASE 
+                    WHEN temps_fin IS NULL THEN NULL
+                    WHEN scan_count = 1 THEN TIMESTAMPDIFF(SECOND, temps_fin, temps_debut) / 60
+                    WHEN scan_count = 2 THEN TIMESTAMPDIFF(SECOND, temps_debut, temps_fin) / 60
+                    ELSE NULL
+                END AS temps_realise,
+                commentaire
+                FROM carte 
+                WHERE nof = ?
+            `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
 
@@ -704,8 +715,8 @@ class TrackingDB {
 
             // update the carte
             if (current_num_ope !== num_ope) { // If num_ope is different
-                let sqlUpdateCarte = `UPDATE carte SET num_ope = ?, temps_debut = ?, temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
-                let valuesUpdateCarte = [num_ope, post.tempsDernierScan, null, '', 1, post.nof, post.nSerie];
+                let sqlUpdateCarte = `UPDATE carte SET num_ope = ?, temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
+                let valuesUpdateCarte = [num_ope, post.tempsDernierScan, '', 1, post.nof, post.nSerie];
 
                 let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
                 console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
