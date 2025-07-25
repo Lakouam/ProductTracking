@@ -15,7 +15,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Find the "Nof" element in the sidebar
         const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
-            item.textContent.trim().toLowerCase().includes('nof')
+            item.textContent.trim().toLowerCase().includes('n° of')
         );
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-scans');
@@ -30,7 +30,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Find the "nof" button in the subtoolbar
         const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
-            item.textContent.trim().toLowerCase().includes('nof')
+            item.textContent.trim().toLowerCase().includes('n° of')
         );
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-nof');
@@ -41,7 +41,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         // Find the "nof" element on the breadcrumb
         const scansBtn = Array.from(document.querySelectorAll('.breadcrumb-item')).find(item =>
-            item.textContent.trim().toLowerCase().includes('nof')
+            item.textContent.trim().toLowerCase().includes('n° of')
         );
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-nof');
