@@ -300,8 +300,26 @@ class Post {
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
                     this.allUpdate(scan); // update all the variables (that can be updated)
-                    await TrackingDB.updateScan(this); // update the scan in the database
-                    scanRejected = false;
+                    const ScanUpdated = await TrackingDB.updateScan(this); // update the scan in the database
+
+                    if (ScanUpdated.is) // if the scan is updated in the database
+                        scanRejected = false;
+                    else { // error messages
+                        if (ScanUpdated.why === "Carte not completed yet") // updateCarte function
+                            errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanUpdated.ope + " ».";
+                        else if (ScanUpdated.why === "Next operation does not match current num_ope") // updateCarte function
+                            errorMessage = "La carte doit être scannée à l’opération « " + ScanUpdated.ope + " ».";
+                        else if (ScanUpdated.why === "Carte completed") // updateCarte function
+                            errorMessage = "La carte est déjà terminée.";
+                        else if (ScanUpdated.why === "Already scanned twice") // updateCarte function
+                            errorMessage = "La carte a déjà été scannée deux fois.";
+                        else if (ScanUpdated.why === "Carte not found") // updateCarte function
+                            errorMessage = "La carte n’existe pas dans la base de données.";
+                        else if (ScanUpdated.why === "Unknown error") // updateCarte function
+                            errorMessage = "";
+
+                        this.clear(); // clear the post if the update failed
+                    }
                 }
             }
             else {
@@ -323,8 +341,23 @@ class Post {
                         scanRejected = false;
                     }
                     else {
-                        if (ScanInserted.prevOpe === undefined) errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
-                        else errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
+
+                        if (ScanInserted.why === "Carte not completed yet") // updateCarte function
+                            errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanInserted.ope + " ».";
+                        else if (ScanInserted.why === "Next operation does not match current num_ope") // updateCarte function
+                            errorMessage = "La carte doit être scannée à l’opération « " + ScanInserted.ope + " ».";
+                        else if (ScanInserted.why === "Carte completed") // updateCarte function
+                            errorMessage = "La carte est déjà terminée.";
+                        else if (ScanInserted.why === "Already scanned twice") // updateCarte function
+                            errorMessage = "La carte a déjà été scannée deux fois.";
+                        else if (ScanInserted.why === "Carte not found") // updateCarte function
+                            errorMessage = "La carte n’existe pas dans la base de données.";
+                        else if (ScanInserted.why === "Unknown error") // updateCarte function
+                            errorMessage = "";
+                        else if (ScanInserted.prevOpe === undefined) // insertScan function
+                            errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
+                        else // insertScan function
+                            errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
                         this.clear(); // clear the post if the insertion failed
                     }
                 }
@@ -339,8 +372,24 @@ class Post {
                             scanRejected = false;
                         }
                         else {
-                            if (ScanInserted.prevOpe === undefined) errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`; // error message
-                            else errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
+                            
+                            if (ScanInserted.why === "Carte not completed yet") // updateCarte function
+                                errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanInserted.ope + " ».";
+                            else if (ScanInserted.why === "Next operation does not match current num_ope") // updateCarte function
+                                errorMessage = "La carte doit être scannée à l’opération « " + ScanInserted.ope + " ».";
+                            else if (ScanInserted.why === "Carte completed") // updateCarte function
+                                errorMessage = "La carte est déjà terminée.";
+                            else if (ScanInserted.why === "Already scanned twice") // updateCarte function
+                                errorMessage = "La carte a déjà été scannée deux fois.";
+                            else if (ScanInserted.why === "Carte not found") // updateCarte function
+                                errorMessage = "La carte n’existe pas dans la base de données.";
+                            else if (ScanInserted.why === "Unknown error") // updateCarte function
+                                errorMessage = "";
+                            else if (ScanInserted.prevOpe === undefined) // insertScan function
+                                errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`;
+                            else // insertScan function
+                                errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
+                            
                             this.clear(); // clear the post if the insertion failed
                         }
                     }

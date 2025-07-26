@@ -525,6 +525,13 @@ class TrackingDB {
 
     // update the table scan by a post
     static async updateScan(post) {
+        
+        const carteUpdated = await this.updateCarte(post); // Update the carte table with the updated scan
+        if (!carteUpdated.is) {
+            console.log("Failed to update carte table for post: " + post.postActuel + ", the carteUpdated object: ", carteUpdated);
+            return carteUpdated; // If the carte update failed, return false
+        }
+
         // update moytempspasser, etat, commentaire, scanCount, qa, tempsFin, tempsDernierScan of the row where nof = post.nof and postActuel = post.postActuel
         
         // Get num_ope for this nof and postActuel (post_machine)
@@ -552,9 +559,7 @@ class TrackingDB {
 
         console.log("Table scan updated!: " + result.affectedRows + " row(s) updated");
 
-        this.updateCarte(post, num_ope); // Update the carte table with the updated scan
-
-        return result; 
+        return {is: true}; // Return true if the update was successful
 
     }
 
@@ -633,6 +638,11 @@ class TrackingDB {
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
 
+        const carteUpdate = await this.updateCarte(post); // Update the carte table with the new scan
+        if (!carteUpdate.is)
+            return carteUpdate; // If the carte update failed, return false
+
+
         // num_ope that we want to scan
         let num_ope_to_scan = null;
         let ref_gamme_to_scan = null;
@@ -699,15 +709,15 @@ class TrackingDB {
                             
         console.log("Table scan inserted!: " + result.affectedRows + " row(s) inserted");
 
-        this.updateCarte(post, num_ope_to_scan); // Update the carte table with the new scan
-
         return {is: true}; // Return true if the insert was successful
 
     }
 
 
     // update a carte
-    static async updateCarte(post, num_ope) {
+    static async updateCarte(post) {
+
+        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
 
         // get carte scan_count and num_ope
         let sqlGetScanCount = `SELECT scan_count, num_ope FROM carte WHERE nof = ? AND n_serie = ?`;
@@ -717,23 +727,72 @@ class TrackingDB {
         if (scanCountRows.length) {
             let currentScanCount = scanCountRows[0].scan_count;
             let current_num_ope = scanCountRows[0].num_ope;
+            if (current_num_ope === null) 
+                current_num_ope = 0; // If num_ope is null, set it to 0
+
 
             // update the carte
             if (current_num_ope !== num_ope) { // If num_ope is different
+
+                // if scan_count is 1, return false
+                if (currentScanCount === 1) 
+                    return {is: false, why: "Carte not completed yet", ope: current_num_ope}; // Carte not completed yet, return false
+
+                // check if the next operation (num_ope just after the current one for the same gamme) is the same as num_ope
+                {
+                    // Get the next num_ope for this gamme
+                    let sqlNextNumOpe = `
+                        SELECT num_ope, poste_machine
+                        FROM operation
+                        WHERE ref_gamme = (SELECT ref_gamme FROM marque WHERE nof = ?)
+                        AND num_ope > ?
+                        ORDER BY num_ope ASC
+                        LIMIT 1
+                    `;
+
+                    let [nextOpeRows] = await this.runQueryWithRetry(sqlNextNumOpe, [post.nof, current_num_ope]);
+
+                    if (nextOpeRows.length) {
+                        // There is a next operation, check if it matches the current num_ope
+                        const nextNumOpe = nextOpeRows[0].num_ope;
+                        if (nextNumOpe !== num_ope) {
+                            console.log("Next operation " + nextNumOpe + " does not match current num_ope " + num_ope);
+                            return {is: false, why: "Next operation does not match current num_ope", ope: nextNumOpe};
+                        }
+                    } else // No next operation found, which means we are at the last operation for this gamme
+                        return {is: false, why: "Carte completed"};
+
+                }
+
+                // If we reach here, it means we can update the carte
                 let sqlUpdateCarte = `UPDATE carte SET num_ope = ?, temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
                 let valuesUpdateCarte = [num_ope, post.tempsDernierScan, '', 1, post.nof, post.nSerie];
 
                 let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
                 console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
-            } else if (currentScanCount === 1) { // If scan_count is 1
-                let sqlUpdateCarte = `UPDATE carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
-                let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie];
 
-                let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
-                console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+                return {is: true}; // Return true if the update was successful
+
+            } else {
+                if (currentScanCount === 1) { // If scan_count is 1
+                    let sqlUpdateCarte = `UPDATE carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
+                    let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie];
+
+                    let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
+                    console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+
+                    return {is: true}; // Return true if the update was successful
+
+                } else if (currentScanCount === 2) { // If scan_count is 2
+                    return {is: false, why: "Already scanned twice"}; // Already scanned twice, return false
+                } else
+                    console.error("Unexpected scan_count value on updateCarte function: " + currentScanCount);
             }
             
         }
+        else return {is: false, why: "Carte not found"}; // Carte not found, return false
+
+        return {is: false, why: "Unknown error"}; // Unknown error, return false
 
     }
 
