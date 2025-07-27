@@ -731,6 +731,19 @@ class TrackingDB {
                 current_num_ope = 0; // If num_ope is null, set it to 0
 
 
+            // chech if is there an active carte on this operation (num_ope), if so, and this carte is not the same as the current one, return false
+            {
+                let sqlCheckActiveCarte = `
+                    SELECT n_serie FROM carte WHERE nof = ? AND num_ope = ? AND n_serie != ? AND scan_count = 1
+                `;
+                let [activeCarteRows] = await this.runQueryWithRetry(sqlCheckActiveCarte, [post.nof, num_ope, post.nSerie]);
+                if (activeCarteRows.length) {
+                    console.log("updateCarte: There is an active carte on this operation (num_ope): " + num_ope + ", return false");
+                    return {is: false, why: "There is an active carte on this operation", carte: activeCarteRows[0].n_serie};
+                }
+            }
+
+
             // update the carte
             if (current_num_ope !== num_ope) { // If num_ope is different
 

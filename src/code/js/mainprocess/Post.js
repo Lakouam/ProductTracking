@@ -305,7 +305,9 @@ class Post {
                     if (ScanUpdated.is) // if the scan is updated in the database
                         scanRejected = false;
                     else { // error messages
-                        if (ScanUpdated.why === "Carte not completed yet") // updateCarte function
+                        if (ScanUpdated.why === "There is an active carte on this operation") // updateCarte function
+                            errorMessage = "Une carte « " + ScanUpdated.carte + " » est déjà active sur cette opération.";
+                        else if (ScanUpdated.why === "Carte not completed yet") // updateCarte function
                             errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanUpdated.ope + " ».";
                         else if (ScanUpdated.why === "Next operation does not match current num_ope") // updateCarte function
                             errorMessage = "La carte doit être scannée à l’opération « " + ScanUpdated.ope + " ».";
@@ -342,7 +344,9 @@ class Post {
                     }
                     else {
 
-                        if (ScanInserted.why === "Carte not completed yet") // updateCarte function
+                        if (ScanInserted.why === "There is an active carte on this operation") // updateCarte function
+                            errorMessage = "Une carte « " + ScanInserted.carte + " » est déjà active sur cette opération.";
+                        else if (ScanInserted.why === "Carte not completed yet") // updateCarte function
                             errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanInserted.ope + " ».";
                         else if (ScanInserted.why === "Next operation does not match current num_ope") // updateCarte function
                             errorMessage = "La carte doit être scannée à l’opération « " + ScanInserted.ope + " ».";
@@ -373,7 +377,9 @@ class Post {
                         }
                         else {
                             
-                            if (ScanInserted.why === "Carte not completed yet") // updateCarte function
+                            if (ScanInserted.why === "There is an active carte on this operation") // updateCarte function
+                                errorMessage = "Une carte « " + ScanInserted.carte + " » est déjà active sur cette opération.";
+                            else if (ScanInserted.why === "Carte not completed yet") // updateCarte function
                                 errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanInserted.ope + " ».";
                             else if (ScanInserted.why === "Next operation does not match current num_ope") // updateCarte function
                                 errorMessage = "La carte doit être scannée à l’opération « " + ScanInserted.ope + " ».";
