@@ -436,8 +436,8 @@ class TrackingDB {
 
 
 
-    // get Active row (qa < qt) of a post
-    static async getActiveRow(post) {
+    // get the first Active row (qa < qt) of a post that has a num_ope more or equal to the num_ope
+    static async getActiveRow(post, num_ope = 0) {
 
         let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, poste_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan 
             FROM scan 
@@ -445,10 +445,10 @@ class TrackingDB {
             INNER JOIN operation 
                 ON scan.num_ope = operation.num_ope 
                 AND marque.ref_gamme = operation.ref_gamme
-            WHERE operation.poste_machine = ? AND scan.qa < marque.qt
+            WHERE operation.poste_machine = ? AND scan.qa < marque.qt AND scan.num_ope >= ?
         `;
         
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post, num_ope]);
 
         console.log("Active row retrieved from the database!");
 
@@ -486,17 +486,35 @@ class TrackingDB {
 
 
 
-    // get the last not completed num_ope for a post machine (if all completed, return the last one)
-    static async currentNumopeFromPost(nof, postActuel) {
+    // Get the first num_ope of the postActuel that is more or equal to the num_ope of the n_serie
+    static async currentNumopeFromPost(nof, postActuel, n_serie) {
 
         /*
-            The first SELECT returns the first not-completed num_ope (if any).
-            The second SELECT returns the last num_ope (if all are completed).
+            The first SELECT returns the first num_ope that is more or equal to the num_ope of the n_serie.
+            The second SELECT returns the last num_ope that is less than the num_ope of the n_serie.
+            The third SELECT returns the first not-completed num_ope (if any).
+            The forth SELECT returns the last num_ope (if all are completed).
             UNION ALL ... LIMIT 1 ensures you get the not-completed one if it exists, otherwise the last one.
         */
 
         // Try to get the first not completed num_ope
         const sql = `
+            (SELECT o.num_ope
+            FROM operation o
+            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
+            INNER JOIN carte c ON c.nof = m.nof
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope >= c.num_ope
+            ORDER BY o.num_ope ASC
+            LIMIT 1)
+            UNION ALL
+            (SELECT o.num_ope
+            FROM operation o
+            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
+            INNER JOIN carte c ON c.nof = m.nof
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope < c.num_ope
+            ORDER BY o.num_ope DESC
+            LIMIT 1)
+            UNION ALL
             (SELECT o.num_ope
             FROM marque m
             INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
@@ -513,7 +531,7 @@ class TrackingDB {
             LIMIT 1)
             LIMIT 1
         `;
-        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, nof, postActuel]);
+        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, nof, postActuel]);
         if (!rows.length) { // No num_ope found for this nof and post_machine
             return -1;
         }
@@ -547,7 +565,7 @@ class TrackingDB {
         }
         const num_ope = numOpeRows[0].num_ope;
         */
-        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
+        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
         console.log("num_ope value: " + num_ope);
 
         let sql = `
@@ -567,7 +585,7 @@ class TrackingDB {
     // check if the scan is exist in the database
     static async isScanNotExist(scan) {
         
-        const num_ope = await this.currentNumopeFromPost(scan.nof, scan.postActuel);
+        const num_ope = await this.currentNumopeFromPost(scan.nof, scan.postActuel, scan.n_serie);
 
         // check if the scan is not in the database
         let sql = `
@@ -664,7 +682,7 @@ class TrackingDB {
                 return {is: false};
             }
             const { ref_gamme } = opeRows[0];
-            const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
+            const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
 
             if (num_ope === -1) {  
                 // No num_ope found for this nof and post_machine
@@ -717,7 +735,7 @@ class TrackingDB {
     // update a carte
     static async updateCarte(post) {
 
-        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel);
+        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
 
         // get carte scan_count and num_ope
         let sqlGetScanCount = `SELECT scan_count, num_ope FROM carte WHERE nof = ? AND n_serie = ?`;

@@ -290,8 +290,8 @@ class Post {
         let scanRejected = true; // true if the scan is rejected
         let errorMessage = ""; // error message
 
-
-        let data = await TrackingDB.getActiveRow(this.postActuel); // get the active row from the database
+        let num_ope = await TrackingDB.currentNumopeFromPost(scan.nof, this.postActuel, scan.n_serie); // get the current num_ope from the database
+        let data = await TrackingDB.getActiveRow(this.postActuel, num_ope); // get the active row from the database
         this.fillFromDB(data); // fill the post with the data from the database
 
 
