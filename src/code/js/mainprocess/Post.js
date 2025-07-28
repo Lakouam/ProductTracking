@@ -300,7 +300,7 @@ class Post {
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
                     this.allUpdate(scan); // update all the variables (that can be updated)
-                    const ScanUpdated = await TrackingDB.updateScan(this); // update the scan in the database
+                    const ScanUpdated = await TrackingDB.updateScan(this, num_ope); // update the scan in the database
 
                     if (ScanUpdated.is) // if the scan is updated in the database
                         scanRejected = false;
@@ -330,14 +330,14 @@ class Post {
             }
         }
         else { // if the post is empty
-            const scanNotExist = await TrackingDB.isScanNotExist(scan); // check if the scan is Not exist in the database (nof, postActuel)
+            const scanNotExist = await TrackingDB.isScanNotExist(scan, num_ope); // check if the scan is Not exist in the database (nof, postActuel)
             
             if (scanNotExist) { // if the scan is Not exist in the database
                 const nofExist = await TrackingDB.isNofExist(scan); // check if the nof exists in the database
 
                 if (nofExist === 1) { // if the nof exists in the database
                     this.fillNew(scan);
-                    const ScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+                    const ScanInserted = await TrackingDB.insertScan(this, num_ope); // insert the scan in the database
 
                     if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
@@ -370,7 +370,7 @@ class Post {
                     const isNofInserted = await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
 
                     if (isNofInserted) { // if the nof is inserted in the database
-                        const ScanInserted = await TrackingDB.insertScan(this); // insert the scan in the database
+                        const ScanInserted = await TrackingDB.insertScan(this, num_ope); // insert the scan in the database
                         
                         if (ScanInserted.is) { // if the scan is inserted in the database
                             scanRejected = false;

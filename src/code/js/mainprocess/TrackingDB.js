@@ -490,10 +490,11 @@ class TrackingDB {
     static async currentNumopeFromPost(nof, postActuel, n_serie) {
 
         /*
-            The first SELECT returns the first num_ope that is more or equal to the num_ope of the n_serie.
-            The second SELECT returns the last num_ope that is less than the num_ope of the n_serie.
-            The third SELECT returns the first not-completed num_ope (if any).
-            The forth SELECT returns the last num_ope (if all are completed).
+            The first SELECT returns the first num_ope if num_ope of the n_serie is null.
+            The second SELECT returns the num_ope that is equal to the num_ope of the n_serie if the scan count is < 2.
+            The third SELECT returns the first num_ope that is more than the num_ope of the n_serie.
+            The forth SELECT returns the last num_ope that is less or equal to the num_ope of the n_serie.
+            The fifth SELECT returns the last num_ope (if all are completed).
             UNION ALL ... LIMIT 1 ensures you get the not-completed one if it exists, otherwise the last one.
         */
 
@@ -503,7 +504,7 @@ class TrackingDB {
             FROM operation o
             INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
             INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope >= c.num_ope
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND c.num_ope IS NULL
             ORDER BY o.num_ope ASC
             LIMIT 1)
             UNION ALL
@@ -511,16 +512,24 @@ class TrackingDB {
             FROM operation o
             INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
             INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope < c.num_ope
-            ORDER BY o.num_ope DESC
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope = c.num_ope AND c.scan_count < 2
+            ORDER BY o.num_ope ASC
             LIMIT 1)
             UNION ALL
             (SELECT o.num_ope
-            FROM marque m
-            INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
-            LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = o.num_ope
-            WHERE m.nof = ? AND o.poste_machine = ? AND (s.qa IS NULL OR s.qa < m.qt)
+            FROM operation o
+            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
+            INNER JOIN carte c ON c.nof = m.nof
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope > c.num_ope
             ORDER BY o.num_ope ASC
+            LIMIT 1)
+            UNION ALL
+            (SELECT o.num_ope
+            FROM operation o
+            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
+            INNER JOIN carte c ON c.nof = m.nof
+            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope <= c.num_ope
+            ORDER BY o.num_ope DESC
             LIMIT 1)
             UNION ALL
             (SELECT o.num_ope
@@ -531,7 +540,7 @@ class TrackingDB {
             LIMIT 1)
             LIMIT 1
         `;
-        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, nof, postActuel]);
+        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel]);
         if (!rows.length) { // No num_ope found for this nof and post_machine
             return -1;
         }
@@ -542,9 +551,9 @@ class TrackingDB {
 
 
     // update the table scan by a post
-    static async updateScan(post) {
+    static async updateScan(post, num_ope) {
         
-        const carteUpdated = await this.updateCarte(post); // Update the carte table with the updated scan
+        const carteUpdated = await this.updateCarte(post, num_ope); // Update the carte table with the updated scan
         if (!carteUpdated.is) {
             console.log("Failed to update carte table for post: " + post.postActuel + ", the carteUpdated object: ", carteUpdated);
             return carteUpdated; // If the carte update failed, return false
@@ -565,7 +574,7 @@ class TrackingDB {
         }
         const num_ope = numOpeRows[0].num_ope;
         */
-        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
+        
         console.log("num_ope value: " + num_ope);
 
         let sql = `
@@ -583,9 +592,7 @@ class TrackingDB {
 
 
     // check if the scan is exist in the database
-    static async isScanNotExist(scan) {
-        
-        const num_ope = await this.currentNumopeFromPost(scan.nof, scan.postActuel, scan.n_serie);
+    static async isScanNotExist(scan, num_ope) {
 
         // check if the scan is not in the database
         let sql = `
@@ -639,7 +646,7 @@ class TrackingDB {
 
 
     // insert a row into the table scan
-    static async insertScan(post) {
+    static async insertScan(post, num_ope) {
         
         // check if the post.postActuel exists on the ope table where ref_gamme of the ref_produit on the reference table is equal to the ref_gamme of ope
         let sqlCheckPost = `
@@ -656,7 +663,7 @@ class TrackingDB {
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
 
-        const carteUpdate = await this.updateCarte(post); // Update the carte table with the new scan
+        const carteUpdate = await this.updateCarte(post, num_ope); // Update the carte table with the new scan
         if (!carteUpdate.is)
             return carteUpdate; // If the carte update failed, return false
 
@@ -682,7 +689,6 @@ class TrackingDB {
                 return {is: false};
             }
             const { ref_gamme } = opeRows[0];
-            const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
 
             if (num_ope === -1) {  
                 // No num_ope found for this nof and post_machine
@@ -733,9 +739,7 @@ class TrackingDB {
 
 
     // update a carte
-    static async updateCarte(post) {
-
-        const num_ope = await this.currentNumopeFromPost(post.nof, post.postActuel, post.nSerie);
+    static async updateCarte(post, num_ope) {
 
         // get carte scan_count and num_ope
         let sqlGetScanCount = `SELECT scan_count, num_ope FROM carte WHERE nof = ? AND n_serie = ?`;
