@@ -77,8 +77,13 @@
     ipcRenderer.invoke('Post Actuel').then(postActuel => {
 
             document.getElementById("scan-product-poste").textContent = postActuel.name;
+
+            let lastNumOpe = postActuel.lastNumOpe;
+            if (lastNumOpe === undefined)
+                lastNumOpe = 0;
+            console.log("Last num_ope for post " + postActuel.name + ": " + lastNumOpe);
         
-            ipcRenderer.invoke('Table Data', 'scanner', postActuel.name).then(data => {
+            ipcRenderer.invoke('Table Data', 'scanner', [postActuel.name, lastNumOpe]).then(data => {
 
                 if (data.rows[0] !== undefined) {
                     document.getElementById("scan-product-nof").textContent = data.rows[0].nof;

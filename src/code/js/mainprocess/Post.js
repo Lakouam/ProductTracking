@@ -285,7 +285,7 @@ class Post {
 
 
     // update the post with the scan
-    async update(scan) {
+    async update(scan, store) {
 
         let scanRejected = true; // true if the scan is rejected
         let errorMessage = ""; // error message
@@ -302,8 +302,10 @@ class Post {
                     this.allUpdate(scan); // update all the variables (that can be updated)
                     const ScanUpdated = await TrackingDB.updateScan(this, num_ope); // update the scan in the database
 
-                    if (ScanUpdated.is) // if the scan is updated in the database
+                    if (ScanUpdated.is) {// if the scan is updated in the database
                         scanRejected = false;
+                        store.set(this.postActuel, num_ope); // save the current num_ope in store
+                    }
                     else { // error messages
                         if (ScanUpdated.why === "There is an active carte on this operation") // updateCarte function
                             errorMessage = "Une carte « " + ScanUpdated.carte + " » est déjà active sur cette opération.";
@@ -341,6 +343,7 @@ class Post {
 
                     if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
+                        store.set(this.postActuel, num_ope); // save the current num_ope in store
                     }
                     else {
 
@@ -374,6 +377,7 @@ class Post {
                         
                         if (ScanInserted.is) { // if the scan is inserted in the database
                             scanRejected = false;
+                            store.set(this.postActuel, num_ope); // save the current num_ope in store
                         }
                         else {
                             

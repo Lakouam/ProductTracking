@@ -4,6 +4,10 @@ const {app, BrowserWindow, nativeImage, Menu, ipcMain} = require('electron');
 // to use path
 const path = require('path');
 
+// to use electron-store for local storage
+const Store = require('electron-store').default;
+const store = new Store();
+
 
 // import our classes
 const ScanData = require('./src/code/js/mainprocess/ScanData.js'); 
@@ -227,7 +231,7 @@ function createWindow() {
                         PageUI.disable(); // disable UI
 
 
-                        let data = await TrackingDB.getActiveRow(postName) 
+                        let data = await TrackingDB.getActiveRow(postName);
                             
                         post.fillPostName(postName); // fill the post name
 
@@ -282,7 +286,8 @@ function createWindow() {
         {
             // send the post Actuel to the render process (posteselect.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
             ipcMain.handle('Post Actuel', async () => {
-                return {name: MyConfig.postActuel, isnull: (post.postActuel === null)};
+                return {name: MyConfig.postActuel, isnull: (post.postActuel === null), 
+                        lastNumOpe: store.get(MyConfig.postActuel)}; 
             });
         }
 
@@ -320,7 +325,7 @@ function createWindow() {
                             console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
                             // update the post with the scan data
-                            let updateInformations = await post.update(scanData); // update the post with the scan data
+                            let updateInformations = await post.update(scanData, store); // update the post with the scan data
                             scanRejected = updateInformations.scanRejected; // get the scan rejected information
                             errorMessage = updateInformations.errorMessage; // get the error message
 

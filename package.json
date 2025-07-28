@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Lakouam/ProductTracking#readme",
   "dependencies": {
     "electron": "^36.1.0",
+    "electron-store": "^10.1.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.14.1",
     "xlsx": "^0.18.5"

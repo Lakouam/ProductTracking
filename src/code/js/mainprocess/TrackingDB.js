@@ -395,7 +395,7 @@ class TrackingDB {
                 FROM scan s
                 INNER JOIN marque m ON s.nof = m.nof
                 INNER JOIN operation o ON s.num_ope = o.num_ope AND m.ref_gamme = o.ref_gamme
-                WHERE o.poste_machine = ? AND m.qt > s.qa
+                WHERE o.poste_machine = ? AND m.qt > s.qa AND o.num_ope >= ?
             `;
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
@@ -417,7 +417,7 @@ class TrackingDB {
                 WHERE nof = ?
             `;
 
-        let [result, fields]  = await this.runQueryWithRetry(sql, [value]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, value);
 
         console.log("Data retrieved from the database!");
 

@@ -26,7 +26,7 @@ let fullData = null;
 // receiving Table Data columns and rows
 {
 
-    ipcRenderer.invoke('Table Data', 'gamme-detail', gamme).then(data => {
+    ipcRenderer.invoke('Table Data', 'gamme-detail', [gamme]).then(data => {
 
         // store data in the page
         fullData = data;
