@@ -291,8 +291,10 @@ class Post {
         let errorMessage = ""; // error message
 
         let num_ope = await TrackingDB.currentNumopeFromPost(scan.nof, this.postActuel, scan.n_serie); // get the current num_ope from the database
-        let data = await TrackingDB.getActiveRow(this.postActuel, num_ope); // get the active row from the database
+        console.log("num_ope: " + num_ope); // log the num_ope
+        let data = await TrackingDB.getActiveRow(this.postActuel, num_ope, scan.nof); // get the active row from the database
         this.fillFromDB(data); // fill the post with the data from the database
+        console.log("Post nof: " + this.nof);
 
 
 
@@ -304,7 +306,7 @@ class Post {
 
                     if (ScanUpdated.is) {// if the scan is updated in the database
                         scanRejected = false;
-                        store.set(this.postActuel, num_ope); // save the current num_ope in store
+                        store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
                     }
                     else { // error messages
                         if (ScanUpdated.why === "There is an active carte on this operation") // updateCarte function
@@ -343,7 +345,7 @@ class Post {
 
                     if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
-                        store.set(this.postActuel, num_ope); // save the current num_ope in store
+                        store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
                     }
                     else {
 
@@ -373,11 +375,15 @@ class Post {
                     const isNofInserted = await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
 
                     if (isNofInserted) { // if the nof is inserted in the database
+
+                        num_ope = await TrackingDB.currentNumopeFromPost(scan.nof, this.postActuel, scan.n_serie); // get the current num_ope from the database 
+                        console.log("num_ope: " + num_ope); // log the num_ope
+
                         const ScanInserted = await TrackingDB.insertScan(this, num_ope); // insert the scan in the database
                         
                         if (ScanInserted.is) { // if the scan is inserted in the database
                             scanRejected = false;
-                            store.set(this.postActuel, num_ope); // save the current num_ope in store
+                            store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
                         }
                         else {
                             
@@ -426,9 +432,10 @@ class Post {
 
         
         if (!this.isEmpty())
-            if (this.isQaCompleted()) 
+            if (this.isQaCompleted()) {
+                //store.delete(this.postActuel); // delete the post from the store if the qa is equal to the qt
                 this.clear(); // if the post is not empty and if the qa is equal to the qt, clear the post
-        
+            }
 
 
         // return information about the update (scan rejected?, scan initial or final?)

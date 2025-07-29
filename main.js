@@ -231,14 +231,14 @@ function createWindow() {
                         PageUI.disable(); // disable UI
 
 
-                        let data = await TrackingDB.getActiveRow(postName);
+                        //let data = await TrackingDB.getActiveRow(postName);
                             
                         post.fillPostName(postName); // fill the post name
 
                         MyConfig.postActuel = postName;
                         MyConfig.save(); // save the post actuel in the config file
 
-                        post.fillFromDB(data); // fill the post with the data from the database
+                        //post.fillFromDB(data); // fill the post with the data from the database
 
                         win.reload();
 
@@ -287,7 +287,7 @@ function createWindow() {
             // send the post Actuel to the render process (posteselect.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
             ipcMain.handle('Post Actuel', async () => {
                 return {name: MyConfig.postActuel, isnull: (post.postActuel === null), 
-                        lastNumOpe: store.get(MyConfig.postActuel)}; 
+                        saved: store.get(MyConfig.postActuel)};
             });
         }
 

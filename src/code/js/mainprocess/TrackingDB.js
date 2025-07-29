@@ -395,7 +395,7 @@ class TrackingDB {
                 FROM scan s
                 INNER JOIN marque m ON s.nof = m.nof
                 INNER JOIN operation o ON s.num_ope = o.num_ope AND m.ref_gamme = o.ref_gamme
-                WHERE o.poste_machine = ? AND m.qt > s.qa AND o.num_ope >= ?
+                WHERE o.poste_machine = ? AND m.qt > s.qa AND o.num_ope >= ? AND s.nof = ?
             `;
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
@@ -437,7 +437,7 @@ class TrackingDB {
 
 
     // get the first Active row (qa < qt) of a post that has a num_ope more or equal to the num_ope
-    static async getActiveRow(post, num_ope = 0) {
+    static async getActiveRow(post, num_ope = 0, nof = null) {
 
         let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, ref_produit, qt, poste_machine AS post_actuel, qa, moy_temps_passer, etat, commentaire, scan_count, temps_dernier_scan 
             FROM scan 
@@ -445,10 +445,10 @@ class TrackingDB {
             INNER JOIN operation 
                 ON scan.num_ope = operation.num_ope 
                 AND marque.ref_gamme = operation.ref_gamme
-            WHERE operation.poste_machine = ? AND scan.qa < marque.qt AND scan.num_ope >= ?
+            WHERE operation.poste_machine = ? AND scan.qa < marque.qt AND scan.num_ope >= ? AND scan.nof = ?
         `;
         
-        let [result, fields]  = await this.runQueryWithRetry(sql, [post, num_ope]);
+        let [result, fields]  = await this.runQueryWithRetry(sql, [post, num_ope, nof]);
 
         console.log("Active row retrieved from the database!");
 

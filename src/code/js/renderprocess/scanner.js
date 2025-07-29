@@ -78,12 +78,21 @@
 
             document.getElementById("scan-product-poste").textContent = postActuel.name;
 
-            let lastNumOpe = postActuel.lastNumOpe;
+            let saved = postActuel.saved;
+            if (saved === undefined) // if saved is undefined, initialize it
+                saved = {};
+            
+            // get last num_ope and nof from saved, if not defined, set them to 0 and null respectively
+            let lastNumOpe = saved.ope;
             if (lastNumOpe === undefined)
                 lastNumOpe = 0;
-            console.log("Last num_ope for post " + postActuel.name + ": " + lastNumOpe);
+            let lastNof = saved.nof;
+            if (lastNof === undefined)
+                lastNof = null;
+
+            console.log("Last num_ope for post " + postActuel.name + ": " + lastNumOpe + ", nof: " + lastNof);
         
-            ipcRenderer.invoke('Table Data', 'scanner', [postActuel.name, lastNumOpe]).then(data => {
+            ipcRenderer.invoke('Table Data', 'scanner', [postActuel.name, lastNumOpe, lastNof]).then(data => {
 
                 if (data.rows[0] !== undefined) {
                     document.getElementById("scan-product-nof").textContent = data.rows[0].nof;
