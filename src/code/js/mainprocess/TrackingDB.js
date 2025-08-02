@@ -200,6 +200,11 @@ class TrackingDB {
         let sqlGamme = `DROP TABLE IF EXISTS gamme`;
         await this.queryAsync(sqlGamme);
         console.log("Table gamme dropped!");
+
+
+        let sqlUser = `DROP TABLE IF EXISTS user`;
+        await this.queryAsync(sqlUser);
+        console.log("Table user dropped!");
         
     }
 
@@ -313,6 +318,11 @@ class TrackingDB {
         let sqlGamme = `DELETE FROM gamme`;
         await this.queryAsync(sqlGamme);
         console.log("Table gamme cleared!");
+
+
+        let sqlUser = `DELETE FROM user`;
+        await this.queryAsync(sqlUser);
+        console.log("Table user cleared!");
 
 
     }
