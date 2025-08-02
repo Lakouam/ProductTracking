@@ -441,6 +441,9 @@ class TrackingDB {
                 FROM carte 
                 WHERE nof = ?
             `;
+        
+        if (who === 'user') // get data from user (nom, matricule, role)
+            sql = `SELECT nom, matricule, role FROM user ORDER BY nom ASC`;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, value);
 

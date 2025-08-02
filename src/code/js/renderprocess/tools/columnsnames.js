@@ -37,6 +37,12 @@ function columnName(name) {
             return 'Temps réalisé (min)';
         case 'statut':
             return 'Statut';
+        case 'nom':
+            return 'Nom';
+        case 'matricule':
+            return 'Matricule';
+        case 'role':
+            return 'Rôle';
         default:
             return name;
     }

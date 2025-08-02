@@ -531,6 +531,9 @@ function createWindow() {
             ipcMain.on('open-scanner', async (event, data) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scanner'));
             });
+            ipcMain.on('open-user', async (event, data) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-user'));
+            });
         }
     }
 
@@ -627,7 +630,7 @@ function openSettingsWindow() {
 // load the appropriate file
 function appropriateFile(postName, dashboard = "") {
     // what content that we want to load in this window
-    
+
     if (dashboard === 'open-scans') return 'src/code/html/scans.html';
     if (dashboard === 'open-nof') return 'src/code/html/marque.html';
     if (dashboard === 'open-post') return 'src/code/html/post.html';
@@ -636,6 +639,7 @@ function appropriateFile(postName, dashboard = "") {
     if (dashboard === 'open-operations') return 'src/code/html/operations.html';
     if (dashboard === 'open-scanner') return 'src/code/html/scanner.html';
     if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
+    if (dashboard === 'open-user') return 'src/code/html/user.html';
     return 'src/code/html/scans.html'; // load the nof page by default
 }
 

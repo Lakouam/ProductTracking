@@ -133,3 +133,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (scansBtn) 
         scansBtn.onclick = () => ipcRenderer.send('open-scanner');
 });
+
+
+
+// go to user.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Find the "users" element in the sidebar
+    const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
+        item.textContent.trim().toLowerCase().includes('users')
+    );
+    if (scansBtn) {
+        scansBtn.onclick = () => ipcRenderer.send('open-user');
+    }
+});
