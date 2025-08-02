@@ -157,6 +157,20 @@ class TrackingDB {
         await this.queryAsync(sqlCarte);
         console.log("Table carte created or already exists!");
 
+
+
+
+        // Create table user (nom, matricule, role)
+        let sqlUser = `CREATE TABLE IF NOT EXISTS user (
+                nom VARCHAR(255) NOT NULL,
+                matricule VARCHAR(255) NOT NULL,
+                role ENUM('Admin', 'Operateur') NOT NULL,
+                PRIMARY KEY (nom, matricule)
+        )`;
+
+        await this.queryAsync(sqlUser);
+        console.log("Table user created or already exists!");
+
         
     }
 
@@ -256,7 +270,18 @@ class TrackingDB {
         await this.queryAsync(sql3, values3);
         console.log("Values inserted into table scan if not existed!");
         */
-        
+
+
+
+
+        // Insert Mohammed Mojahid as Admin to the user table if it doesn't exist
+        let valuesUser = [
+            ['Mohammed Mojahid', '0000', 'Admin']
+        ];
+        let sqlUser = `INSERT IGNORE INTO user (nom, matricule, role) VALUES ?`;
+        await this.queryAsync(sqlUser, valuesUser);
+        console.log("User inserted into table user if not existed!");
+
     }
 
 
