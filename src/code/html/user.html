@@ -162,10 +162,21 @@
                         </svg>
                         Ajouter
                     </span>
-                    <select class="main-subtoolbar-sort-select">
-                    </select>
                 </div>
             </div>
+        </div>
+
+
+        <!-- Add User Form -->
+        <div id="addUserForm" class="add-user-form" style="display:none;">
+            <input type="text" id="userNameInput" class="add-user-input" placeholder="Nom">
+            <input type="text" id="userMatriculeInput" class="add-user-input" placeholder="Matricule">
+            <select id="userRoleSelect" class="add-user-select">
+                <option value="" disabled selected>Choisir un rôle</option>
+                <option value="Opérateur">Opérateur</option>
+                <option value="Superviseur">Superviseur</option>
+            </select>
+            <button id="addUserSendBtn" class="add-user-btn">Ajouter</button>
         </div>
 
 

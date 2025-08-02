@@ -538,11 +538,14 @@ function createWindow() {
     }
 
 
+    
 
-    // post.js & marque.js
+
+    // Add (user.js)
     {
         // receive data from render process
         {
+            /*
             // receive add post request from render process (modifypost.js)
             ipcMain.handle('add-post', async (event, postName) => {
 
@@ -565,10 +568,12 @@ function createWindow() {
                 }
 
             });
+            */
 
 
 
-            // receive add post request from render process (modifynof.js)
+            /*
+            // receive add nof request from render process (modifynof.js)
             ipcMain.handle('add-nof', async (event, nofscan) => {
 
                 try {
@@ -592,7 +597,35 @@ function createWindow() {
                 }
 
             });
+            */
 
+
+
+
+            // receive add user request from render process (user.js)
+            ipcMain.handle('add-user', async (event, userData) => {
+
+                try {
+
+                    PageUI.disable(); // disable UI
+
+                    let success = false;
+                    if(userData !== null) 
+                        success = await TrackingDB.addUser(userData.nom, userData.matricule, userData.role); // add the user to the database
+
+                    win.reload(); // reload the page to refresh the table
+
+                    PageUI.enable(); // enable UI
+
+                    return success; // send the success status to the render process
+
+                } catch (err) {
+                    console.error("Database error in add-user event:", err.message);
+                    // close the app
+                    app.quit();
+                }
+
+            });
 
         }
     }

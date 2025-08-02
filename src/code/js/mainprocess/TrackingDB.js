@@ -164,7 +164,7 @@ class TrackingDB {
         let sqlUser = `CREATE TABLE IF NOT EXISTS user (
                 nom VARCHAR(255) NOT NULL,
                 matricule VARCHAR(255) NOT NULL,
-                role ENUM('Admin', 'Operateur') NOT NULL,
+                role ENUM('Admin', 'Opérateur', 'Superviseur') NOT NULL,
                 PRIMARY KEY (nom, matricule)
         )`;
 
@@ -1025,6 +1025,25 @@ class TrackingDB {
         let [result] = await this.runQueryWithRetry(sql, [values]);
 
         console.log("Cartes added for nof: " + nof + ", " + result.affectedRows + " cartes inserted.");
+    }
+
+
+
+    // add user to the database
+    static async addUser(nom, matricule, role) {
+
+        // Insert a new user into the user table if it doesn't already exist
+        let sql = `INSERT IGNORE INTO user (nom, matricule, role) VALUES (?, ?, ?)`;
+
+        let [result] = await this.runQueryWithRetry(sql, [nom, matricule, role]);
+        
+        // Check if the insert was successful
+        if (result && result.affectedRows > 0) {
+            return true; // User added successfully
+        } else {
+            return false; // User already exists or failed to add
+        }
+        
     }
 
 
