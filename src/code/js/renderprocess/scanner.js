@@ -61,7 +61,7 @@
         document.getElementById("scanError").textContent = data.errorMessage;
         // add class error to errorMessage if is not empty
         if (data.errorMessage !== "") {
-            document.getElementById('scanError').classList.add('error');
+            //document.getElementById('scanError').classList.add('error');
             document.getElementById('scanError').style.display = "block";
         }
     });

@@ -48,18 +48,21 @@ let fullData = null;
                 if (response.success) {
                     // Optionally, update the UI to reflect the new user
                     console.log('User added successfully:', response.data);
+
+                    // Hide form after sending
+                    document.getElementById('addUserForm').style.display = 'none';
                 }
                 else {
                     // Handle error response
-                    console.error('Error adding user:', response.error);
+                    document.getElementById("ajouterError").textContent = "Une erreur est survenue lors de l'ajout de l'utilisateur.";
+                    document.getElementById('ajouterError').style.display = "block";
                 }
             });
 
-            // Hide form after sending
-            document.getElementById('addUserForm').style.display = 'none';
         } else {
-            // Optionally show an error message
-            console.log('Veuillez remplir tous les champs.');
+            // show an error message
+            document.getElementById("ajouterError").textContent = "Merci de remplir tous les champs.";
+            document.getElementById('ajouterError').style.display = "block";
         }
     });
 }

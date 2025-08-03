@@ -613,7 +613,8 @@ function createWindow() {
                     if(userData !== null) 
                         success = await TrackingDB.addUser(userData.nom, userData.matricule, userData.role); // add the user to the database
 
-                    win.reload(); // reload the page to refresh the table
+                    if (success) 
+                        win.reload(); // reload the page to refresh the table
 
                     PageUI.enable(); // enable UI
 
