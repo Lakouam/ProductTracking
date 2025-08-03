@@ -1061,6 +1061,25 @@ class TrackingDB {
     }
 
 
+
+    // find a user by nom and matricule and return it
+    static async findUser(value) {
+
+        // Find a user by nom and matricule
+        let sql = `SELECT * FROM user WHERE nom = ? AND matricule = ?`;
+
+        let [result, fields]  = await this.runQueryWithRetry(sql, value);
+
+        // If the user is found, return it
+        if (result.length > 0) {
+            return result[0]; // Return the first user found
+        } else {
+            return null; // User not found
+        }
+        
+    }
+
+
 }
 
 module.exports = TrackingDB;

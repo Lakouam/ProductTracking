@@ -18,6 +18,8 @@ const MyConfig = require('./src/code/js/mainprocess/MyConfig.js');
 
 const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
+let user;
+
 
 
 // Gets the path of the icon to use in the tray and taskbar
@@ -630,6 +632,40 @@ function createWindow() {
             });
 
         }
+    }
+
+
+
+
+
+    // login.js
+    {
+        // receive login request from render process (login.js)
+        ipcMain.handle('login-user', async (event, { nom, matricule }) => {
+            
+            try {
+                PageUI.disable(); // disable UI
+
+                user = await TrackingDB.findUser([nom, matricule]);
+                console.log("User found:", user);
+
+                PageUI.enable(); // enable UI
+
+                if (user) {
+                    // go to scanner.html
+                    win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scanner'));
+
+                    return { success: true};
+                } else {
+                    return { success: false, message: "Nom ou matricule incorrect." };
+                }
+
+            } catch (err) {
+                console.error("Database error in login-user event:", err.message);
+                return { success: false, message: "Erreur de connexion à la base de données." };
+            }
+        });
+        
     }
 
 
