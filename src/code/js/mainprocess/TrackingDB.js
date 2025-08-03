@@ -938,6 +938,20 @@ class TrackingDB {
         }
         */
 
+
+        if (who === 'user') {
+            // Delete from user table where nom = value[0] and matricule = value[1]
+            let sqlUser = `DELETE FROM user WHERE nom = ? AND matricule = ?`;
+            let [result] = await this.runQueryWithRetry(sqlUser, value);
+            // result.affectedRows > 0 means a row was deleted from user
+            if (result && result.affectedRows > 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
         return false;
         
     }

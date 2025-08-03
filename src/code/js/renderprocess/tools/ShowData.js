@@ -104,6 +104,8 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                         removeRowFromDB(row["nof"], removable.who)
                     if (removable.who === 'post')
                         removeRowFromDB(row["name"], removable.who)
+                    if (removable.who === 'user')
+                        removeRowFromDB([row["nom"], row["matricule"]], removable.who);
                 };
                 if(row["name"] !== "Admin")
                     tr.appendChild(removeTd);
