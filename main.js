@@ -46,6 +46,7 @@ function createWindow() {
 
 
     win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
+    win.loadFile('src/code/html/login.html'); // load the login page first
 
 
     // when loading the page

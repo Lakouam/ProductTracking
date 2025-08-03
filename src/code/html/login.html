@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - Product Tracking</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="6" y="6" width="36" height="36" rx="10" fill="#7e58e6"/>
+                    <circle cx="24" cy="20" r="7" fill="#fff"/>
+                    <rect x="14" y="31" width="20" height="5" rx="2.5" fill="#fff"/>
+                </svg>
+            </div>
+            <h2 class="login-title">Connexion</h2>
+            <form id="loginForm" autocomplete="off">
+                <input type="text" id="loginNom" class="login-input" placeholder="Nom" autocomplete="off" required>
+                <input type="text" id="loginMatricule" class="login-input" placeholder="Matricule" autocomplete="off" required>
+                <button type="submit" class="login-btn">Se connecter</button>
+                <div id="loginError" class="login-error" style="display:none;"></div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
