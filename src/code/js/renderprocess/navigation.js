@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Find the "users" element in the sidebar
     const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
-        item.textContent.trim().toLowerCase().includes('users')
+        item.textContent.trim().toLowerCase().includes('utilisateurs')
     );
     if (scansBtn) {
         scansBtn.onclick = () => ipcRenderer.send('open-user');
