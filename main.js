@@ -638,7 +638,7 @@ function createWindow() {
 
 
 
-    // login.js
+    // login.js & userinfo.js
     {
         // receive login request from render process (login.js)
         ipcMain.handle('login-user', async (event, { nom, matricule }) => {
@@ -664,6 +664,13 @@ function createWindow() {
                 console.error("Database error in login-user event:", err.message);
                 return { success: false, message: "Erreur de connexion à la base de données." };
             }
+        });
+
+
+
+        // send the current user information to the render process (userinfo.js) whenever it request it
+        ipcMain.handle('get-current-user', async () => {
+            return{ nom: user.nom, role: user.role };
         });
         
     }
