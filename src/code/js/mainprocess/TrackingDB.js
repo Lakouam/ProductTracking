@@ -145,11 +145,6 @@ class TrackingDB {
         let sqlCarte = `CREATE TABLE IF NOT EXISTS carte (
             nof VARCHAR(255) NOT NULL,
             n_serie VARCHAR(255) NOT NULL,
-            num_ope INT,
-            temps_debut DATETIME,
-            temps_fin DATETIME,
-            commentaire VARCHAR(255) NOT NULL,
-            scan_count INT NOT NULL,
             PRIMARY KEY (nof, n_serie),
             FOREIGN KEY (nof) REFERENCES marque(nof)
         )`;
@@ -172,11 +167,36 @@ class TrackingDB {
         console.log("Table user created or already exists!");
 
         
+
+        // create table scan_carte (ref_gamme, num_ope, nof, n_serie, nom, matricule, temps_debut, temps_fin, commentaire, scan_count)
+        let sqlScanCarte = `CREATE TABLE IF NOT EXISTS scan_carte (
+            ref_gamme VARCHAR(255) NOT NULL,
+            num_ope INT NOT NULL,
+            nof VARCHAR(255) NOT NULL,
+            n_serie VARCHAR(255) NOT NULL,
+            nom VARCHAR(255),
+            matricule VARCHAR(255),
+            temps_debut DATETIME,
+            temps_fin DATETIME,
+            commentaire VARCHAR(255) NOT NULL,
+            scan_count INT NOT NULL,
+            PRIMARY KEY (ref_gamme, num_ope, nof, n_serie),
+            FOREIGN KEY (ref_gamme, num_ope) REFERENCES operation(ref_gamme, num_ope),
+            FOREIGN KEY (nof, n_serie) REFERENCES carte(nof, n_serie),
+            FOREIGN KEY (nom, matricule) REFERENCES user(nom, matricule)
+        )`;
+
+        await this.queryAsync(sqlScanCarte);
+        console.log("Table scan_carte created or already exists!");
     }
 
 
     // drop tables
     static async dropTables() {
+
+        let sqlScanCarte = `DROP TABLE IF EXISTS scan_carte`;
+        await this.queryAsync(sqlScanCarte);
+        console.log("Table scan_carte dropped!");
 
         let sqlCarte = `DROP TABLE IF EXISTS carte`;
         await this.queryAsync(sqlCarte);
@@ -293,6 +313,11 @@ class TrackingDB {
 
     // clear all the tables
     static async clearTables() {
+
+
+        let sqlScanCarte = `DELETE FROM scan_carte`;
+        await this.queryAsync(sqlScanCarte);
+        console.log("Table scan_carte cleared!");
         
         
         let sqlCarte = `DELETE FROM carte`;
@@ -435,21 +460,38 @@ class TrackingDB {
 
         if (who === 'nof-detail') // get data from carte (n_serie, num_ope, temps_debut, temps_fin, commentaire) where nof = value
             sql = `
-                SELECT n_serie, num_ope, 
-                CASE 
-                    WHEN scan_count = 1 THEN 'En cours'
-                    WHEN scan_count = 0 OR scan_count = 2 THEN 'En attente'
-                END AS statut,
-                temps_debut, temps_fin,
-                CASE 
-                    WHEN temps_fin IS NULL THEN NULL
-                    WHEN scan_count = 1 THEN TIMESTAMPDIFF(SECOND, temps_fin, temps_debut) / 60
-                    WHEN scan_count = 2 THEN TIMESTAMPDIFF(SECOND, temps_debut, temps_fin) / 60
-                    ELSE NULL
-                END AS temps_realise,
-                commentaire
-                FROM carte 
-                WHERE nof = ?
+                SELECT
+                    c.n_serie,
+                    COALESCE(sc.num_ope, NULL) AS num_ope,
+                    CASE 
+                        WHEN sc.scan_count = 1 THEN 'En cours'
+                        WHEN sc.scan_count = 2 THEN 'En attente'
+                        WHEN sc.scan_count = 0 OR sc.scan_count IS NULL THEN 'En attente'
+                    END AS statut,
+                    sc.temps_debut,
+                    sc.temps_fin,
+                    CASE 
+                        WHEN sc.temps_fin IS NULL THEN NULL
+                        WHEN sc.scan_count = 2 THEN TIMESTAMPDIFF(SECOND, sc.temps_debut, sc.temps_fin) / 60
+                        ELSE NULL
+                    END AS temps_realise,
+                    sc.commentaire
+                FROM carte c
+                LEFT JOIN (
+                    SELECT sc1.*
+                    FROM scan_carte sc1
+                    INNER JOIN (
+                        SELECT n_serie, MAX(num_ope) AS max_num_ope
+                        FROM scan_carte
+                        WHERE nof = ? AND scan_count > 0
+                        GROUP BY n_serie
+                    ) last_sc
+                    ON sc1.n_serie = last_sc.n_serie AND sc1.num_ope = last_sc.max_num_ope
+                    WHERE sc1.nof = ?
+                ) sc
+                ON c.n_serie = sc.n_serie AND c.nof = sc.nof
+                WHERE c.nof = ?
+                ORDER BY c.n_serie ASC
             `;
         
         if (who === 'user') // get data from user (nom, matricule, role)
@@ -528,46 +570,22 @@ class TrackingDB {
     static async currentNumopeFromPost(nof, postActuel, n_serie) {
 
         /*
-            The first SELECT returns the first num_ope if num_ope of the n_serie is null.
-            The second SELECT returns the num_ope that is equal to the num_ope of the n_serie if the scan count is < 2.
-            The third SELECT returns the first num_ope that is more than the num_ope of the n_serie.
-            The forth SELECT returns the last num_ope that is less or equal to the num_ope of the n_serie.
-            The fifth SELECT returns the last num_ope (if all are completed).
-            UNION ALL ... LIMIT 1 ensures you get the not-completed one if it exists, otherwise the last one.
+            -- 1. Get the first num_ope for this nof, postActuel, and n_serie in operation
+            -- where scan_carte is missing or scan_count < 2 (not completed)
+
+             -- 2. If nothing found, get the last num_ope for this nof and postActuel (poste_machine)
         */
 
         // Try to get the first not completed num_ope
         const sql = `
             (SELECT o.num_ope
-            FROM operation o
-            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
-            INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND c.num_ope IS NULL
+            FROM marque m
+            INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+            LEFT JOIN scan_carte sc
+                ON sc.nof = m.nof AND sc.num_ope = o.num_ope
+            WHERE m.nof = ? AND o.poste_machine = ? AND sc.n_serie = ? 
+            AND (sc.scan_count IS NULL OR sc.scan_count < 2)
             ORDER BY o.num_ope ASC
-            LIMIT 1)
-            UNION ALL
-            (SELECT o.num_ope
-            FROM operation o
-            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
-            INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope = c.num_ope AND c.scan_count < 2
-            ORDER BY o.num_ope ASC
-            LIMIT 1)
-            UNION ALL
-            (SELECT o.num_ope
-            FROM operation o
-            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
-            INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope > c.num_ope
-            ORDER BY o.num_ope ASC
-            LIMIT 1)
-            UNION ALL
-            (SELECT o.num_ope
-            FROM operation o
-            INNER JOIN marque m ON m.ref_gamme = o.ref_gamme
-            INNER JOIN carte c ON c.nof = m.nof
-            WHERE m.nof = ? AND o.poste_machine = ? AND c.n_serie = ? AND o.num_ope <= c.num_ope
-            ORDER BY o.num_ope DESC
             LIMIT 1)
             UNION ALL
             (SELECT o.num_ope
@@ -576,9 +594,8 @@ class TrackingDB {
             WHERE m.nof = ? AND o.poste_machine = ?
             ORDER BY o.num_ope DESC
             LIMIT 1)
-            LIMIT 1
         `;
-        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel, n_serie, nof, postActuel]);
+        let [rows] = await this.runQueryWithRetry(sql, [nof, postActuel, n_serie, nof, postActuel]);
         if (!rows.length) { // No num_ope found for this nof and post_machine
             return -1;
         }
@@ -779,22 +796,36 @@ class TrackingDB {
     // update a carte
     static async updateCarte(post, num_ope) {
 
-        // get carte scan_count and num_ope
-        let sqlGetScanCount = `SELECT scan_count, num_ope FROM carte WHERE nof = ? AND n_serie = ?`;
-        let [scanCountRows] = await this.runQueryWithRetry(sqlGetScanCount, [post.nof, post.nSerie]);
+        // check if the carte exists for this nof and n_serie
+        let sqlCheckCarte = `SELECT * FROM carte WHERE nof = ? AND n_serie = ?`;
+        let [checkCarteRows] = await this.runQueryWithRetry(sqlCheckCarte, [post.nof, post.nSerie]);
 
         // If carte found, update it
-        if (scanCountRows.length) {
-            let currentScanCount = scanCountRows[0].scan_count;
-            let current_num_ope = scanCountRows[0].num_ope;
-            if (current_num_ope === null) 
-                current_num_ope = 0; // If num_ope is null, set it to 0
+        if (checkCarteRows.length) {
+
+            // get carte current scan_count and num_ope
+            let sqlScanCount = `
+                SELECT scan_count, num_ope 
+                FROM scan_carte
+                WHERE nof = ? AND n_serie = ? AND scan_count > 0
+                ORDER BY num_ope DESC
+                LIMIT 1
+            `;
+
+            let [scanCountRows] = await this.runQueryWithRetry(sqlScanCount, [post.nof, post.nSerie]);
+            let currentScanCount = 0; // Default scan_count to 0
+            let current_num_ope = 0; // Default num_ope to 0
+            // If scan_count and num_ope found, set them
+            if (scanCountRows.length) {
+                currentScanCount = scanCountRows[0].scan_count;
+                current_num_ope = scanCountRows[0].num_ope;
+            }
 
 
             // chech if is there an active carte on this operation (num_ope), if so, and this carte is not the same as the current one, return false
             {
                 let sqlCheckActiveCarte = `
-                    SELECT n_serie FROM carte WHERE nof = ? AND num_ope = ? AND n_serie != ? AND scan_count = 1
+                    SELECT n_serie FROM scan_carte WHERE nof = ? AND num_ope = ? AND n_serie != ? AND scan_count = 1
                 `;
                 let [activeCarteRows] = await this.runQueryWithRetry(sqlCheckActiveCarte, [post.nof, num_ope, post.nSerie]);
                 if (activeCarteRows.length) {
@@ -838,21 +869,21 @@ class TrackingDB {
                 }
 
                 // If we reach here, it means we can update the carte
-                let sqlUpdateCarte = `UPDATE carte SET num_ope = ?, temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
-                let valuesUpdateCarte = [num_ope, post.tempsDernierScan, '', 1, post.nof, post.nSerie];
+                let sqlUpdateCarte = `UPDATE scan_carte SET temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
+                let valuesUpdateCarte = [post.tempsDernierScan, '', 1, post.nof, post.nSerie, num_ope];
 
                 let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
-                console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+                console.log("Table scan_carte updated!: " + result.affectedRows + " row(s) updated");
 
                 return {is: true}; // Return true if the update was successful
 
             } else {
                 if (currentScanCount === 1) { // If scan_count is 1
-                    let sqlUpdateCarte = `UPDATE carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ?`;
-                    let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie];
+                    let sqlUpdateCarte = `UPDATE scan_carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
+                    let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie, current_num_ope];
 
                     let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
-                    console.log("Table carte updated!: " + result.affectedRows + " row(s) updated");
+                    console.log("Table scan_carte updated!: " + result.affectedRows + " row(s) updated");
 
                     return {is: true}; // Return true if the update was successful
 
@@ -959,6 +990,11 @@ class TrackingDB {
 
     // remove cartes for the nof
     static async removeCartes(nof) {
+
+        // First, delete from scan_carte table where nof = value
+        let sqlScanCarte = `DELETE FROM scan_carte WHERE nof = ?`;
+        let [resultScanCarte] = await this.runQueryWithRetry(sqlScanCarte, [nof]);
+
         // Delete cartes from the carte table where nof = value
         let sql = `DELETE FROM carte WHERE nof = ?`;
         let [result] = await this.runQueryWithRetry(sql, [nof]);
@@ -1032,13 +1068,44 @@ class TrackingDB {
         for (let i = 1; i <= qt; i++) {
             // n_serie is a string of lenght 4 (ex: 0001)
             let n_serie = String(i).padStart(4, '0'); // Pad with leading zeros to make it 4 digits
-            values.push([nof, n_serie, null, null, null, '', 0]); // n_serie starts from 1 to qt
+            values.push([nof, n_serie]); // n_serie starts from 1 to qt
         }
 
-        let sql = `INSERT INTO carte (nof, n_serie, num_ope, temps_debut, temps_fin, commentaire, scan_count) VALUES ?`;
+        let sql = `INSERT INTO carte (nof, n_serie) VALUES ?`;
         let [result] = await this.runQueryWithRetry(sql, [values]);
 
         console.log("Cartes added for nof: " + nof + ", " + result.affectedRows + " cartes inserted.");
+
+
+        // Insert a new rows into the scan_carte table for each carte
+        {
+            // get ref_gamme, num_ope for this nof from operation table
+            let sqlOpe = `
+                SELECT o.ref_gamme, o.num_ope
+                FROM marque m
+                INNER JOIN operation o ON m.ref_gamme = o.ref_gamme
+                WHERE m.nof = ?
+            `;
+            let [opeRows] = await this.runQueryWithRetry(sqlOpe, [nof]);
+
+            // iterate over the opeRows and insert a row into scan_carte for each n_serie
+            let valuesScanCarte = [];
+            for (let i = 0; i < opeRows.length; i++) {
+                let ref_gamme = opeRows[i].ref_gamme;
+                let num_ope = opeRows[i].num_ope;
+
+                for (let j = 1; j <= qt; j++) {
+                    let n_serie = String(j).padStart(4, '0'); // Pad with leading zeros to make it 4 digits
+                    valuesScanCarte.push([ref_gamme, num_ope, nof, n_serie, null, null, null, null, '', 0]); // scan_count starts from 0
+                }
+            }
+
+            let sqlScanCarte = `INSERT INTO scan_carte (ref_gamme, num_ope, nof, n_serie, nom, matricule, temps_debut, temps_fin, commentaire, scan_count) VALUES ?`;
+            let [resultScanCarte] = await this.runQueryWithRetry(sqlScanCarte, [valuesScanCarte]);
+
+            console.log("Scan cartes added for nof: " + nof + ", " + resultScanCarte.affectedRows + " scan cartes inserted."); 
+
+        }
     }
 
 
