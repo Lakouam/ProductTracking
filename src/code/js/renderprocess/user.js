@@ -36,15 +36,22 @@ let fullData = null;
 
     // handle the send button click (hide the form)
     document.getElementById('addUserSendBtn').addEventListener('click', () => {
-        const nom = document.getElementById('userNameInput').value.trim();
-        const matricule = document.getElementById('userMatriculeInput').value.trim();
+        const nom = document.getElementById('userNameInput').value.trim(); // Get the user name input value without leading/trailing spaces
+        const matricule = document.getElementById('userMatriculeInput').value.trim(); // Get the user matricule input value without leading/trailing spaces
         const role = document.getElementById('userRoleSelect').value;
+        
+        // Make the first letter of each word in the name uppercase and remove extra spaces
+        const formattedNom = nom
+            .split(' ')
+            .filter(word => word.length > 0)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+        
 
         // TODO: Validate and send data (e.g., via ipcRenderer)
         if (nom && matricule && role) {
             // Send data to main process or handle as needed
-            console.log({ nom, matricule, role });
-            ipcRenderer.invoke('add-user', { nom, matricule, role }).then(response => {
+            ipcRenderer.invoke('add-user', { nom: formattedNom, matricule, role }).then(response => {
                 if (response.success) {
                     // Optionally, update the UI to reflect the new user
                     console.log('User added successfully:', response.data);

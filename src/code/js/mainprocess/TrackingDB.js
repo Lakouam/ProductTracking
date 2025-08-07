@@ -1133,7 +1133,7 @@ class TrackingDB {
     static async findUser(value) {
 
         // Find a user by nom and matricule
-        let sql = `SELECT * FROM user WHERE nom = ? AND matricule = ?`;
+        let sql = `SELECT * FROM user WHERE LOWER(nom) = LOWER(?) AND matricule = ?`;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, value);
 

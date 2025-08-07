@@ -612,6 +612,8 @@ function createWindow() {
 
                     PageUI.disable(); // disable UI
 
+                    console.log("Adding user:", userData);
+
                     let success = false;
                     if(userData !== null) 
                         success = await TrackingDB.addUser(userData.nom, userData.matricule, userData.role); // add the user to the database
