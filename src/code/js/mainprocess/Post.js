@@ -285,7 +285,7 @@ class Post {
 
 
     // update the post with the scan
-    async update(scan, store) {
+    async update(scan, store, user) {
 
         let scanRejected = true; // true if the scan is rejected
         let errorMessage = ""; // error message
@@ -302,7 +302,7 @@ class Post {
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
                     this.allUpdate(scan); // update all the variables (that can be updated)
-                    const ScanUpdated = await TrackingDB.updateScan(this, num_ope); // update the scan in the database
+                    const ScanUpdated = await TrackingDB.updateScan(this, num_ope, user); // update the scan in the database
 
                     if (ScanUpdated.is) {// if the scan is updated in the database
                         scanRejected = false;
@@ -341,7 +341,7 @@ class Post {
 
                 if (nofExist === 1) { // if the nof exists in the database
                     this.fillNew(scan);
-                    const ScanInserted = await TrackingDB.insertScan(this, num_ope); // insert the scan in the database
+                    const ScanInserted = await TrackingDB.insertScan(this, num_ope, user); // insert the scan in the database
 
                     if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
@@ -379,7 +379,7 @@ class Post {
                         num_ope = await TrackingDB.currentNumopeFromPost(scan.nof, this.postActuel, scan.n_serie); // get the current num_ope from the database 
                         console.log("num_ope: " + num_ope); // log the num_ope
 
-                        const ScanInserted = await TrackingDB.insertScan(this, num_ope); // insert the scan in the database
+                        const ScanInserted = await TrackingDB.insertScan(this, num_ope, user); // insert the scan in the database
                         
                         if (ScanInserted.is) { // if the scan is inserted in the database
                             scanRejected = false;

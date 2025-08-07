@@ -475,6 +475,8 @@ class TrackingDB {
                         WHEN sc.scan_count = 2 THEN TIMESTAMPDIFF(SECOND, sc.temps_debut, sc.temps_fin) / 60
                         ELSE NULL
                     END AS temps_realise,
+                    sc.matricule,
+                    sc.nom,
                     sc.commentaire
                 FROM carte c
                 LEFT JOIN (
@@ -606,9 +608,9 @@ class TrackingDB {
 
 
     // update the table scan by a post
-    static async updateScan(post, num_ope) {
+    static async updateScan(post, num_ope, user) {
         
-        const carteUpdated = await this.updateCarte(post, num_ope); // Update the carte table with the updated scan
+        const carteUpdated = await this.updateCarte(post, num_ope, user); // Update the carte table with the updated scan
         if (!carteUpdated.is) {
             console.log("Failed to update carte table for post: " + post.postActuel + ", the carteUpdated object: ", carteUpdated);
             return carteUpdated; // If the carte update failed, return false
@@ -701,7 +703,7 @@ class TrackingDB {
 
 
     // insert a row into the table scan
-    static async insertScan(post, num_ope) {
+    static async insertScan(post, num_ope, user) {
         
         // check if the post.postActuel exists on the ope table where ref_gamme of the ref_produit on the reference table is equal to the ref_gamme of ope
         let sqlCheckPost = `
@@ -718,7 +720,7 @@ class TrackingDB {
         console.log("Post " + post.postActuel + " exists in the ope table for the given ref_produit: " + post.refProduit + ", Counting: " + checkResult[0].count);
 
 
-        const carteUpdate = await this.updateCarte(post, num_ope); // Update the carte table with the new scan
+        const carteUpdate = await this.updateCarte(post, num_ope, user); // Update the carte table with the new scan
         if (!carteUpdate.is)
             return carteUpdate; // If the carte update failed, return false
 
@@ -794,7 +796,7 @@ class TrackingDB {
 
 
     // update a carte
-    static async updateCarte(post, num_ope) {
+    static async updateCarte(post, num_ope, user) {
 
         // check if the carte exists for this nof and n_serie
         let sqlCheckCarte = `SELECT * FROM carte WHERE nof = ? AND n_serie = ?`;
@@ -869,8 +871,8 @@ class TrackingDB {
                 }
 
                 // If we reach here, it means we can update the carte
-                let sqlUpdateCarte = `UPDATE scan_carte SET temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
-                let valuesUpdateCarte = [post.tempsDernierScan, '', 1, post.nof, post.nSerie, num_ope];
+                let sqlUpdateCarte = `UPDATE scan_carte SET nom = ?, matricule = ?, temps_debut = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
+                let valuesUpdateCarte = [user.nom, user.matricule, post.tempsDernierScan, '', 1, post.nof, post.nSerie, num_ope];
 
                 let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
                 console.log("Table scan_carte updated!: " + result.affectedRows + " row(s) updated");
@@ -879,8 +881,8 @@ class TrackingDB {
 
             } else {
                 if (currentScanCount === 1) { // If scan_count is 1
-                    let sqlUpdateCarte = `UPDATE scan_carte SET temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
-                    let valuesUpdateCarte = [post.tempsDernierScan, '', 2, post.nof, post.nSerie, current_num_ope];
+                    let sqlUpdateCarte = `UPDATE scan_carte SET nom = ?, matricule = ?, temps_fin = ?, commentaire = ?, scan_count = ? WHERE nof = ? AND n_serie = ? AND num_ope = ?`;
+                    let valuesUpdateCarte = [user.nom, user.matricule, post.tempsDernierScan, '', 2, post.nof, post.nSerie, current_num_ope];
 
                     let [result] = await this.runQueryWithRetry(sqlUpdateCarte, valuesUpdateCarte);
                     console.log("Table scan_carte updated!: " + result.affectedRows + " row(s) updated");

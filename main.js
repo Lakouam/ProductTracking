@@ -328,7 +328,7 @@ function createWindow() {
                             console.warn("Scan valide: " + scanData.toString()); // print the scan data in the console
 
                             // update the post with the scan data
-                            let updateInformations = await post.update(scanData, store); // update the post with the scan data
+                            let updateInformations = await post.update(scanData, store, { nom: user.nom, matricule: user.matricule }); // update the post with the scan data
                             scanRejected = updateInformations.scanRejected; // get the scan rejected information
                             errorMessage = updateInformations.errorMessage; // get the error message
 
