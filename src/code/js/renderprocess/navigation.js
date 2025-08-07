@@ -125,24 +125,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // go to scanner.html
-document.addEventListener('DOMContentLoaded', function() {
-    // Find the "scanner" button in the subtoolbar
-    const scansBtn = Array.from(document.querySelectorAll('.sidebar-scanner-btn')).find(item =>
-        item.textContent.trim().toLowerCase().includes('scanner')
-    );
-    if (scansBtn) 
-        scansBtn.onclick = () => ipcRenderer.send('open-scanner');
-});
+{
+    // When clicking on 'scanner' on the sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "scanner" button in the subtoolbar
+        const scansBtn = Array.from(document.querySelectorAll('.sidebar-scanner-btn')).find(item =>
+            item.textContent.trim().toLowerCase().includes('scanner')
+        );
+        if (scansBtn) 
+            scansBtn.onclick = () => ipcRenderer.send('open-scanner');
+    });
+}
 
 
 
 // go to user.html
-document.addEventListener('DOMContentLoaded', function() {
-    // Find the "users" element in the sidebar
-    const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
-        item.textContent.trim().toLowerCase().includes('utilisateurs')
-    );
-    if (scansBtn) {
-        scansBtn.onclick = () => ipcRenderer.send('open-user');
-    }
-});
+{
+    // When clicking on 'utilisateurs' on the sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "users" element in the sidebar
+        const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('utilisateurs')
+        );
+        if (scansBtn) {
+            scansBtn.onclick = () => ipcRenderer.send('open-user');
+        }
+    });
+
+
+    // When clicking on 'utilisateurs' on the breadcrumb
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find the "users" element on the breadcrumb
+        const scansBtn = Array.from(document.querySelectorAll('.breadcrumb-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('utilisateurs')
+        );
+        if (scansBtn) {
+            scansBtn.onclick = () => ipcRenderer.send('open-user');
+        }
+    });
+}

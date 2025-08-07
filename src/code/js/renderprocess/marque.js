@@ -23,7 +23,7 @@ let fullData = null;
         // set the input value to the shared 'nof'
         document.getElementById("search").value = sharedNof;
 
-        show(sharedNof, undefined, {is: true, who: 'nof'}, undefined, undefined, true);
+        show(sharedNof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'});
             
     });
 }
@@ -43,7 +43,7 @@ let fullData = null;
             // Save the value in localStorage
             localStorage.setItem('shared_nof', nof);
 
-            show(nof, undefined, {is: true, who: 'nof'}, undefined, undefined, true);
+            show(nof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'});
 
         }
     });

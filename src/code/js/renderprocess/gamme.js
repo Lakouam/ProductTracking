@@ -14,7 +14,7 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show(undefined, undefined, undefined, undefined, true);
+        show(undefined, undefined, undefined, undefined, {is: true, who: "gamme"});
         
             
     });
@@ -34,7 +34,7 @@ let fullData = null;
             // get gamme value
             const gamme = document.getElementById("search").value;
 
-            show(undefined, undefined, undefined, gamme, true);
+            show(undefined, undefined, undefined, gamme, {is: true, who: "gamme"});
 
         }
     });

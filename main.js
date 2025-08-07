@@ -473,6 +473,13 @@ function createWindow() {
             ipcMain.on('open-nof-detail', (event, nof, gamme, qt) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof-detail'), { query: { nof, gamme, qt } });
             });
+
+
+
+            // open userdetail.html
+            ipcMain.on('open-user-detail', (event, nom, matricule, role) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-user-detail'), { query: { nom, matricule, role } });
+            });
         }
     }
 
@@ -720,6 +727,7 @@ function appropriateFile(postName, dashboard = "") {
     if (dashboard === 'open-scanner') return 'src/code/html/scanner.html';
     if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
     if (dashboard === 'open-user') return 'src/code/html/user.html';
+    if (dashboard === 'open-user-detail') return 'src/code/html/userdetail.html';
     return 'src/code/html/scans.html'; // load the nof page by default
 }
 

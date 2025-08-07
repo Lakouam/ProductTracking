@@ -1,7 +1,7 @@
 const { columnName } = require('./columnsnames.js');
 
 
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = false, nof_detail = false) {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}) {
     
     // show columns in the table
     {
@@ -111,22 +111,30 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                     tr.appendChild(removeTd);
             }
 
-            // gamme detail
-            if (detail) {
-                tr.style.cursor = "pointer";
-                tr.onclick = () => {
-                    // Open gammedetail.html, using ipcRenderer, passing the gamme info (e.g., row.ref_gamme):
-                    ipcRenderer.send('open-gamme-detail', row["ref_gamme"]);
-                };
-            }
-
-            // nof detail
-            if (nof_detail) {
-                tr.style.cursor = "pointer";
-                tr.onclick = () => {
-                    // Open carte.html, using ipcRenderer, passing the nof info (e.g., row.nof, row.gamme, row.qt):
-                    ipcRenderer.send('open-nof-detail', row["nof"], row["ref_gamme"], row["qt"]);
-                };
+            // Add detail functionality
+            if (detail.is) {
+                if (detail.who === "gamme") { // gamme detail
+                    tr.style.cursor = "pointer";
+                    tr.onclick = () => {
+                        // Open gammedetail.html, using ipcRenderer, passing the gamme info (e.g., row.ref_gamme):
+                        ipcRenderer.send('open-gamme-detail', row["ref_gamme"]);
+                    };
+                }
+                if (detail.who === "nof") { // nof detail
+                    tr.style.cursor = "pointer";
+                    tr.onclick = () => {
+                        // Open carte.html, using ipcRenderer, passing the nof info (e.g., row.nof, row.gamme, row.qt):
+                        ipcRenderer.send('open-nof-detail', row["nof"], row["ref_gamme"], row["qt"]);
+                    };
+                }
+                if (detail.who === "user" && row["role"] === "Opérateur") { // user detail
+                    tr.style.cursor = "pointer";
+                    tr.onclick = () => {
+                        // Open userdetail.html, using ipcRenderer, passing the user info (e.g., row.nom, row.matricule):
+                        ipcRenderer.send('open-user-detail', row["nom"], row["matricule"], row["role"]);
+                    };
+                }
+                
             }
 
             tableBody.appendChild(tr);
