@@ -43,6 +43,10 @@ function columnName(name) {
             return 'Matricule';
         case 'role':
             return 'Rôle';
+        case 'qte_total':
+            return 'Quantité totale dont';
+        case 'date':
+            return 'Date';
         default:
             return name;
     }

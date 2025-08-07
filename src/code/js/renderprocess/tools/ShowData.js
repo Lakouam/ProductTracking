@@ -78,7 +78,9 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                         td.classList.add("status-encours");
                     }
                     td.appendChild(badge);
-                } else if (cell instanceof Date) 
+                } else if (name === "date") // show only the year, month and day
+                    td.innerText = cell.toLocaleDateString(); // format the date
+                else if (cell instanceof Date) 
                     td.innerText = cell.toLocaleString(); // format the date
                 else td.innerText = cell;
                 tr.appendChild(td);

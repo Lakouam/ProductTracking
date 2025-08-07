@@ -499,6 +499,19 @@ class TrackingDB {
         if (who === 'user') // get data from user (nom, matricule, role)
             sql = `SELECT nom, matricule, role FROM user ORDER BY nom ASC`;
 
+        if (who === 'user-detail') // get data (the total quantity) from scan_carte for a specific user, grouped by day, nof, num_ope
+            sql = `
+                SELECT
+                    DATE(temps_fin) AS date,
+                    nof,
+                    num_ope,
+                    COUNT(*) AS qte_total
+                FROM scan_carte
+                WHERE nom = ? AND matricule = ? AND scan_count = 2 AND temps_fin IS NOT NULL
+                GROUP BY DATE(temps_fin), nof, num_ope
+                ORDER BY date DESC, nof, num_ope DESC
+            `;
+
         let [result, fields]  = await this.runQueryWithRetry(sql, value);
 
         console.log("Data retrieved from the database!");
