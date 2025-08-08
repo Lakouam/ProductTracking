@@ -1,7 +1,7 @@
 const { columnName } = require('./columnsnames.js');
 
 
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}) {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}, nom = "") {
     
     // show columns in the table
     {
@@ -48,6 +48,9 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
 
             // check if the row contains the gamme value as a prefix
             if (gamme !== "" && !row["ref_gamme"].startsWith(gamme))
+                return; // skip this row
+            // check if the row contains the nom value
+            if (nom !== "" && !row["nom"].toLowerCase().includes(nom.toLowerCase()))
                 return; // skip this row
             
             // show the row in the table

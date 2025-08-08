@@ -50,3 +50,21 @@ let fullData = null;
             
     });
 }
+
+
+
+
+
+// receiving value of input in 'search' when the user click enter in the input
+{
+    // click enter on input event
+    document.getElementById("search").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            // get nof value
+            const nof = document.getElementById("search").value;
+
+            show(nof);
+
+        }
+    });
+}

@@ -24,6 +24,26 @@ let fullData = null;
 
 
 
+// receiving value of input in 'search' when the user click enter in the input
+{
+    // click enter on input event
+    document.getElementById("search").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            // get gamme value
+            const nom = document.getElementById("search").value;
+
+            show(undefined, undefined, {is: true, who: 'user'}, undefined, {is: true, who: 'user'}, nom);
+
+        }
+    });
+}
+
+
+
+
 
 // Toggle form visibility on label click
 {
