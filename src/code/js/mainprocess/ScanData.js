@@ -121,6 +121,24 @@ class ScanData {
         return null;
     }
 
+
+
+    // check if the nof is valid
+    static isValidNof(nof, refProduit, qt) {
+        // if nof is a string of length 7
+        if (typeof nof === "string" && nof.length === ScanData.NOFSIZE) {
+            // if refProduit is a string of length 6
+            if (typeof refProduit === "string" && refProduit.length === ScanData.REFPSIZE) {
+                // if qt is a number
+                if (!isNaN(qt) && parseInt(qt) > 0) {
+                    return true; // all conditions are met
+                }
+            }
+        }
+
+        return false; // one or more conditions are not met
+    }
+
 }
 
 module.exports = ScanData;

@@ -591,8 +591,10 @@ function createWindow() {
                     PageUI.disable(); // disable UI
 
                     let success = false;
-                    if(nofscan !== null) 
-                        success = await TrackingDB.addNof(nofscan.nof, nofscan.ref, nofscan.qt); // add the post to the database
+                    if(nofscan !== null && ScanData.isValidNof(nofscan.nof, nofscan.ref, nofscan.qt)) 
+                        success = await TrackingDB.addNof(nofscan.nof, nofscan.ref, parseInt(nofscan.qt)); // add the post to the database
+                    else console.warn("Invalid NOF data:", nofscan);
+
 
                     if (success) 
                         win.reload(); // reload the page to refresh the table
