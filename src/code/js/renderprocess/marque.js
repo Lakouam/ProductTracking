@@ -48,3 +48,49 @@ let fullData = null;
         }
     });
 }
+
+
+
+
+
+// Toggle form visibility on label click
+{
+    // show/hide the form when the label is clicked
+    document.querySelector('.main-subtoolbar-sort-label').addEventListener('click', () => {
+        const form = document.getElementById('addNofForm');
+        form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+    });
+
+
+    // handle the send button click (hide the form)
+    document.getElementById('addNofSendBtn').addEventListener('click', () => {
+        const nof = document.getElementById('nofInput').value.trim(); // Get the user name input value without leading/trailing spaces
+        const ref = document.getElementById('refInput').value.trim(); // Get the user matricule input value without leading/trailing spaces
+        const qt = document.getElementById('qtInput').value.trim(); // Get the user role input value without leading/trailing spaces
+        
+
+        // TODO: Validate and send data (e.g., via ipcRenderer)
+        if (nof && ref && qt) {
+            // Send data to main process or handle as needed
+            ipcRenderer.invoke('add-nof', { nof, ref, qt }).then(response => {
+                if (response.success) {
+                    // Optionally, update the UI to reflect the new user
+                    console.log('Numéro O.F added successfully:', response.data);
+
+                    // Hide form after sending
+                    document.getElementById('addNofForm').style.display = 'none';
+                }
+                else {
+                    // Handle error response
+                    document.getElementById("ajouterError").textContent = "Une erreur est survenue lors de l'ajout de ce numéro O.F.";
+                    document.getElementById('ajouterError').style.display = "block";
+                }
+            });
+
+        } else {
+            // show an error message
+            document.getElementById("ajouterError").textContent = "Merci de remplir tous les champs.";
+            document.getElementById('ajouterError').style.display = "block";
+        }
+    });
+}

@@ -582,7 +582,7 @@ function createWindow() {
 
 
 
-            /*
+            
             // receive add nof request from render process (modifynof.js)
             ipcMain.handle('add-nof', async (event, nofscan) => {
 
@@ -592,9 +592,10 @@ function createWindow() {
 
                     let success = false;
                     if(nofscan !== null) 
-                        success = await TrackingDB.addNof(nofscan.nof, nofscan.refProduit, nofscan.qt); // add the post to the database
+                        success = await TrackingDB.addNof(nofscan.nof, nofscan.ref, nofscan.qt); // add the post to the database
 
-                    win.reload(); // reload the page to refresh the table
+                    if (success) 
+                        win.reload(); // reload the page to refresh the table
 
                     PageUI.enable(); // enable UI
 
@@ -607,7 +608,7 @@ function createWindow() {
                 }
 
             });
-            */
+            
 
 
 
