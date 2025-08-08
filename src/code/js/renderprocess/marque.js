@@ -64,13 +64,13 @@ let fullData = null;
 
     // handle the send button click (hide the form)
     document.getElementById('addNofSendBtn').addEventListener('click', () => {
-        const nof = document.getElementById('nofInput').value.trim(); // Get the user name input value without leading/trailing spaces
-        const ref = document.getElementById('refInput').value.trim(); // Get the user matricule input value without leading/trailing spaces
-        const qt = document.getElementById('qtInput').value.trim(); // Get the user role input value without leading/trailing spaces
+        const nof = document.getElementById('nofInput').value.trim(); // Get the numéro O.F input value without leading/trailing spaces
+        const ref = document.getElementById('refInput').value.trim(); // Get the reference input value without leading/trailing spaces
+        const qt = document.getElementById('qtInput').value.trim(); // Get the quantity input value without leading/trailing spaces
         
-
+        console.log("N° OF:", nof, "Reference:", ref, "Quantity:", qt);
         // TODO: Validate and send data (e.g., via ipcRenderer)
-        if (nof && ref && qt) {
+        if (nof && ref && qt && qt > 0) {
             // Send data to main process or handle as needed
             ipcRenderer.invoke('add-nof', { nof, ref, qt }).then(response => {
                 if (response.success) {
