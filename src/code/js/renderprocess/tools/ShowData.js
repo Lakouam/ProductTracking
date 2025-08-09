@@ -43,7 +43,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
             // check if the row contains the nof and postCharge values
             if (nof !== "" && row["nof"] !== nof)
                 return; // skip this row
-            if (postCharge !== "" && row["post_actuel"] !== postCharge && row["post_machine"] !== postCharge)
+            if (postCharge !== "" && row["post_actuel"] !== postCharge && row["poste_machine"] !== postCharge)
                 return; // skip this row
 
             // check if the row contains the gamme value as a prefix
