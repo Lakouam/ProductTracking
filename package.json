@@ -17,13 +17,13 @@
   },
   "homepage": "https://github.com/Lakouam/ProductTracking#readme",
   "dependencies": {
-    "electron": "^36.1.0",
     "electron-store": "^10.1.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.14.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "electron": "^37.2.6",
     "electron-packager": "^17.1.2"
   }
 }
