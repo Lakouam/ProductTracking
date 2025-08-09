@@ -46,8 +46,7 @@ function createWindow() {
     win.show();     // Now show the maximized window
 
 
-    win.loadFile(appropriateFile(MyConfig.postActuel)); // load the appropriate file
-    win.loadFile('src/code/html/login.html'); // load the login page first
+    win.loadFile(appropriateFile(MyConfig.postActuel, 'open-login')); // load the login page first
 
 
     // when loading the page
@@ -730,6 +729,7 @@ function appropriateFile(postName, dashboard = "") {
     if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
     if (dashboard === 'open-user') return 'src/code/html/user.html';
     if (dashboard === 'open-user-detail') return 'src/code/html/userdetail.html';
+    if (dashboard === 'open-login') return 'src/code/html/login.html';
     return 'src/code/html/scans.html'; // load the nof page by default
 }
 
