@@ -22,9 +22,8 @@ let user;
 
 
 
-// Gets the path of the icon to use in the tray and taskbar
-//const iconPath = path.join(__dirname, "src", "icons", "applogo.ico");
-const iconPath = path.join(__dirname, "src", "icons", "applogo2.png");
+// Gets the path of the icon to use in the taskbar
+const iconPath = path.join(__dirname, "src", "icons", "applogo2.ico");
 
 // function to create a window
 function createWindow() {
