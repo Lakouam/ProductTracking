@@ -1,3 +1,7 @@
+const { ipcRenderer } = require('electron');
+
+
+
 // This script handles the login functionality for the application
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('loginForm');

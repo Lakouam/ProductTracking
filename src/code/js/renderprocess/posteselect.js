@@ -1,3 +1,7 @@
+const { ipcRenderer } = require('electron');
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // when selecting a post, send the post name to main process
