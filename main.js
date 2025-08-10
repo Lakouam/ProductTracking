@@ -693,6 +693,31 @@ function createWindow() {
     }
 
 
+
+
+    // insert gammes (gamme.js)
+    {
+        ipcMain.on('insert-gamme', async (event) => {
+            try {
+                PageUI.disable(); // disable UI
+
+                const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
+                await Gamme.fileToDB(gammefilePath);
+
+                win.reload(); // reload the page to refresh the table
+
+                PageUI.enable(); // enable UI
+
+            } catch (err) {
+                console.error("Error while inserting Gammes:", err.message);
+                // close the app
+                app.quit();
+            }
+        });
+                
+    }
+
+
 };
 
 

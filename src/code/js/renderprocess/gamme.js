@@ -14,6 +14,12 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
+
+        // show the ajouter button if the data has only one column and less than 3133 rows
+        if (data.columns.length === 1 && data.rows.length < 3133) {
+            document.querySelector('.main-subtoolbar-sort').style.display = 'flex';
+        }
+
         show(undefined, undefined, undefined, undefined, {is: true, who: "gamme"});
         
             
@@ -37,5 +43,15 @@ let fullData = null;
             show(undefined, undefined, undefined, gamme, {is: true, who: "gamme"});
 
         }
+    });
+}
+
+
+
+
+// on label click, add gammes
+{
+    document.querySelector('.main-subtoolbar-sort-label').addEventListener('click', () => {
+        ipcRenderer.send('insert-gamme');
     });
 }
