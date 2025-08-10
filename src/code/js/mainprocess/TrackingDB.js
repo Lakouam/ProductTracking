@@ -511,6 +511,20 @@ class TrackingDB {
                 GROUP BY DATE(temps_fin), nof, num_ope
                 ORDER BY date DESC, nof, num_ope DESC
             `;
+        
+        if (who === 'poste-detail') // get data (the total quantity) from scan_carte for a specific poste, grouped by day, nof, num_ope
+            sql = `
+                SELECT
+                    DATE(sc.temps_fin) AS date,
+                    sc.nof,
+                    sc.num_ope,
+                    COUNT(*) AS qte_total
+                FROM scan_carte sc
+                INNER JOIN operation o ON sc.ref_gamme = o.ref_gamme AND sc.num_ope = o.num_ope
+                WHERE o.poste_machine = ? AND sc.scan_count = 2 AND sc.temps_fin IS NOT NULL
+                GROUP BY DATE(sc.temps_fin), sc.nof, sc.num_ope
+                ORDER BY date DESC, sc.nof, sc.num_ope DESC
+            `;
 
         let [result, fields]  = await this.runQueryWithRetry(sql, value);
 

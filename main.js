@@ -478,6 +478,13 @@ function createWindow() {
             ipcMain.on('open-user-detail', (event, nom, matricule, role) => {
                 win.loadFile(appropriateFile(MyConfig.postActuel, 'open-user-detail'), { query: { nom, matricule, role } });
             });
+
+
+
+            // open poste-detail.html
+            ipcMain.on('open-poste-detail', (event, poste) => {
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-poste-detail'), { query: { poste } });
+            });
         }
     }
 
@@ -730,6 +737,7 @@ function appropriateFile(postName, dashboard = "") {
     if (dashboard === 'open-user') return 'src/code/html/user.html';
     if (dashboard === 'open-user-detail') return 'src/code/html/userdetail.html';
     if (dashboard === 'open-login') return 'src/code/html/login.html';
+    if (dashboard === 'open-poste-detail') return 'src/code/html/postedetail.html';
     return 'src/code/html/scans.html'; // load the nof page by default
 }
 

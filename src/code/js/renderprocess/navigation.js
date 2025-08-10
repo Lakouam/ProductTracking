@@ -63,22 +63,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // go to post.html
 {
-    // When clicking on 'post' button on the subtoolbar
+    // When clicking on Post on the sidebar
     document.addEventListener('DOMContentLoaded', function() {
-        // Find the "post" button on the subtoolbar
-        const scansBtn = Array.from(document.querySelectorAll('.main-subtoolbar-btn')).find(item =>
-            item.textContent.trim().toLowerCase().includes('post')
+        // Find the "post" element in the sidebar
+        const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('poste')
         );
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-post');
     });
 
 
-    // When clicking on Post on the sidebar
+    // When clicking on Post on the breadcrumb
     document.addEventListener('DOMContentLoaded', function() {
-        // Find the "post" element in the sidebar
-        const scansBtn = Array.from(document.querySelectorAll('.sidebar-menu-item')).find(item =>
-            item.textContent.trim().toLowerCase().includes('post')
+        // Find the "post" element on the breadcrumb
+        const scansBtn = Array.from(document.querySelectorAll('.breadcrumb-item')).find(item =>
+            item.textContent.trim().toLowerCase().includes('poste')
         );
         if (scansBtn) 
             scansBtn.onclick = () => ipcRenderer.send('open-post');

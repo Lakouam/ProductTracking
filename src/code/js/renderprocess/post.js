@@ -15,7 +15,7 @@ let fullData = null;
         // store data in the page
         fullData = data;
 
-        show();
+        show(undefined, undefined, undefined, undefined, {is: true, who: 'poste'});
         
             
     });
@@ -33,7 +33,7 @@ let fullData = null;
             // get poste value
             const poste = document.getElementById("search").value;
 
-            show(undefined, poste);
+            show(undefined, poste, undefined, undefined, {is: true, who: 'poste'});
 
         }
     });

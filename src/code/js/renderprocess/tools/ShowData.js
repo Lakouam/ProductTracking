@@ -142,6 +142,13 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                         ipcRenderer.send('open-user-detail', row["nom"], row["matricule"], row["role"]);
                     };
                 }
+                if (detail.who === "poste") { // poste detail
+                    tr.style.cursor = "pointer";
+                    tr.onclick = () => {
+                        // Open poste-detail.html, using ipcRenderer, passing the poste info (e.g., row.poste_machine):
+                        ipcRenderer.send('open-poste-detail', row["poste_machine"]);
+                    };
+                }
                 
             }
 
