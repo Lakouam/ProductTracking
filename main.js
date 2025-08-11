@@ -74,66 +74,66 @@ function createWindow() {
         // Application menu with Settings
         const templateMenu = [
             {
-                label: 'File',
+                label: 'Fichier',
                 submenu: [
                     {
-                        label: 'Settings',
+                        label: 'Paramètres',
                         submenu: [
                             {
-                                label: 'Database',
+                                label: 'Base de données',
                                 click: () => openSettingsWindow()
                             }
                         ]
                     },
-                    { role: 'quit' }
+                    { role: 'quit', label: 'Quitter' }
                 ]
             },
             {
-                label: 'Edit',
+                label: 'Édition',
                 submenu: [
-                    { role: 'undo' },
-                    { role: 'redo' },
+                    { role: 'undo', label: 'Annuler' },
+                    { role: 'redo', label: 'Rétablir' },
                     { type: 'separator' },
-                    { role: 'cut' },
-                    { role: 'copy' },
-                    { role: 'paste' },
+                    { role: 'cut', label: 'Couper' },
+                    { role: 'copy', label: 'Copier' },
+                    { role: 'paste', label: 'Coller' },
                     { type: 'separator' },
-                    { role: 'selectAll' }
+                    { role: 'selectAll', label: 'Tout sélectionner' }
                 ]
             },
             {
-                label: 'View',
+                label: 'Affichage',
                 submenu: [
-                    { role: 'reload', label: 'Reload' },
-                    { role: 'forceReload', label: 'Force Reload' },
-                    { role: 'toggleDevTools', label: 'Toggle Developer Tools' },
+                    { role: 'reload', label: 'Recharger' },
+                    { role: 'forceReload', label: 'Recharger (forcer)' },
+                    //{ role: 'toggleDevTools', label: 'Outils de développement' },
                     { type: 'separator' },
-                    { role: 'resetZoom', label: 'Reset Zoom' },
-                    { role: 'zoomIn', label: 'Zoom In' },
-                    { role: 'zoomOut', label: 'Zoom Out' },
+                    { role: 'resetZoom', label: 'Réinitialiser le zoom' },
+                    { role: 'zoomIn', label: 'Zoomer' },
+                    { role: 'zoomOut', label: 'Dézoomer' },
                     { type: 'separator' },
-                    { role: 'togglefullscreen', label: 'Toggle Fullscreen' }
+                    { role: 'togglefullscreen', label: 'Plein écran' }
                 ]
             },
             {
-                label: 'Window',
+                label: 'Fenêtre',
                 submenu: [
-                    { role: 'minimize', label: 'Minimize' },
-                    { role: 'close', label: 'Close Window' }
+                    { role: 'minimize', label: 'Minimiser' },
+                    { role: 'close', label: 'Fermer la fenêtre' }
                 ]
             },
             {
-                label: 'Help',
+                label: 'Aide',
                 submenu: [
                     {
-                        label: 'Learn More',
+                        label: 'En savoir plus',
                         click: async () => {
                             const { shell } = require('electron');
                             await shell.openExternal('https://github.com/Lakouam/ProductTracking'); // app's site or repo
                         }
                     },
                     {
-                        label: 'About',
+                        label: 'À propos',
                         click: () => {
                             // show an about dialog here
                         }
@@ -151,12 +151,12 @@ function createWindow() {
 
         // a menu that pop up when we right click
         let templateRightClick = [
-            {label: 'Cut', role: 'cut'},
-            {label: 'Copy', role: 'copy'},
-            {label: 'Paste', role: 'paste'},
+            {label: 'Couper', role: 'cut'},
+            {label: 'Copier', role: 'copy'},
+            {label: 'Coller', role: 'paste'},
             {type: 'separator'},
-            {label: 'Reload', role: 'reload'},
-            {label: 'Toggle Developer Tools', role: 'toggleDevTools'}
+            {label: 'Recharger', role: 'reload'},
+            {label: 'Outils de développement', role: 'toggleDevTools'}
         ];
         contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
 

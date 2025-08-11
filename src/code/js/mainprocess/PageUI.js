@@ -22,7 +22,7 @@ class PageUI {
         // Disable menu third item submenu item 1 (reload) and 2 (force reload)
         this.menu.items[2].submenu.items[0].enabled = false;
         this.menu.items[2].submenu.items[1].enabled = false;
-        this.menu.items[2].submenu.items[2].enabled = false;
+        //this.menu.items[2].submenu.items[2].enabled = false;
     }
 
     // Enable UI
