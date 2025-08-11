@@ -1,3 +1,5 @@
+
+
 // handles the display of the user menu and the logout action.
 document.addEventListener('DOMContentLoaded', () => {
     const userMenuBtn = document.getElementById('userMenuBtn');
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Logout action
     logoutBtn.addEventListener('click', () => {
-        // Add your logout logic here
-        console.log('test logout');
+        // send a message to the main process or perform logout logic
+        ipcRenderer.send('logout');
     });
 });

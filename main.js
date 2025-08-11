@@ -556,7 +556,7 @@ function createWindow() {
     
 
 
-    // Add (user.js)
+    // Add (user.js) & Add (marque.js)
     {
         // receive data from render process
         {
@@ -690,6 +690,34 @@ function createWindow() {
             return{ nom: user.nom, role: user.role };
         });
         
+    }
+
+
+
+
+
+    // logout
+    {
+        // receive logout request from render process (userinfo.js)
+        ipcMain.on('logout', async (event) => {
+
+            try {
+
+                PageUI.disable(); // disable UI
+
+                user = null; // reset the user
+
+                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-login')); // go to login page
+
+                PageUI.enable(); // enable UI
+
+            } catch (err) {
+                console.error("Error during logout:", err.message);
+                // close the app
+                app.quit();
+            }
+
+        });
     }
 
 
