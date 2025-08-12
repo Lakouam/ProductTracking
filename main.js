@@ -241,7 +241,8 @@ function createWindow() {
                         PageUI.enable(); // enable UI
 
                     } catch (err) {
-                        console.error("Database error in Post Select event:", err.message);
+                        //console.error("Database error in Post Select event:", err.message);
+                        console.error("Error in Post Select event:", err.message);
                         // close the app
                         app.quit();
                     }
