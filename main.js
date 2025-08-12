@@ -78,12 +78,7 @@ function createWindow() {
                 submenu: [
                     {
                         label: 'Paramètres',
-                        submenu: [
-                            {
-                                label: 'Base de données',
-                                click: () => openSettingsWindow()
-                            }
-                        ]
+                        click: () => openSettingsWindow() // open the settings window
                     },
                     { role: 'quit', label: 'Quitter' }
                 ]
