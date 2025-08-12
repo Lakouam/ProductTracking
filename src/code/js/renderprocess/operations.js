@@ -7,29 +7,35 @@ let fullData = null;
 
 
 
-// receiving Table Data columns and rows
-{
-
-    ipcRenderer.invoke('Table Data', 'operations').then(data => {
+// create a function to request the data and show it in the table
+function showData(nof) {
+    // get data from main process
+    ipcRenderer.invoke('Table Data', 'operations', [nof]).then(data => {
 
         // store data in the page
         fullData = data;
 
-        // Retrieve the shared 'nof' value from localStorage
-        let sharedNof = localStorage.getItem('shared_nof');
-        if (sharedNof === null) 
-            sharedNof = "";
-
-        // set the input value to the shared 'nof'
-        document.getElementById("search").value = sharedNof;
-
-        if (sharedNof === "") 
-            show(" "); // Show only the columns
-        else 
-            show(sharedNof);
+        show();
         
             
     });
+}
+
+
+
+// receiving Table Data columns and rows
+{
+
+    // Retrieve the shared 'nof' value from localStorage
+    let sharedNof = localStorage.getItem('shared_nof');
+    if (sharedNof === null) 
+        sharedNof = "";
+
+    // set the input value to the shared 'nof'
+    document.getElementById("search").value = sharedNof;
+
+    // request the data with the shared nof value & show it
+    showData(sharedNof);
 }
 
 
@@ -48,10 +54,8 @@ let fullData = null;
             localStorage.setItem('shared_nof', nof);
 
 
-            if (nof === "") 
-                show(" "); // Show only the columns
-            else 
-                show(nof);
+            // request the data with the new nof value & show it
+            showData(nof);
 
         }
     });

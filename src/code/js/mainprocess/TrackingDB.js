@@ -446,6 +446,7 @@ class TrackingDB {
                 FROM marque m
                 JOIN operation o ON o.ref_gamme = m.ref_gamme
                 LEFT JOIN scan s ON s.nof = m.nof AND s.num_ope = o.num_ope
+                WHERE m.nof = ?
                 ORDER BY m.nof, o.num_ope
             `;
 
