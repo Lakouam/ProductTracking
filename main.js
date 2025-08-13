@@ -14,7 +14,7 @@ const ScanData = require('./src/code/js/mainprocess/ScanData.js');
 const TrackingDB = require('./src/code/js/mainprocess/TrackingDB.js');
 const Post = require('./src/code/js/mainprocess/Post.js');
 const PageUI = require('./src/code/js/mainprocess/PageUI.js');
-const MyConfig = require('./src/code/js/mainprocess/MyConfig.js');
+//const MyConfig = require('./src/code/js/mainprocess/MyConfig.js');
 
 const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
@@ -46,7 +46,7 @@ function createWindow() {
     win.show();     // Now show the maximized window
 
 
-    win.loadFile(appropriateFile(MyConfig.postActuel, 'open-login')); // load the login page first
+    win.loadFile(appropriateFile("", 'open-login')); // load the login page first
 
 
     // when loading the page
@@ -231,8 +231,11 @@ function createWindow() {
                             
                         post.fillPostName(postName); // fill the post name
 
+                        /*
                         MyConfig.postActuel = postName;
                         MyConfig.save(); // save the post actuel in the config file
+                        */
+                        store.set("poste", postName); // save the post actuel in the local storage
 
                         //post.fillFromDB(data); // fill the post with the data from the database
 
@@ -283,8 +286,12 @@ function createWindow() {
         {
             // send the post Actuel to the render process (posteselect.js) whenever it request it, (the event that fill our post is not trigered first time when we get post name from local storage, so triger it)
             ipcMain.handle('Post Actuel', async () => {
+                /*
                 return {name: MyConfig.postActuel, isnull: (post.postActuel === null), 
                         saved: store.get(MyConfig.postActuel)};
+                */
+                return {name: store.get("poste"), isnull: (post.postActuel === null), 
+                        saved: store.get(store.get("poste"))};
             });
         }
 
@@ -458,28 +465,28 @@ function createWindow() {
 
             // open gammedetail.html
             ipcMain.on('open-gamme-detail', (event, gamme) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme-detail'), { query: { gamme } });
+                win.loadFile(appropriateFile("", 'open-gamme-detail'), { query: { gamme } });
             });
 
 
 
             // open carte.html
             ipcMain.on('open-nof-detail', (event, nof, gamme, qt) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof-detail'), { query: { nof, gamme, qt } });
+                win.loadFile(appropriateFile("", 'open-nof-detail'), { query: { nof, gamme, qt } });
             });
 
 
 
             // open userdetail.html
             ipcMain.on('open-user-detail', (event, nom, matricule, role) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-user-detail'), { query: { nom, matricule, role } });
+                win.loadFile(appropriateFile("", 'open-user-detail'), { query: { nom, matricule, role } });
             });
 
 
 
             // open poste-detail.html
             ipcMain.on('open-poste-detail', (event, poste) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-poste-detail'), { query: { poste } });
+                win.loadFile(appropriateFile("", 'open-poste-detail'), { query: { poste } });
             });
         }
     }
@@ -497,16 +504,29 @@ function createWindow() {
         {
             // send the config file to the render process (settings.html) whenever we load the page
             ipcMain.handle('get-db-config', async () => {
-                return MyConfig.toObject(); // send the config file to the render process
+                //return MyConfig.toObject(); // send the config file to the render process
+                return {
+                    host: store.get("host"),
+                    user: store.get("user"),
+                    password: store.get("password"),
+                    database: store.get("database")
+                };
             });
 
             // save the config file whenever we change it (settings.html)
             ipcMain.handle('save-db-config', async (event, config) => {
+                /*
                 MyConfig.host = config.host;
                 MyConfig.user = config.user;
                 MyConfig.password = config.password;
                 MyConfig.database = config.database;
                 let success = MyConfig.save(); // save JSON file
+                */
+                store.set("host", config.host);
+                store.set("user", config.user);
+                store.set("password", config.password);
+                store.set("database", config.database);
+                let success = true; // assume success
                 TrackingDB.refreshPool(); // refresh the database connection pool
                 return {success: success};
             });
@@ -525,25 +545,25 @@ function createWindow() {
         // receive data from render process
         {
             ipcMain.on('open-scans', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scans'));
+                win.loadFile(appropriateFile("", 'open-scans'));
             });
             ipcMain.on('open-nof', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-nof'));
+                win.loadFile(appropriateFile("", 'open-nof'));
             });
             ipcMain.on('open-post', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-post'));
+                win.loadFile(appropriateFile("", 'open-post'));
             });
             ipcMain.on('open-gamme', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-gamme'));
+                win.loadFile(appropriateFile("", 'open-gamme'));
             });
             ipcMain.on('open-operations', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-operations'));
+                win.loadFile(appropriateFile("", 'open-operations'));
             });
             ipcMain.on('open-scanner', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scanner'));
+                win.loadFile(appropriateFile("", 'open-scanner'));
             });
             ipcMain.on('open-user', async (event, data) => {
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-user'));
+                win.loadFile(appropriateFile("", 'open-user'));
             });
         }
     }
@@ -666,7 +686,7 @@ function createWindow() {
 
                 if (user) {
                     // go to scanner.html
-                    win.loadFile(appropriateFile(MyConfig.postActuel, 'open-scanner'));
+                    win.loadFile(appropriateFile("", 'open-scanner'));
 
                     return { success: true};
                 } else {
@@ -703,7 +723,7 @@ function createWindow() {
 
                 user = null; // reset the user
 
-                win.loadFile(appropriateFile(MyConfig.postActuel, 'open-login')); // go to login page
+                win.loadFile(appropriateFile("", 'open-login')); // go to login page
 
                 PageUI.enable(); // enable UI
 

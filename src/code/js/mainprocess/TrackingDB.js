@@ -1,4 +1,7 @@
-const MyConfig = require('./MyConfig.js');
+//const MyConfig = require('./MyConfig.js');
+
+const Store = require('electron-store').default;
+const store = new Store();
 
 class TrackingDB {
 
@@ -11,6 +14,7 @@ class TrackingDB {
     static password = "muslim1997";
     static database = "trackingdb";
     
+    
 
     // Create a pool to the database
     static pool = this.createPool();
@@ -18,10 +22,16 @@ class TrackingDB {
     // create a pool to the database
     static createPool() {
         return this.mysql.createPool({
+            /*
             host: MyConfig.host, //this.host,
             user: MyConfig.user, //this.user,
             password: MyConfig.password, //this.password,
             database: MyConfig.database, //this.database,
+            */
+            host: store.get('host'),
+            user: store.get('user'),
+            password: store.get('password'),
+            database: store.get('database'),
             waitForConnections: true,
             connectionLimit: 3, // or higher if needed (1 if you want to perform only one query at a time)
             queueLimit: 0 // queue limit (0 for no limit)
