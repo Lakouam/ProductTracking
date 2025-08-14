@@ -1,7 +1,7 @@
 const { show } = require('../js/renderprocess/tools/ShowData.js');
 
 
-// retrieves the 'gamme' parameter from the URL
+// retrieves the 'nom, matricule, role' parameter from the URL
 const params = new URLSearchParams(window.location.search);
 const nom = params.get('nom');
 const matricule = params.get('matricule');

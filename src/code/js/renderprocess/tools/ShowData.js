@@ -1,7 +1,7 @@
 const { columnName } = require('./columnsnames.js');
 
 
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}, nom = "") {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}, nom = "", role = "") {
     
     // show columns in the table
     {
@@ -18,7 +18,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
         });
 
         // Remove
-        if (removable.is) { // Add a header for the remove icon column
+        if (removable.is && role === "Admin") { // Add a header for the remove icon column
             const th = document.createElement("th");
             th.innerText = "Actions";
             th.style.width = "48px"; // Set a fixed width for the remove icon column
@@ -91,7 +91,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
 
             
             // Remove
-            if (removable.is) {
+            if (removable.is && role === "Admin") {
                 // Add remove icon cell
                 const removeTd = document.createElement("td");
                 removeTd.style.textAlign = "center"; // Center the remove icon

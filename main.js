@@ -450,7 +450,10 @@ function createWindow() {
 
                     PageUI.disable(); // disable UI
 
-                    let success = await TrackingDB.removeRow(value, who); // remove the row from the database
+                    let success = false;
+                    
+                    if (User.isActionValid("remove-row", user.role)) // check if the user has the permission to remove a row
+                        success = await TrackingDB.removeRow(value, who); // remove the row from the database
 
                     win.reload(); // reload the page to refresh the table
 
@@ -553,7 +556,7 @@ function createWindow() {
                 win.loadFile(appropriateFile(user.role, 'open-scans'));
             });
             ipcMain.on('open-nof', async (event, data) => {
-                win.loadFile(appropriateFile(user.role, 'open-nof'));
+                win.loadFile(appropriateFile(user.role, 'open-nof'), { query: { role: user.role  } });
             });
             ipcMain.on('open-post', async (event, data) => {
                 win.loadFile(appropriateFile(user.role, 'open-post'));
@@ -568,7 +571,7 @@ function createWindow() {
                 win.loadFile(appropriateFile(user.role, 'open-scanner'));
             });
             ipcMain.on('open-user', async (event, data) => {
-                win.loadFile(appropriateFile(user.role, 'open-user'));
+                win.loadFile(appropriateFile(user.role, 'open-user'), { query: { role: user.role  } });
             });
         }
     }

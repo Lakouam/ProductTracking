@@ -92,6 +92,10 @@ class User {
         }
         
 
+        if (action === 'remove-row') { // remove a row from the database
+            if (role === 'Opérateur' || role === 'Superviseur')
+                return false; // Opérateur and Superviseur cannot remove a row
+        }
 
 
         return true; // if all checks passed, return true

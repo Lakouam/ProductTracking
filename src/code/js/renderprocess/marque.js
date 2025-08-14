@@ -5,6 +5,10 @@ const { show } = require('../js/renderprocess/tools/ShowData.js');
 let fullData = null;
 
 
+// retrieves the 'role' parameter from the URL
+const params = new URLSearchParams(window.location.search);
+const userrole = params.get('role');
+
 
 
 // receiving Table Data columns and rows
@@ -23,7 +27,7 @@ let fullData = null;
         // set the input value to the shared 'nof'
         document.getElementById("search").value = sharedNof;
 
-        show(sharedNof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'});
+        show(sharedNof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'}, undefined, userrole);
             
     });
 }
@@ -43,7 +47,7 @@ let fullData = null;
             // Save the value in localStorage
             localStorage.setItem('shared_nof', nof);
 
-            show(nof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'});
+            show(nof, undefined, {is: true, who: 'nof'}, undefined, {is: true, who: 'nof'}, undefined, userrole);
 
         }
     });
