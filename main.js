@@ -470,28 +470,28 @@ function createWindow() {
 
             // open gammedetail.html
             ipcMain.on('open-gamme-detail', (event, gamme) => {
-                win.loadFile(appropriateFile("", 'open-gamme-detail'), { query: { gamme } });
+                win.loadFile(appropriateFile(user.role, 'open-gamme-detail'), { query: { gamme } });
             });
 
 
 
             // open carte.html
             ipcMain.on('open-nof-detail', (event, nof, gamme, qt) => {
-                win.loadFile(appropriateFile("", 'open-nof-detail'), { query: { nof, gamme, qt } });
+                win.loadFile(appropriateFile(user.role, 'open-nof-detail'), { query: { nof, gamme, qt } });
             });
 
 
 
             // open userdetail.html
             ipcMain.on('open-user-detail', (event, nom, matricule, role) => {
-                win.loadFile(appropriateFile("", 'open-user-detail'), { query: { nom, matricule, role } });
+                win.loadFile(appropriateFile(user.role, 'open-user-detail'), { query: { nom, matricule, role } });
             });
 
 
 
             // open poste-detail.html
             ipcMain.on('open-poste-detail', (event, poste) => {
-                win.loadFile(appropriateFile("", 'open-poste-detail'), { query: { poste } });
+                win.loadFile(appropriateFile(user.role, 'open-poste-detail'), { query: { poste } });
             });
         }
     }
@@ -550,25 +550,25 @@ function createWindow() {
         // receive data from render process
         {
             ipcMain.on('open-scans', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-scans'));
+                win.loadFile(appropriateFile(user.role, 'open-scans'));
             });
             ipcMain.on('open-nof', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-nof'));
+                win.loadFile(appropriateFile(user.role, 'open-nof'));
             });
             ipcMain.on('open-post', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-post'));
+                win.loadFile(appropriateFile(user.role, 'open-post'));
             });
             ipcMain.on('open-gamme', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-gamme'));
+                win.loadFile(appropriateFile(user.role, 'open-gamme'));
             });
             ipcMain.on('open-operations', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-operations'));
+                win.loadFile(appropriateFile(user.role, 'open-operations'));
             });
             ipcMain.on('open-scanner', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-scanner'));
+                win.loadFile(appropriateFile(user.role, 'open-scanner'));
             });
             ipcMain.on('open-user', async (event, data) => {
-                win.loadFile(appropriateFile("", 'open-user'));
+                win.loadFile(appropriateFile(user.role, 'open-user'));
             });
         }
     }
@@ -696,7 +696,7 @@ function createWindow() {
                     user.fillUser(userinfo); // fill the user with the data from the database
 
                     // go to scanner.html
-                    win.loadFile(appropriateFile("", 'open-scanner'));
+                    win.loadFile(appropriateFile(user.role, 'open-scanner'));
 
                     return { success: true};
                 } else {
@@ -733,7 +733,7 @@ function createWindow() {
 
                 user.resetUser(); // reset the user (nullify the user data)
 
-                win.loadFile(appropriateFile("", 'open-login')); // go to login page
+                win.loadFile(appropriateFile(user.role, 'open-login')); // go to login page
 
                 PageUI.enable(); // enable UI
 
@@ -802,22 +802,25 @@ function openSettingsWindow() {
 
 
 // load the appropriate file
-function appropriateFile(postName, dashboard = "") {
+function appropriateFile(role, dashboard = "") {
     // what content that we want to load in this window
 
-    if (dashboard === 'open-scans') return 'src/code/html/scans.html';
-    if (dashboard === 'open-nof') return 'src/code/html/marque.html';
-    if (dashboard === 'open-post') return 'src/code/html/post.html';
-    if (dashboard === 'open-gamme') return 'src/code/html/gamme.html';
-    if (dashboard === 'open-gamme-detail') return 'src/code/html/gammedetail.html';
-    if (dashboard === 'open-operations') return 'src/code/html/operations.html';
+    if (User.isActionValid("access-other-pages", role)) {   
+        if (dashboard === 'open-scans') return 'src/code/html/scans.html';
+        if (dashboard === 'open-nof') return 'src/code/html/marque.html';
+        if (dashboard === 'open-post') return 'src/code/html/post.html';
+        if (dashboard === 'open-gamme') return 'src/code/html/gamme.html';
+        if (dashboard === 'open-gamme-detail') return 'src/code/html/gammedetail.html';
+        if (dashboard === 'open-operations') return 'src/code/html/operations.html';
+        if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
+        if (dashboard === 'open-user') return 'src/code/html/user.html';
+        if (dashboard === 'open-user-detail') return 'src/code/html/userdetail.html';
+        if (dashboard === 'open-poste-detail') return 'src/code/html/postedetail.html';
+    }
+        
     if (dashboard === 'open-scanner') return 'src/code/html/scanner.html';
-    if (dashboard === 'open-nof-detail') return 'src/code/html/carte.html';
-    if (dashboard === 'open-user') return 'src/code/html/user.html';
-    if (dashboard === 'open-user-detail') return 'src/code/html/userdetail.html';
     if (dashboard === 'open-login') return 'src/code/html/login.html';
-    if (dashboard === 'open-poste-detail') return 'src/code/html/postedetail.html';
-    return 'src/code/html/scans.html'; // load the nof page by default
+    return 'src/code/html/scanner.html'; // default to scanner.html
 }
 
 

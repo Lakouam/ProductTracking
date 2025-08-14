@@ -52,7 +52,7 @@ class User {
     }
 
 
-    // check user
+    // check user before adding it to the database
     static isUserValid(nom, matricule, role) {
         if (nom && matricule && role) {
             // check if nom is a string and not empty
@@ -73,6 +73,29 @@ class User {
         return false;
     }
 
+
+
+    // Verify action of user
+    static isActionValid(action, role) {
+        // Check if action is a string and not empty
+        if (typeof action !== 'string' || action.trim() === '') 
+            return false;
+
+        // Check if role is a string and is one of the defined roles
+        if (typeof role !== 'string' || !User.ROLES.includes(role))
+            return false;
+        
+
+        if (action === 'access-other-pages') { // any page except the login & scanner pages
+            if (role === 'Opérateur') 
+                return false; // Opérateur cannot access other pages
+        }
+        
+
+
+
+        return true; // if all checks passed, return true
+    }
 
 
 
