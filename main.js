@@ -18,7 +18,9 @@ const PageUI = require('./src/code/js/mainprocess/PageUI.js');
 
 const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
-let user;
+//let user;
+// import User class
+const User = require('./src/code/js/mainprocess/user.js');
 
 
 
@@ -208,6 +210,9 @@ function createWindow() {
 
     PageUI.connect(win, contextMenuRightClick, menu); // connect the pageUI to the window and contextMenuRightClick
 
+
+    // Create a new User object
+    let user = new User(); // create a new User object
 
 
 
@@ -612,7 +617,7 @@ function createWindow() {
                     PageUI.disable(); // disable UI
 
                     let success = false;
-                    if(nofscan !== null && ScanData.isValidNof(nofscan.nof, nofscan.ref, nofscan.qt)) 
+                    if(nofscan !== null && ScanData.isValidNof(nofscan.nof, nofscan.ref, nofscan.qt)) // check if the nofscan is valid
                         success = await TrackingDB.addNof(nofscan.nof, nofscan.ref, parseInt(nofscan.qt)); // add the post to the database
                     else console.warn("Invalid NOF data:", nofscan);
 
@@ -646,7 +651,7 @@ function createWindow() {
                     console.log("Adding user:", userData);
 
                     let success = false;
-                    if(userData !== null) 
+                    if(userData !== null && User.isUserValid(userData.nom, userData.matricule, userData.role)) // check if the user data is valid
                         success = await TrackingDB.addUser(userData.nom, userData.matricule, userData.role); // add the user to the database
 
                     if (success) 
@@ -679,12 +684,17 @@ function createWindow() {
             try {
                 PageUI.disable(); // disable UI
 
-                user = await TrackingDB.findUser([nom, matricule]);
-                console.log("User found:", user);
+                let userinfo = await TrackingDB.findUser([nom, matricule]);
+
+                console.log("User found:", userinfo);
+
 
                 PageUI.enable(); // enable UI
 
-                if (user) {
+                if (userinfo) {
+
+                    user.fillUser(userinfo); // fill the user with the data from the database
+
                     // go to scanner.html
                     win.loadFile(appropriateFile("", 'open-scanner'));
 
@@ -721,7 +731,7 @@ function createWindow() {
 
                 PageUI.disable(); // disable UI
 
-                user = null; // reset the user
+                user.resetUser(); // reset the user (nullify the user data)
 
                 win.loadFile(appropriateFile("", 'open-login')); // go to login page
 
