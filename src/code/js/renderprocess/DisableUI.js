@@ -3,7 +3,7 @@
     function setInputsDisabled(disabled) { // what's elements to disable or enable  
         
         // Select all interactive elements you want to disable
-        const elements = document.querySelectorAll('input, select, .action-card, .breadcrumb-link');
+        const elements = document.querySelectorAll('input, select, button, .sidebar-menu-item, .breadcrumb-nav');
         elements.forEach(el => {
             
             if (disabled) {
@@ -30,11 +30,11 @@
     
     // Block click events on .action-card & .breadcrumb-link when disabled
     document.addEventListener('click', function(e) {
-        const card = e.target.closest('.action-card.disabled');
-        if (card) e.stopPropagation();
+        const menuitem = e.target.closest('.sidebar-menu-item.disabled');
+        if (menuitem) e.stopPropagation();
 
-        const navigation = e.target.closest('.breadcrumb-link.disabled');
-        if (navigation) e.stopPropagation();
+        const breadcrumb = e.target.closest('.breadcrumb-nav.disabled');
+        if (breadcrumb) e.stopPropagation();
     }, true);
     
 }

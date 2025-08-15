@@ -708,6 +708,7 @@ function createWindow() {
 
             } catch (err) {
                 console.error("Database error in login-user event:", err.message);
+                PageUI.enable(); // enable UI
                 return { success: false, message: "Erreur de connexion à la base de données." };
             }
         });
