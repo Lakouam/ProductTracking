@@ -408,7 +408,7 @@ class TrackingDB {
 
 
     // get data from the database
-    static async getData(who, value) {
+    static async getData(who, value, role) {
 
         // get data from the database (temps_debut, temps_fin, nof, num_ope, ref_gamme, ref_produit, qt, post_actuel, qa, moy_temps_passer, etat, commentaire)
         let sql = `SELECT temps_debut, temps_fin, scan.nof AS nof, scan.num_ope, operation.ref_gamme, qt, poste_machine AS post_actuel, qa, moy_temps_passer / 60 AS moy_temps_passer, commentaire 
@@ -507,8 +507,12 @@ class TrackingDB {
                 ORDER BY c.n_serie ASC
             `;
         
-        if (who === 'user') // get data from user (nom, matricule, role)
-            sql = `SELECT nom, matricule, role FROM user ORDER BY nom ASC`;
+        if (who === 'user') { 
+            if (role !== 'Admin') // get data from user (nom, matricule, role) where role = 'Opérateur'
+                sql = `SELECT nom, matricule, role FROM user WHERE role = 'Opérateur' ORDER BY nom ASC`;
+            else // get data from user (nom, matricule, role) where role = 'Opérateur' or 'Superviseur'
+                sql = `SELECT nom, matricule, role FROM user WHERE role != 'Admin' ORDER BY nom ASC`;
+        }
 
         if (who === 'user-detail') // get data (the total quantity) from scan_carte for a specific user, grouped by day, nof, num_ope
             sql = `

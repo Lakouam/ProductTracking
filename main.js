@@ -422,7 +422,7 @@ function createWindow() {
 
                         PageUI.disable(); // disable UI
 
-                        let data = await TrackingDB.getData(who, value); // get the data from the database
+                        let data = await TrackingDB.getData(who, value, user.role); // get the data from the database
 
                         PageUI.enable(); // enable UI
                         
