@@ -480,9 +480,12 @@ class TrackingDB {
                         WHEN sc.scan_count = 0 OR sc.scan_count IS NULL THEN 'En attente'
                     END AS statut,
                     sc.temps_debut,
-                    sc.temps_fin,
+                    CASE
+                        WHEN sc.scan_count = 1 THEN sc2.temps_fin
+                        ELSE sc.temps_fin
+                    END AS temps_fin,
                     CASE 
-                        WHEN sc.temps_fin IS NULL THEN NULL
+                        WHEN sc.scan_count = 1 THEN TIMESTAMPDIFF(SECOND, sc2.temps_fin, sc.temps_debut) / 60
                         WHEN sc.scan_count = 2 THEN TIMESTAMPDIFF(SECOND, sc.temps_debut, sc.temps_fin) / 60
                         ELSE NULL
                     END AS temps_realise,
@@ -503,6 +506,12 @@ class TrackingDB {
                     WHERE sc1.nof = ?
                 ) sc
                 ON c.n_serie = sc.n_serie AND c.nof = sc.nof
+                LEFT JOIN scan_carte sc2
+                    ON sc2.nof = sc.nof AND sc2.n_serie = sc.n_serie AND sc2.num_ope = (
+                        SELECT MAX(num_ope)
+                        FROM scan_carte
+                        WHERE nof = sc.nof AND n_serie = sc.n_serie AND num_ope < sc.num_ope
+                    )
                 WHERE c.nof = ?
                 ORDER BY c.n_serie ASC
             `;
