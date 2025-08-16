@@ -779,3 +779,17 @@ body {
 .add-user-btn:hover {
     background: #724ad6;
 }
+
+
+
+
+
+
+
+/* fix: when you click on a disabled input, select, or button, the browser does not fire any events */
+.disabled-parent .disabled {
+    pointer-events: none;
+}
+.disabled-parent {
+    pointer-events: auto;
+}

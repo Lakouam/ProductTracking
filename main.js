@@ -152,8 +152,8 @@ function createWindow() {
             {label: 'Copier', role: 'copy'},
             {label: 'Coller', role: 'paste'},
             {type: 'separator'},
-            {label: 'Recharger', role: 'reload'},
-            {label: 'Outils de développement', role: 'toggleDevTools'}
+            {label: 'Recharger', role: 'reload', id: 'reload'},
+            {label: 'Outils de développement', role: 'toggleDevTools', id: 'toggleDevTools'}
         ];
         contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
 
@@ -229,7 +229,7 @@ function createWindow() {
 
                     try {
 
-                        PageUI.disable(); // disable UI
+                        PageUI.disable(user.role); // disable UI
 
 
                         //let data = await TrackingDB.getActiveRow(postName);
@@ -246,7 +246,7 @@ function createWindow() {
 
                         win.reload();
 
-                        PageUI.enable(); // enable UI
+                        PageUI.enable(user.role); // enable UI
 
                     } catch (err) {
                         //console.error("Database error in Post Select event:", err.message);
@@ -266,11 +266,11 @@ function createWindow() {
 
                     try {
 
-                        PageUI.disable(); // disable UI
+                        PageUI.disable(user.role); // disable UI
 
                         let postsName = await TrackingDB.getPostsName();
 
-                        PageUI.enable(); // enable UI
+                        PageUI.enable(user.role); // enable UI
 
                         return postsName; // send the post name to the render process
 
@@ -325,7 +325,7 @@ function createWindow() {
 
                     try {
 
-                        PageUI.disable(); // disable UI
+                        PageUI.disable(user.role); // disable UI
 
                         const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
                         
@@ -350,7 +350,7 @@ function createWindow() {
 
                             win.reload(); // reload the page to clear the input fields
 
-                            PageUI.enable(); // enable UI
+                            PageUI.enable(user.role); // enable UI
 
                         //}, 1000); // to wait for one second
 
@@ -420,11 +420,11 @@ function createWindow() {
 
                     try {
 
-                        PageUI.disable(); // disable UI
+                        PageUI.disable(user.role); // disable UI
 
                         let data = await TrackingDB.getData(who, value, user.role); // get the data from the database
 
-                        PageUI.enable(); // enable UI
+                        PageUI.enable(user.role); // enable UI
                         
                         return {columns: data[0], rows: data.slice(1)}; // send the columns and rows to the render process
 
@@ -448,7 +448,7 @@ function createWindow() {
 
                 try {
 
-                    PageUI.disable(); // disable UI
+                    PageUI.disable(user.role); // disable UI
 
                     let success = false;
                     
@@ -457,7 +457,7 @@ function createWindow() {
 
                     win.reload(); // reload the page to refresh the table
 
-                    PageUI.enable(); // enable UI
+                    PageUI.enable(user.role); // enable UI
 
                     return success; // send the success status to the render process
 
@@ -617,7 +617,7 @@ function createWindow() {
 
                 try {
 
-                    PageUI.disable(); // disable UI
+                    PageUI.disable(user.role); // disable UI
 
                     let success = false;
                     if(nofscan !== null && ScanData.isValidNof(nofscan.nof, nofscan.ref, nofscan.qt)) // check if the nofscan is valid
@@ -628,7 +628,7 @@ function createWindow() {
                     if (success) 
                         win.reload(); // reload the page to refresh the table
 
-                    PageUI.enable(); // enable UI
+                    PageUI.enable(user.role); // enable UI
 
                     return success; // send the success status to the render process
 
@@ -649,7 +649,7 @@ function createWindow() {
 
                 try {
 
-                    PageUI.disable(); // disable UI
+                    PageUI.disable(user.role); // disable UI
 
                     console.log("Adding user:", userData);
 
@@ -660,7 +660,7 @@ function createWindow() {
                     if (success) 
                         win.reload(); // reload the page to refresh the table
 
-                    PageUI.enable(); // enable UI
+                    PageUI.enable(user.role); // enable UI
 
                     return success; // send the success status to the render process
 
@@ -685,14 +685,14 @@ function createWindow() {
         ipcMain.handle('login-user', async (event, { nom, matricule }) => {
             
             try {
-                PageUI.disable(); // disable UI
+                PageUI.disable(user.role); // disable UI
 
                 let userinfo = await TrackingDB.findUser([nom, matricule]);
 
                 console.log("User found:", userinfo);
 
 
-                PageUI.enable(); // enable UI
+                PageUI.enable(user.role); // enable UI
 
                 if (userinfo) {
 
@@ -708,7 +708,7 @@ function createWindow() {
 
             } catch (err) {
                 console.error("Database error in login-user event:", err.message);
-                PageUI.enable(); // enable UI
+                PageUI.enable(user.role); // enable UI
                 return { success: false, message: "Erreur de connexion à la base de données." };
             }
         });
@@ -733,13 +733,13 @@ function createWindow() {
 
             try {
 
-                PageUI.disable(); // disable UI
+                PageUI.disable(user.role); // disable UI
 
                 user.resetUser(); // reset the user (nullify the user data)
 
                 win.loadFile(appropriateFile(user.role, 'open-login')); // go to login page
 
-                PageUI.enable(); // enable UI
+                PageUI.enable(user.role); // enable UI
 
             } catch (err) {
                 console.error("Error during logout:", err.message);
@@ -757,14 +757,14 @@ function createWindow() {
     {
         ipcMain.on('insert-gamme', async (event) => {
             try {
-                PageUI.disable(); // disable UI
+                PageUI.disable(user.role); // disable UI
 
                 const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
                 await Gamme.fileToDB(gammefilePath);
 
                 win.reload(); // reload the page to refresh the table
 
-                PageUI.enable(); // enable UI
+                PageUI.enable(user.role); // enable UI
 
             } catch (err) {
                 console.error("Error while inserting Gammes:", err.message);

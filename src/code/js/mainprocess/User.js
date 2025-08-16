@@ -98,6 +98,12 @@ class User {
         }
 
 
+        if (action === 'right-click-menu' || action === 'menu') { // right click menu
+            if (role === 'Opérateur') 
+                return false; // Opérateur cannot use right click menu
+        }
+
+
         return true; // if all checks passed, return true
     }
 
