@@ -654,7 +654,8 @@ function createWindow() {
                     console.log("Adding user:", userData);
 
                     let success = false;
-                    if(userData !== null && User.isUserValid(userData.nom, userData.matricule, userData.role)) // check if the user data is valid
+                    if(userData !== null && User.isUserValid(userData.nom, userData.matricule, userData.role) && 
+                    User.isActionValid('add-user', user.role, userData.role)) // check if the user data is valid
                         success = await TrackingDB.addUser(userData.nom, userData.matricule, userData.role); // add the user to the database
 
                     if (success) 

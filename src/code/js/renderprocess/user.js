@@ -98,3 +98,17 @@ const userrole = params.get('role');
         }
     });
 }
+
+
+
+
+// add Superviseur option to the role select element if the user is an admin
+{
+    if (userrole === 'Admin') {
+        const roleSelect = document.getElementById('userRoleSelect');
+        const option = document.createElement('option');
+        option.value = 'Superviseur';
+        option.textContent = 'Superviseur';
+        roleSelect.appendChild(option);
+    }
+}

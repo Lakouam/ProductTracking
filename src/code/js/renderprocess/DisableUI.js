@@ -1,7 +1,6 @@
 // receive a signal to disable UI or Enable it (interaction of user with some elements)
 {
     function setInputsDisabled(disabled, role = "") { // what's elements to disable or enable  
-        console.log("Setting inputs disabled:", disabled, "Role:", role);
         // Select all interactive elements you want to disable
         const elements = document.querySelectorAll('input, select, button, .sidebar-menu-item, .breadcrumb-nav');
         elements.forEach(el => {

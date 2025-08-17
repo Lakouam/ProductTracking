@@ -76,7 +76,7 @@ class User {
 
 
     // Verify action of user
-    static isActionValid(action, role) {
+    static isActionValid(action, role, value = "") {
         // Check if action is a string and not empty
         if (typeof action !== 'string' || action.trim() === '') 
             return false;
@@ -101,6 +101,14 @@ class User {
         if (action === 'right-click-menu' || action === 'menu') { // right click menu
             if (role === 'Opérateur') 
                 return false; // Opérateur cannot use right click menu
+        }
+
+        if (action === 'add-user') { // add a user to the database
+            if (role === 'Opérateur') 
+                return false; // Opérateur cannot add a user
+            if (role === 'Superviseur')
+                if (value !== 'Opérateur')
+                    return false; // Superviseur can only add Opérateur
         }
 
 
