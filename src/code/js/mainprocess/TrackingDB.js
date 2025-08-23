@@ -1,5 +1,3 @@
-//const MyConfig = require('./MyConfig.js');
-
 const Store = require('electron-store').default;
 const store = new Store();
 

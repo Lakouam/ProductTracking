@@ -14,7 +14,6 @@ const ScanData = require('./src/code/js/mainprocess/ScanData.js');
 const TrackingDB = require('./src/code/js/mainprocess/TrackingDB.js');
 const Post = require('./src/code/js/mainprocess/Post.js');
 const PageUI = require('./src/code/js/mainprocess/PageUI.js');
-//const MyConfig = require('./src/code/js/mainprocess/MyConfig.js');
 
 const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
