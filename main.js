@@ -776,6 +776,24 @@ function createWindow() {
     }
 
 
+
+
+
+    // Test DB connection (settings.js)
+    ipcMain.handle('test-db-connection', async (event, config) => {
+        try {
+            await TrackingDB.testConnection(config);
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    });
+
+
+
+
+
+
 };
 
 
@@ -789,7 +807,7 @@ function openSettingsWindow() {
         width: 450,
         height: 500,
         icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
-        title: "Settings",
+        title: "Paramètres",
         parent: BrowserWindow.getFocusedWindow(),
         modal: true, // prevent interaction with the main window until this window is closed
         webPreferences: {

@@ -5,6 +5,8 @@ class TrackingDB {
 
     // Import the mysql module
     static mysql = require('mysql2');
+    static mysqlpromise = require('mysql2/promise');
+
 
     // Database connection details
     static host = "localhost";
@@ -54,6 +56,26 @@ class TrackingDB {
 
         this.pool = this.createPool();
     }
+
+
+
+
+    // Test DB connection
+    static async testConnection(config) {
+
+        const connection = await this.mysqlpromise.createConnection({
+            host: config.host,
+            user: config.user,
+            password: config.password,
+            database: config.database,
+            connectTimeout: 3000
+        });
+        await connection.end();
+
+    }
+
+
+
 
 
     // Helper to promisify pool.query (function to await querie) used for operations (createTables, dropTables, ...)

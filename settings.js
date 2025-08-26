@@ -1,36 +1,57 @@
 const { ipcRenderer } = require('electron');
 
 // Load current settings
-{
-    // when the page is loaded send a request to the main process to get the current settings
-    // and fill the form with the current settings
-    window.onload = () => {
-        ipcRenderer.invoke('get-db-config').then(config => {
-            document.getElementById('dbHost').value = config.host || '';
-            document.getElementById('dbUser').value = config.user || '';
-            document.getElementById('dbPassword').value = config.password || '';
-            document.getElementById('dbName').value = config.database || '';
-        });
-    };
-}
+window.onload = () => {
+    ipcRenderer.invoke('get-db-config').then(config => {
+        document.getElementById('dbHost').value = config.host || '';
+        document.getElementById('dbUser').value = config.user || '';
+        document.getElementById('dbPassword').value = config.password || '';
+        document.getElementById('dbName').value = config.database || '';
+    });
+};
 
+// Show/hide password
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const pwd = document.getElementById('dbPassword');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        this.textContent = 'Masquer';
+    } else {
+        pwd.type = 'password';
+        this.textContent = 'Afficher';
+    }
+});
+
+// Test connection
+document.getElementById('testBtn').addEventListener('click', function() {
+    const config = {
+        host: document.getElementById('dbHost').value,
+        user: document.getElementById('dbUser').value,
+        password: document.getElementById('dbPassword').value,
+        database: document.getElementById('dbName').value
+    };
+    setStatus('Test de connexion en cours...', '');
+    ipcRenderer.invoke('test-db-connection', config).then(result => {
+        setStatus(result.success ? "Connexion réussie !" : ("Erreur : " + (result.error || "Échec de la connexion.")), result.success ? 'success' : 'error');
+    });
+});
 
 // Save settings
-{
-    document.getElementById('settingsForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const config = {
-            host: document.getElementById('dbHost').value,
-            user: document.getElementById('dbUser').value,
-            password: document.getElementById('dbPassword').value,
-            database: document.getElementById('dbName').value
-        };
-        ipcRenderer.invoke('save-db-config', config).then(result => {
-            document.getElementById('statusMessage').textContent = result.success
-                ? "Settings saved!"
-                : "Failed to save settings.";
-            // add class error to statusMessage if result.success is false
-            document.getElementById('statusMessage').classList.add(result.success ? 'success' : 'error');
-        });
+document.getElementById('settingsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const config = {
+        host: document.getElementById('dbHost').value,
+        user: document.getElementById('dbUser').value,
+        password: document.getElementById('dbPassword').value,
+        database: document.getElementById('dbName').value
+    };
+    ipcRenderer.invoke('save-db-config', config).then(result => {
+        setStatus(result.success ? "Paramètres enregistrés !" : "Échec de l'enregistrement.", result.success ? 'success' : 'error');
     });
+});
+
+function setStatus(msg, type) {
+    const status = document.getElementById('statusMessage');
+    status.textContent = msg;
+    status.className = type;
 }

@@ -9,29 +9,34 @@
         <title>Paramètres</title>
 
         <!-- CSS -->
+        <link rel="stylesheet" href="./settings.css">
 
     </head>
     <body>
 
-        <div class="flexContainerCenter">
-            <form id="settingsForm" class="flexContainerCenter width320">
-                <h2 class="flexItemLeft">Database Settings</h2>
-                <label for="dbHost" class="flexItemLeft">Host</label>
-                <input type="text" id="dbHost" name="dbHost" required>
+        <form id="settingsForm" class="settings-card" autocomplete="off">
+            <h2>Paramètres de la base de données</h2>
+            <label for="dbHost">Hôte</label>
+            <input type="text" id="dbHost" name="dbHost" required autofocus>
 
-                <label for="dbUser" class="flexItemLeft">User</label>
-                <input type="text" id="dbUser" name="dbUser" required>
+            <label for="dbUser">Utilisateur</label>
+            <input type="text" id="dbUser" name="dbUser" required>
 
-                <label for="dbPassword" class="flexItemLeft">Password</label>
-                <input type="password" id="dbPassword" name="dbPassword" required>
+            <label for="dbPassword">Mot de passe</label>
+            <div style="display: flex; align-items: center;">
+                <input type="password" id="dbPassword" name="dbPassword" required style="flex:1;">
+                <button type="button" class="show-password" id="togglePassword">Afficher</button>
+            </div>
 
-                <label for="dbName" class="flexItemLeft">Database</label>
-                <input type="text" id="dbName" name="dbName" required>
+            <label for="dbName">Base de données</label>
+            <input type="text" id="dbName" name="dbName" required>
 
-                <button type="submit">Save</button>
-            </form>
+            <div class="settings-actions">
+                <button type="button" id="testBtn">Tester la connexion</button>
+                <button type="submit">Enregistrer</button>
+            </div>
             <div id="statusMessage"></div>
-        </div>
+        </form>
 
 
 
