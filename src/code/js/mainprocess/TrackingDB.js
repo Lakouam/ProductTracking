@@ -8,8 +8,8 @@ class TrackingDB {
 
     // Database connection details
     static host = "localhost";
-    static user = "root"; 
-    static password = "muslim1997";
+    static user = "tracking"; 
+    static password = "Tracking2025!";
     static database = "trackingdb";
     
     
