@@ -19,7 +19,7 @@ const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 
 //let user;
 // import User class
-const User = require('./src/code/js/mainprocess/user.js');
+const User = require('./src/code/js/mainprocess/User.js');
 
 
 
