@@ -4,6 +4,7 @@ class ScanData {
 
 
     static NOFSIZE = 9; // size of nof
+    static NSERIESIZE = 4; // size of n_serie
 
 
 
@@ -31,7 +32,7 @@ class ScanData {
             let dataArray = data.split("/");
             if (dataArray.length === 4) {
                 if (dataArray[0].indexOf(" ") === -1) {
-                    if (dataArray[0].length >= ScanData.NOFSIZE + 1) {
+                    if (dataArray[0].length === ScanData.NOFSIZE + ScanData.NSERIESIZE) { // 13 characters (9 + 4)
                         scan.nof = dataArray[0].substring(0, ScanData.NOFSIZE);
                         scan.n_serie = dataArray[0].substring(ScanData.NOFSIZE);
 
@@ -100,8 +101,8 @@ class ScanData {
     static scanToObject(data) {
         // if data is a string
         if(typeof data === "string"){
-            // if data is a string of length 10 (9 + 1) or more
-            if (data.length >= ScanData.NOFSIZE + 1) {
+            // if data is a string of length 13 (9 + 4) or more
+            if (data.length === ScanData.NOFSIZE + ScanData.NSERIESIZE) {
                 return {
                     nof: data.substring(0, ScanData.NOFSIZE), // the first 9 letters
                     n_serie: data.substring(ScanData.NOFSIZE), // the rest of the string

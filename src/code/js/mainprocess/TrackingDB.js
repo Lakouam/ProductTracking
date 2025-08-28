@@ -1157,10 +1157,10 @@ class TrackingDB {
     static async addCartes(nof, qt) {
         // Insert cartes into the carte table for the new nof
         let values = [];
-        let nb_digit = String(qt).length; // number of digits on the qt number
+        let nb_digit = 4; // number of digits for the n_serie (String(qt).length; // number of digits on the qt number)
         for (let i = 1; i <= qt; i++) {
             // n_serie is a string of lenght 4 (ex: 0001)
-            let n_serie = String(i).padStart(nb_digit, '0'); // Pad with leading zeros to make it nb_digit length
+            let n_serie = String(i).padStart(nb_digit, '0'); // Pad with leading zeros to make it 4 digits
             values.push([nof, n_serie]); // n_serie starts from 1 to qt
         }
 
@@ -1188,7 +1188,7 @@ class TrackingDB {
                 let num_ope = opeRows[i].num_ope;
 
                 for (let j = 1; j <= qt; j++) {
-                    let n_serie = String(j).padStart(nb_digit, '0'); // Pad with leading zeros to make it nb_digit length
+                    let n_serie = String(j).padStart(nb_digit, '0'); // Pad with leading zeros to make it 4 digits
                     valuesScanCarte.push([ref_gamme, num_ope, nof, n_serie, null, null, null, null, '', 0]); // scan_count starts from 0
                 }
             }
