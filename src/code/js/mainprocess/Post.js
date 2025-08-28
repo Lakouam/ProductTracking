@@ -371,57 +371,14 @@ class Post {
                     }
                 }
                 else if (nofExist === 0) { // if the nof does not exist in the database
-                    this.fillNew(scan);
-                    const isNofInserted = await TrackingDB.insertMarque(this); // insert the new marque fix (new nof) in the database
-
-                    if (isNofInserted) { // if the nof is inserted in the database
-
-                        num_ope = await TrackingDB.currentNumopeFromPost(scan.nof, this.postActuel, scan.n_serie); // get the current num_ope from the database 
-                        console.log("num_ope: " + num_ope); // log the num_ope
-
-                        const ScanInserted = await TrackingDB.insertScan(this, num_ope, user); // insert the scan in the database
-                        
-                        if (ScanInserted.is) { // if the scan is inserted in the database
-                            scanRejected = false;
-                            store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
-                        }
-                        else {
-                            
-                            if (ScanInserted.why === "There is an active carte on this operation") // updateCarte function
-                                errorMessage = "Une carte « " + ScanInserted.carte + " » est déjà active sur cette opération.";
-                            else if (ScanInserted.why === "Carte not completed yet") // updateCarte function
-                                errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanInserted.ope + " ».";
-                            else if (ScanInserted.why === "Next operation does not match current num_ope") // updateCarte function
-                                errorMessage = "La carte doit être scannée à l’opération « " + ScanInserted.ope + " ».";
-                            else if (ScanInserted.why === "Carte completed") // updateCarte function
-                                errorMessage = "La carte est déjà terminée.";
-                            else if (ScanInserted.why === "Already scanned twice") // updateCarte function
-                                errorMessage = "La carte a déjà été scannée deux fois.";
-                            else if (ScanInserted.why === "Carte not found") // updateCarte function
-                                errorMessage = "La carte n’existe pas dans la base de données.";
-                            else if (ScanInserted.why === "Unknown error") // updateCarte function
-                                errorMessage = "";
-                            else if (ScanInserted.prevOpe === undefined) // insertScan function
-                                errorMessage = `Le poste « ${this.postActuel} » n'existe pas dans la gamme.`;
-                            else // insertScan function
-                                errorMessage = "L'opération précédente « " + ScanInserted.prevOpe + " » n'a pas encore été scannée.";
-                            
-                            this.clear(); // clear the post if the insertion failed
-                        }
-                    }
-                    else {
-                        errorMessage = `La référence produit « ${scan.refProduit} » n'est associée à aucune gamme.`; // error message
-                        this.clear(); // clear the post if the insertion failed
-                    }
+                    throw new Error("Unexpected state: NOF does not exist in the database, but logic should prevent reaching this point.");
+                } else if (nofExist === -1) { // if the Nof exist in the database but scan is corrupted!
+                    throw new Error(`Impossible state: Le NOF « ${scan.nof} » existe déjà avec une référence produit ou une quantité différente, but logic should prevent reaching this point.`);
                 }
-                else if (nofExist === -1) { // if the Nof exist in the database but scan is corrupted!
-                    errorMessage = "Le NOF « " + scan.nof + " » existe déjà avec une référence produit ou une quantité différente."; // error message
-                }
-
             }
             else {
                 const nofExist = await TrackingDB.isNofExist(scan); // check if the nof exists in the database
-                if (nofExist === -1) errorMessage = "Le NOF « " + scan.nof + " » a déjà été complété avec une référence produit ou une quantité différente."; // error message
+                if (nofExist === -1) throw new Error(`Impossible state: Le NOF « ${scan.nof} » a déjà été complété avec une référence produit ou une quantité différente, but logic should prevent reaching this point.`);
                 else errorMessage = "Le NOF « " + scan.nof + " » est déjà terminé."; // error message
             }
 

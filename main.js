@@ -326,7 +326,7 @@ function createWindow() {
 
                         PageUI.disable(user.role); // disable UI
 
-                        const scanData = new ScanData(data); // create a new ScanData object with the data received from the render process
+                        const scanData = await ScanData.create(data); // create a new ScanData object with the data received from the render process
                         
                         // check if the scan is valid
                         if(scanData.isValide()){

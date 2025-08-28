@@ -1,14 +1,14 @@
+const TrackingDB = require('./TrackingDB.js');
+
 class ScanData {
 
 
-    static NSERIESIZE = 4; // size of n_serie
-    static NOFSIZE = 7; // size of nof
-    static REFPSIZE = 6; // size of refProduit
+    static NOFSIZE = 9; // size of nof
 
 
 
     // if there is a problem in the data continue with the default values
-    constructor(data) {
+    constructor() {
         
         // default values like if the data is empty
         this.n_serie = "";
@@ -19,53 +19,49 @@ class ScanData {
         this.etat = false;
         this.commentaire = "";
         this.tempsActuel = new Date(); // the current date and time
+        this.message = "";
+
+    }
 
 
-        // if data is a string
-        if(typeof data === "string"){
-            // split the string into an array of strings by the character "/"
+    static async create(data) {
+        const scan = new ScanData();
+
+        if (typeof data === "string") {
             let dataArray = data.split("/");
+            if (dataArray.length === 4) {
+                if (dataArray[0].indexOf(" ") === -1) {
+                    if (dataArray[0].length >= ScanData.NOFSIZE + 1) {
+                        scan.nof = dataArray[0].substring(0, ScanData.NOFSIZE);
+                        scan.n_serie = dataArray[0].substring(ScanData.NOFSIZE);
 
-            // the array should contain 4 elements
-            if(dataArray.length === 4) {
-                // the first element is the n_serie (4 letters) nof (7 letters), refProduit (6 letters), qt (the rest of the string if is a number)
-                // test if the first element has no space
-                if(dataArray[0].indexOf(" ") === -1) {
-                        // test if the first element is a string of length 18 (4 + 7 + 6 + 1) or more
-                    if(dataArray[0].length >= ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE + 1) {
-                        this.n_serie = dataArray[0].substring(0, ScanData.NSERIESIZE); // the first 4 letters
-                        this.nof = dataArray[0].substring(ScanData.NSERIESIZE, ScanData.NSERIESIZE + ScanData.NOFSIZE); // the next 7 letters
-                        this.refProduit = dataArray[0].substring(ScanData.NSERIESIZE + ScanData.NOFSIZE, ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE); 
-                            // the next 6 letters
-                        // test if the rest of the string is a number
-                        if(!isNaN(dataArray[0].substring(ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE))) {
-                            this.qt = parseInt(dataArray[0].substring(ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE)); 
-                                // the rest of the string is a number
-                        } else {
-                            this.qt = 0; // if not, set qt to 0
+                        // Await the database call here
+                        try {
+                            const { ref_produit, qt } = await TrackingDB.getNof(scan.nof);
+                            scan.refProduit = ref_produit;
+                            scan.qt = qt;
+                        } catch (err) {
+                            scan.refProduit = "";
+                            scan.qt = 0;
                         }
                     }
                 }
-                
-                // the second element is the postActuel
-                this.postActuel = dataArray[1]; 
-                // if the value is "true", convert it to a boolean
-                if(dataArray[2] === "true") this.etat = true; 
-                // the fourth element is the commentaire
-                this.commentaire = dataArray[3]; 
-            } 
+                scan.postActuel = dataArray[1];
+                if (dataArray[2] === "true") scan.etat = true;
+                scan.commentaire = dataArray[3];
+            }
         }
-        
-        
+
+        return scan;
     }
 
 
     // true if the scan is valid, false otherwise
     isValide(){
         // by default 
-            // n_serie is empty or has 4 letters
-            // nof is empty or has 7 letters
-            // refProduit is empty or has 6 letters
+            // n_serie is empty or has more than 1 letter
+            // nof is empty or has 9 letters
+            // refProduit is empty or has more than 1 letter
             // qt is 0 or a number
             // postActual is empty or a string
             // etat is false or true
@@ -73,15 +69,15 @@ class ScanData {
 
 
 
-        if(this.n_serie === "") return false; // n_serie is empty
+        if(this.n_serie === "" || this.nof === "" || this.postActuel === "") {
+            this.message = "La syntaxe du scan est incorrecte.";
+            return false;
+        }
 
-        if(this.nof === "") return false; // nof is empty
-
-        if(this.refProduit === "") return false; // refProduit is empty
-
-        if(this.qt === 0) return false; // qt is equal to 0
-
-        if(this.postActuel === "") return false; // postActuel is empty
+        if(this.refProduit === "" || this.qt === 0) {
+            this.message = "Le NOF « " + this.nof + " » n'existe pas dans la base de données.";
+            return false;
+        }
 
         return true;
     }
@@ -94,8 +90,8 @@ class ScanData {
 
     // return and error message if the scan is not valid
     errorMessage(){
-        let message = "La syntaxe du scan est incorrecte.";
-        return message;
+        if(this.message === "") return "La syntaxe du scan est incorrecte.";
+        else return this.message;
     }
 
 
@@ -104,15 +100,11 @@ class ScanData {
     static scanToObject(data) {
         // if data is a string
         if(typeof data === "string"){
-            // if data is a string of length 14 (7 + 6 + 1) or more
-            if (data.length >= ScanData.NOFSIZE + ScanData.REFPSIZE + 1) {
+            // if data is a string of length 10 (9 + 1) or more
+            if (data.length >= ScanData.NOFSIZE + 1) {
                 return {
-                    n_serie: data.substring(0, ScanData.NSERIESIZE), // the first 4 letters
-                    nof: data.substring(ScanData.NSERIESIZE, ScanData.NSERIESIZE + ScanData.NOFSIZE), // the next 7 letters
-                    refProduit: data.substring(ScanData.NSERIESIZE + ScanData.NOFSIZE, ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE), 
-                            // the next 6 letters
-                    // test if the rest of the string is a number
-                    qt: isNaN(data.substring(ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE)) ? 0 : parseInt(data.substring(ScanData.NSERIESIZE + ScanData.NOFSIZE + ScanData.REFPSIZE)), // the rest of the string is a number
+                    nof: data.substring(0, ScanData.NOFSIZE), // the first 9 letters
+                    n_serie: data.substring(ScanData.NOFSIZE), // the rest of the string
                 };
             }
 
@@ -128,7 +120,7 @@ class ScanData {
         // if nof is a string of length 7
         if (typeof nof === "string" && nof.length === ScanData.NOFSIZE) {
             // if refProduit is a string of length 6
-            if (typeof refProduit === "string" && refProduit.length === ScanData.REFPSIZE) {
+            if (typeof refProduit === "string" && refProduit.length > 0) {
                 // if qt is a number
                 if (!isNaN(qt) && parseInt(qt) > 0) {
                     return true; // all conditions are met

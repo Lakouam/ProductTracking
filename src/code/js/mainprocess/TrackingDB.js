@@ -773,6 +773,25 @@ class TrackingDB {
 
 
 
+    // get ref_produit & qt from marque table for a specifique nof ("" value if NOF not exist in the database)
+    static async getNof(nof) {
+        let sql = `SELECT ref_produit, qt FROM marque WHERE nof = ?`;
+
+        let [result, fields]  = await this.runQueryWithRetry(sql, [nof]);
+
+        // If the nof is not in the database
+        if (result.length === 0) {
+            console.log("Nof Not exist in the database!");
+            return {ref_produit: "", qt: 0};
+        } else {
+            console.log("Nof exist in the database!");
+            return {ref_produit: result[0].ref_produit, qt: result[0].qt};
+        }
+
+    }
+
+
+
     // insert a row into the table scan
     static async insertScan(post, num_ope, user) {
         
@@ -1138,9 +1157,10 @@ class TrackingDB {
     static async addCartes(nof, qt) {
         // Insert cartes into the carte table for the new nof
         let values = [];
+        let nb_digit = String(qt).length; // number of digits on the qt number
         for (let i = 1; i <= qt; i++) {
             // n_serie is a string of lenght 4 (ex: 0001)
-            let n_serie = String(i).padStart(4, '0'); // Pad with leading zeros to make it 4 digits
+            let n_serie = String(i).padStart(nb_digit, '0'); // Pad with leading zeros to make it nb_digit length
             values.push([nof, n_serie]); // n_serie starts from 1 to qt
         }
 
@@ -1168,7 +1188,7 @@ class TrackingDB {
                 let num_ope = opeRows[i].num_ope;
 
                 for (let j = 1; j <= qt; j++) {
-                    let n_serie = String(j).padStart(4, '0'); // Pad with leading zeros to make it 4 digits
+                    let n_serie = String(j).padStart(nb_digit, '0'); // Pad with leading zeros to make it nb_digit length
                     valuesScanCarte.push([ref_gamme, num_ope, nof, n_serie, null, null, null, null, '', 0]); // scan_count starts from 0
                 }
             }
