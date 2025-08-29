@@ -561,7 +561,7 @@ function createWindow() {
                 win.loadFile(appropriateFile(user.role, 'open-post'));
             });
             ipcMain.on('open-gamme', async (event, data) => {
-                win.loadFile(appropriateFile(user.role, 'open-gamme'));
+                win.loadFile(appropriateFile(user.role, 'open-gamme'), { query: { role: user.role  } });
             });
             ipcMain.on('open-operations', async (event, data) => {
                 win.loadFile(appropriateFile(user.role, 'open-operations'));
@@ -758,6 +758,8 @@ function createWindow() {
         ipcMain.on('insert-gamme', async (event) => {
             try {
                 PageUI.disable(user.role); // disable UI
+
+                await TrackingDB.clearGammes(); // clear the gamme table (all tables except user) before inserting new gammes
 
                 const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
                 await Gamme.fileToDB(gammefilePath);

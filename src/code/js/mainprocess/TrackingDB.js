@@ -261,26 +261,6 @@ class TrackingDB {
 
 
 
-    static async insertGamme(gamme, post, gammeOperations, operation) {
-        // insert gamme into the table gamme if it doesn't exist
-        let sqlGamme = `INSERT IGNORE INTO gamme (ref_gamme) VALUES ?`;
-        await this.queryAsync(sqlGamme, gamme);
-        //console.log("Gamme inserted into table gamme if not existed!");
-
-
-        /*
-        // insert post into the table post if it doesn't exist
-        let sqlPost = `INSERT IGNORE INTO post (name) VALUES ?`;
-        await this.queryAsync(sqlPost, post);
-        //console.log("Post inserted into table post if not existed!");
-        */
-
-
-        // insert ope into the table gamme_operations if it doesn't exist
-        let sqlOperation = `INSERT IGNORE INTO operation (ref_gamme, num_ope, poste_machine, tps_oper) VALUES ?`;
-        await this.queryAsync(sqlOperation, gammeOperations);
-        //console.log("Ope inserted into table ope if not existed!");
-    }
 
 
 
@@ -419,6 +399,75 @@ class TrackingDB {
             attempt();
 
         });
+    }
+
+
+
+
+
+
+
+    // clear the tables scan_carte, carte, scan, marque, operation, gamme
+    static async clearGammes() {
+        
+        // Delete all rows from scan_carte
+        let sqlScanCarte = `DELETE FROM scan_carte`;
+        await this.runQueryWithRetry(sqlScanCarte);
+        console.log("Table scan_carte cleared!");
+
+        // Delete all rows from carte
+        let sqlCarte = `DELETE FROM carte`;
+        await this.runQueryWithRetry(sqlCarte);
+        console.log("Table carte cleared!");
+
+        // Delete all rows from scan
+        let sqlScan = `DELETE FROM scan`;
+        await this.runQueryWithRetry(sqlScan);
+        console.log("Table scan cleared!");
+
+        // Delete all rows from marque
+        let sqlMarque = `DELETE FROM marque`;
+        await this.runQueryWithRetry(sqlMarque);
+        console.log("Table marque cleared!");
+
+        // Delete all rows from operation
+        let sqlOperation = `DELETE FROM operation`;
+        await this.runQueryWithRetry(sqlOperation);
+        console.log("Table operation cleared!");
+
+        // Delete all rows from gamme
+        let sqlGamme = `DELETE FROM gamme`;
+        await this.runQueryWithRetry(sqlGamme);
+        console.log("Table gamme cleared!");
+
+    }
+
+
+
+
+
+
+
+
+    static async insertGamme(gamme, post, gammeOperations, operation) {
+        // insert gamme into the table gamme if it doesn't exist
+        let sqlGamme = `INSERT IGNORE INTO gamme (ref_gamme) VALUES ?`;
+        await this.runQueryWithRetry(sqlGamme, [gamme]);
+        //console.log("Gamme inserted into table gamme if not existed!");
+
+
+        /*
+        // insert post into the table post if it doesn't exist
+        let sqlPost = `INSERT IGNORE INTO post (name) VALUES ?`;
+        await this.runQueryWithRetry(sqlPost, [post]);
+        //console.log("Post inserted into table post if not existed!");
+        */
+
+
+        // insert ope into the table gamme_operations if it doesn't exist
+        let sqlOperation = `INSERT IGNORE INTO operation (ref_gamme, num_ope, poste_machine, tps_oper) VALUES ?`;
+        await this.runQueryWithRetry(sqlOperation, [gammeOperations]);
+        //console.log("Ope inserted into table ope if not existed!");
     }
 
 

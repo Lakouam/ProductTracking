@@ -5,6 +5,11 @@ let fullData = null;
 
 
 
+// retrieves the 'role' parameter from the URL
+const params = new URLSearchParams(window.location.search);
+const userrole = params.get('role');
+
+
 
 // receiving Table Data columns and rows
 {
@@ -15,10 +20,10 @@ let fullData = null;
         fullData = data;
 
 
-        // show the ajouter button if the data has only one column and less than 3133 rows
-        if (data.columns.length === 1 && data.rows.length < 3133) {
+        // show the Ajouter button if the user is an Admin
+        if (userrole === 'Admin')
             document.querySelector('.main-subtoolbar-sort').style.display = 'flex';
-        }
+        
 
         show(undefined, undefined, undefined, undefined, {is: true, who: "gamme"});
         
