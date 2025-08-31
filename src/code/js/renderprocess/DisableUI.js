@@ -2,7 +2,7 @@
 {
     function setInputsDisabled(disabled, role = "") { // what's elements to disable or enable  
         // Select all interactive elements you want to disable
-        const elements = document.querySelectorAll('input, select, button, .sidebar-menu-item, .breadcrumb-nav');
+        const elements = document.querySelectorAll('input, select, button, tr, .sidebar-menu-item, .breadcrumb-nav');
         elements.forEach(el => {
             
             if (disabled) {
@@ -59,10 +59,11 @@
         const menuitem = e.target.closest('.sidebar-menu-item.disabled');
         const breadcrumb = e.target.closest('.breadcrumb-nav.disabled');
         const inputselectbutton = e.target.closest('.disabled-parent');
+        const tr = e.target.closest('tr.disabled');
 
         //console.log('menuitem', menuitem, 'breadcrumb', breadcrumb, 'disabled-parent', inputselectbutton);
 
-        if (menuitem || breadcrumb || inputselectbutton) {
+        if (menuitem || breadcrumb || inputselectbutton || tr) {
             e.stopPropagation();
             e.preventDefault();
             
