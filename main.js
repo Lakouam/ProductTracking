@@ -759,33 +759,38 @@ function createWindow() {
     {
         // open file dialog to select a gamme file and insert it to the database (gamme.js)
         ipcMain.on('open-gamme-file-dialog', async () => {
-            const result = await dialog.showOpenDialog({
-                title: 'Importer un fichier Gamme',
-                filters: [{ name: 'Excel Files', extensions: ['xls'] }],
-                properties: ['openFile']
-            });
-            if (!result.canceled && result.filePaths.length > 0) { // if the user selected a file, insert it to the database
 
-                let gammefilePath = result.filePaths[0];
+            if (User.isActionValid("import-gammes", user.role)) { // check if the user has the permission to import gammes
 
-                try {
-                    PageUI.disable(user.role); // disable UI
+                const result = await dialog.showOpenDialog({
+                    title: 'Importer un fichier Gamme',
+                    filters: [{ name: 'Excel Files', extensions: ['xls'] }],
+                    properties: ['openFile']
+                });
+                if (!result.canceled && result.filePaths.length > 0) { // if the user selected a file, insert it to the database
 
-                    await TrackingDB.clearGammes(); // clear the gamme table (all tables except user) before inserting new gammes
+                    let gammefilePath = result.filePaths[0];
 
-                    //const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
-                    await Gamme.fileToDB(gammefilePath);
+                    try {
+                        PageUI.disable(user.role); // disable UI
 
-                    win.reload(); // reload the page to refresh the table
+                        await TrackingDB.clearGammes(); // clear the gamme table (all tables except user) before inserting new gammes
 
-                    PageUI.enable(user.role); // enable UI
+                        //const gammefilePath = path.join(__dirname, "src", "gamme", "GAMMES DE FABRICATION X3.xls");
+                        await Gamme.fileToDB(gammefilePath);
 
-                } catch (err) {
-                    console.error("Error while inserting Gammes:", err.message);
-                    // close the app
-                    app.quit();
+                        win.reload(); // reload the page to refresh the table
+
+                        PageUI.enable(user.role); // enable UI
+
+                    } catch (err) {
+                        console.error("Error while inserting Gammes:", err.message);
+                        // close the app
+                        app.quit();
+                    }
+                    
                 }
-                
+
             }
             
         });

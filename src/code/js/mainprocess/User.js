@@ -111,6 +111,11 @@ class User {
                     return false; // Superviseur can only add Opérateur
         }
 
+        if (action === 'import-gammes') { // import gammes
+            if (role === 'Opérateur' || role === 'Superviseur')
+                return false; // Opérateur and Superviseur cannot import gammes
+        }
+
 
         return true; // if all checks passed, return true
     }
