@@ -1,5 +1,8 @@
 const { show } = require('../js/renderprocess/tools/ShowData.js');
 
+
+
+
 // write data in table
 let fullData = null;
 
@@ -56,7 +59,10 @@ const userrole = params.get('role');
 
 // on label click, add gammes
 {
-    document.querySelector('.main-subtoolbar-sort-label').addEventListener('click', () => {
-        ipcRenderer.send('insert-gamme');
+    document.querySelector('.main-subtoolbar-sort-label').addEventListener('click', async () => {
+
+        // Ask main process to open file dialog and insert gamme
+        await ipcRenderer.send('open-gamme-file-dialog');
+        
     });
 }
