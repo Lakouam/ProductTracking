@@ -5,6 +5,10 @@ const { show } = require('../js/renderprocess/tools/ShowData.js');
 let fullData = null;
 
 
+// retrieves the 'role' parameter from the URL
+const params = new URLSearchParams(window.location.search);
+const userrole = params.get('role');
+
 
 
 // create a function to request the data and show it in the table
@@ -15,7 +19,7 @@ function showData(nof) {
         // store data in the page
         fullData = data;
 
-        show();
+        show(undefined, undefined, undefined, undefined, undefined, undefined, userrole, {is: true});
         
             
     });

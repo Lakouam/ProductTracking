@@ -566,7 +566,7 @@ function createWindow() {
                 win.loadFile(appropriateFile(user.role, 'open-gamme'), { query: { role: user.role  } });
             });
             ipcMain.on('open-operations', async (event, data) => {
-                win.loadFile(appropriateFile(user.role, 'open-operations'));
+                win.loadFile(appropriateFile(user.role, 'open-operations'), { query: { role: user.role  } });
             });
             ipcMain.on('open-scanner', async (event, data) => {
                 win.loadFile(appropriateFile(user.role, 'open-scanner'));

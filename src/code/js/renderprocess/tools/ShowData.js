@@ -1,7 +1,7 @@
 const { columnName } = require('./columnsnames.js');
 
 
-function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}, nom = "", role = "") {
+function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme = "", detail = {is: false, who: ""}, nom = "", role = "", skip = {is: false}) {
     
     // show columns in the table
     {
@@ -17,8 +17,8 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
             tr.appendChild(th);
         });
 
-        // Remove
-        if (removable.is && role === "Admin") { // Add a header for the remove icon column
+        // Remove or skip
+        if ((removable.is || skip.is) && role === "Admin") { // Add a header for the remove icon column
             const th = document.createElement("th");
             th.innerText = "Actions";
             th.style.width = "48px"; // Set a fixed width for the remove icon column
@@ -117,6 +117,30 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                 }
                     
                 tr.appendChild(removeTd);
+            }
+
+
+            // Skip
+            if (skip.is && role === "Admin") {
+                // Add skip icon cell
+                const skipTd = document.createElement("td");
+                skipTd.style.textAlign = "center"; // Center the skip icon
+
+                // cursor pointer
+                skipTd.style.cursor = "pointer";
+
+                skipTd.innerHTML = `
+                    <span class="skip-row" title="Ignorer">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="18" height="18" viewBox="0 0 24 24" style="fill:#f9a825;">
+                        <path d="M 12 2 C 6.486 2 2 6.486 2 12 C 2 17.514 6.486 22 12 22 C 17.514 22 22 17.514 22 12 C 22 6.486 17.514 2 12 2 z M 12 4 C 16.411997 4 20 7.5880031 20 12 C 20 16.411997 16.411997 20 12 20 C 7.5880031 20 4 16.411997 4 12 C 4 7.5880031 7.5880031 4 12 4 z M 11 6 L 11 13 L 16.5 16.15 L 17.5 14.85 L 13 12 L 13 6 L 11 6 z"></path>
+                        </svg>
+                    </span>
+                `;
+                skipTd.onclick = (event) => {
+                    // Call skip function, e.g.:
+                };
+
+                tr.appendChild(skipTd);
             }
 
             // Add detail functionality
