@@ -138,6 +138,7 @@ function show(nof = "", postCharge = "", removable = {is: false, who: ""}, gamme
                 `;
                 skipTd.onclick = (event) => {
                     // Call skip function, e.g.:
+                    skipRowsInDB(row["nof"], row["num_ope"]);
                 };
 
                 tr.appendChild(skipTd);
@@ -197,6 +198,19 @@ function removeRowFromDB(value, who) {
     });
         
     
+}
+
+
+// skip value in database
+function skipRowsInDB(nof, num_ope) {
+    // Use ipcRenderer to ask main process to skip by unique key (e.g., nof), some operations
+    ipcRenderer.invoke('skip-rows', {nof, num_ope}).then(success => {
+        if (success) {
+
+        } else {
+
+        }
+    });
 }
 
 

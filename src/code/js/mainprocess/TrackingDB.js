@@ -1289,6 +1289,16 @@ class TrackingDB {
     }
 
 
+
+
+    // Skip operations for a nof up to a specific operation number
+    static async skipOperations(nof, num_ope) {
+
+        console.log("Request to skip rows for NOF:", nof, "up to operation number:", num_ope);
+
+    }
+
+
 }
 
 module.exports = TrackingDB;

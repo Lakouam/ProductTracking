@@ -116,6 +116,10 @@ class User {
                 return false; // Opérateur and Superviseur cannot import gammes
         }
 
+        if (action === 'skip-rows') { // skip rows in the database
+            if (role === 'Opérateur' || role === 'Superviseur')
+                return false; // Opérateur and Superviseur cannot skip rows
+        }
 
         return true; // if all checks passed, return true
     }

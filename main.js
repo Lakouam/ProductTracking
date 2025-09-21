@@ -472,6 +472,34 @@ function createWindow() {
 
 
 
+            // receive data from render process (ShowData.js) to skip rows from the database
+            ipcMain.handle('skip-rows', async (event, {nof, num_ope}) => {
+
+                try {
+
+                    PageUI.disable(user.role); // disable UI
+
+                    let success = false;
+
+                    if (User.isActionValid("skip-rows", user.role)) // check if the user has the permission to skip rows
+                        success = await TrackingDB.skipOperations(nof, num_ope); // skip the rows from the database
+
+                    win.reload(); // reload the page to refresh the table
+
+                    PageUI.enable(user.role); // enable UI
+
+                    return success; // send the success status to the render process
+
+                } catch (err) {
+                    console.error("Database error in skip-rows event:", err.message);
+                    // close the app
+                    app.quit();
+                }
+
+            });
+
+
+
             // open gammedetail.html
             ipcMain.on('open-gamme-detail', (event, gamme) => {
                 win.loadFile(appropriateFile(user.role, 'open-gamme-detail'), { query: { gamme } });
