@@ -1296,6 +1296,26 @@ class TrackingDB {
 
         console.log("Request to skip rows for NOF:", nof, "up to operation number:", num_ope);
 
+        const now = new Date();
+
+        // 1. Update rows where scan_count = 0
+        let sqlUpdate0 = `
+            UPDATE scan_carte
+            SET temps_debut = ?, temps_fin = ?, scan_count = 2
+            WHERE nof = ? AND num_ope <= ? AND scan_count = 0
+        `;
+        await this.runQueryWithRetry(sqlUpdate0, [now, now, nof, num_ope]);
+
+        // 2. Update rows where scan_count = 1
+        let sqlUpdate1 = `
+            UPDATE scan_carte
+            SET nom = NULL, matricule = NULL, temps_fin = ?, scan_count = 2
+            WHERE nof = ? AND num_ope <= ? AND scan_count = 1
+        `;
+        await this.runQueryWithRetry(sqlUpdate1, [now, nof, num_ope]);
+
+        console.log("Operations skipped up to num_ope:", num_ope, "for NOF:", nof);
+
     }
 
 
