@@ -1314,7 +1314,36 @@ class TrackingDB {
         `;
         await this.runQueryWithRetry(sqlUpdate1, [now, nof, num_ope]);
 
+        this.skipScan(nof, num_ope, now); // Call skipScan function to skip scan table as well
+
         console.log("Operations skipped up to num_ope:", num_ope, "for NOF:", nof);
+
+    }
+
+
+
+
+    // Skip scan table for a nof up to a specific operation number
+    static async skipScan(nof, num_ope, now) {
+
+        // Get qt from marque table for this nof
+        let sqlQt = `SELECT qt FROM marque WHERE nof = ?`;
+        let [result] = await this.runQueryWithRetry(sqlQt, [nof]);
+        
+        if (!result.length) {
+            console.log("No qt found for NOF:", nof, "Skipping scan update aborted.");
+            return; // No qt found for this nof, abort
+        }
+        
+        const qt = result[0].qt;
+
+        // Update scan table where qa < qt and num_ope <= given num_ope
+        let sqlUpdate = `
+            UPDATE scan
+            SET qa = ?, moy_temps_passer = 0, temps_fin = ?, scan_count = ?, temps_dernier_scan = ?
+            WHERE nof = ? AND num_ope <= ? AND qa < ?
+        `;
+        await this.runQueryWithRetry(sqlUpdate, [qt, now, qt * 2, now, nof, num_ope, qt]);
 
     }
 
