@@ -486,7 +486,7 @@ class TrackingDB {
                         INNER JOIN operation
                             ON scan.num_ope = operation.num_ope 
                             AND marque.ref_gamme = operation.ref_gamme
-                        ORDER BY temps_debut DESC, scan.nof ASC, scan.num_ope ASC`;
+                        ORDER BY temps_debut DESC, scan.nof ASC, scan.num_ope DESC`;
 
         if (who === 'nof') // get data from marque (nof, ref_produit, qt, ref_gamme)
             sql = `SELECT nof, ref_gamme, qt, ref_produit FROM marque`;
@@ -1326,16 +1326,17 @@ class TrackingDB {
     // Skip scan table for a nof up to a specific operation number
     static async skipScan(nof, num_ope, now) {
 
-        // Get qt from marque table for this nof
-        let sqlQt = `SELECT qt FROM marque WHERE nof = ?`;
+        // Get qt and ref_gamme from marque table for this nof
+        let sqlQt = `SELECT qt, ref_gamme FROM marque WHERE nof = ?`;
         let [result] = await this.runQueryWithRetry(sqlQt, [nof]);
         
         if (!result.length) {
-            console.log("No qt found for NOF:", nof, "Skipping scan update aborted.");
+            console.log("No qt or ref_gamme found for NOF:", nof, "Skipping scan update aborted.");
             return; // No qt found for this nof, abort
         }
         
         const qt = result[0].qt;
+        const ref_gamme = result[0].ref_gamme;
 
         // Update scan table where qa < qt and num_ope <= given num_ope
         let sqlUpdate = `
@@ -1344,6 +1345,41 @@ class TrackingDB {
             WHERE nof = ? AND num_ope <= ? AND qa < ?
         `;
         await this.runQueryWithRetry(sqlUpdate, [qt, now, qt * 2, now, nof, num_ope, qt]);
+
+
+        // get the other num_ope for this ref_gamme that are not in the scan table for this nof and less than or equal to the given num_ope
+        let sqlMissingNumOpe = `
+            SELECT o.num_ope
+            FROM operation o
+            WHERE o.ref_gamme = ? AND o.num_ope <= ?
+            AND o.num_ope NOT IN (
+                SELECT s.num_ope FROM scan s WHERE s.nof = ? AND s.num_ope <= ?
+            )
+            ORDER BY o.num_ope ASC
+        `;
+        let [missingRows] = await this.runQueryWithRetry(sqlMissingNumOpe, [ref_gamme, num_ope, nof, num_ope]);
+
+        if (missingRows.length) {
+            let valuesToInsert = missingRows.map(row => [
+                nof,
+                ref_gamme,
+                row.num_ope,
+                qt,
+                0, // moy_temps_passer
+                0, // etat
+                "", // commentaire
+                now, // temps_debut
+                now, // temps_fin
+                qt * 2, // scan_count
+                now  // temps_dernier_scan
+            ]);
+            let sqlInsert = `
+                INSERT INTO scan (nof, ref_gamme, num_ope, qa, moy_temps_passer, etat, commentaire, temps_debut, temps_fin, scan_count, temps_dernier_scan)
+                VALUES ?
+            `;
+            await this.runQueryWithRetry(sqlInsert, [valuesToInsert]);
+            console.log("Inserted missing scan rows for NOF:", nof, "up to num_ope:", num_ope);
+        }
 
     }
 
