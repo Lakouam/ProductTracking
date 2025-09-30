@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+
+        <title>Authentification administrateur</title>
+
+        <!-- CSS -->
+        <link rel="stylesheet" href="../css/adminauth.css">
+
+    </head>
+    <body>
+
+        
+        <!-- Admin authentication modal -->
+        <div id="adminAuthModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);display:flex;align-items:center;justify-content:center;z-index:10;">
+            <div style="background:#fff;padding:32px 24px;border-radius:12px;box-shadow:0 4px 24px rgba(0,0,0,0.12);min-width:320px;display:flex;flex-direction:column;gap:14px;">
+                <h3 style="margin:0 0 8px 0;">Authentification administrateur</h3>
+                <label for="adminPassword">Mot de passe administrateur</label>
+                <input type="password" id="adminPassword" style="padding:8px 10px;border-radius:6px;border:1px solid #d1d5db;font-size:1rem;">
+                <button id="adminAuthBtn" style="padding:8px 18px;border:none;border-radius:6px;background:#1976d2;color:#fff;font-size:1rem;cursor:pointer;">Valider</button>
+                <div id="adminAuthStatus" style="color:#d32f2f;font-size:1rem;min-height:22px;"></div>
+            </div>
+        </div>
+
+
+        <!-- Javascript -->
+        <script src="../js/renderprocess/adminauth.js"></script> 
+
+    </body>
+</html>

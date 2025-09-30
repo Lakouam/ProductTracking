@@ -81,7 +81,7 @@ function createWindow() {
                 submenu: [
                     {
                         label: 'Paramètres',
-                        click: () => openSettingsWindow() // open the settings window
+                        click: () => openAdminAuthWindow() // open the settings window
                     },
                     { role: 'quit', label: 'Quitter' }
                 ]
@@ -844,7 +844,46 @@ function createWindow() {
 
 
 
+    // Listen for successful authentication from renderer
+    ipcMain.on('admin-auth-success', () => {
+        // Close the auth window
+        BrowserWindow.getAllWindows().forEach(win => {
+            if (win.getTitle() === "Authentification administrateur") {
+                win.close();
+            }
+        });
+        // open the settings window
+        openSettingsWindow(win);
+    });
+
+
+
+
+
+
 };
+
+
+
+
+
+// Function to Open the Admin Authentication Window
+function openAdminAuthWindow() {
+    const authWin = new BrowserWindow({
+        width: 350,
+        height: 260,
+        resizable: false,
+        title: "Authentification administrateur",
+        modal: true,
+        parent: BrowserWindow.getFocusedWindow(),
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+    authWin.setMenu(null); // Optional: remove menu from settings window
+    authWin.loadFile(path.join(__dirname, 'src', 'code', 'html', 'adminauth.html'));
+}
 
 
 
@@ -852,13 +891,13 @@ function createWindow() {
 
 
 // Function to Open the Settings Window
-function openSettingsWindow() {
+function openSettingsWindow(win) {
     const settingsWin = new BrowserWindow({
         width: 450,
         height: 500,
         icon: nativeImage.createFromPath(iconPath), // set the image as the icon of the application.
         title: "Paramètres",
-        parent: BrowserWindow.getFocusedWindow(),
+        parent: win,
         modal: true, // prevent interaction with the main window until this window is closed
         webPreferences: {
             nodeIntegration: true,
