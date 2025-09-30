@@ -1,6 +1,12 @@
 const Store = require('electron-store').default;
 const store = new Store();
 
+// Set default values if not present
+if (!store.get('host')) store.set('host', 'localhost');
+if (!store.get('user')) store.set('user', 'tracking');
+if (!store.get('password')) store.set('password', 'Tracking2025!');
+if (!store.get('database')) store.set('database', 'trackingdb');
+
 class TrackingDB {
 
     // Import the mysql module
