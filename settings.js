@@ -55,3 +55,36 @@ function setStatus(msg, type) {
     status.textContent = msg;
     status.className = type;
 }
+
+
+
+
+// Change admin password
+document.getElementById('changeAdminPwdForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const oldPwd = document.getElementById('oldAdminPwd').value;
+    const newPwd = document.getElementById('newAdminPwd').value;
+    const confirmPwd = document.getElementById('confirmAdminPwd').value;
+    const status = document.getElementById('adminPwdStatus');
+
+    if (newPwd.length < 8) {
+        status.textContent = "Le nouveau mot de passe doit contenir au moins 8 caractères.";
+        status.className = "error";
+        return;
+    }
+    if (newPwd !== confirmPwd) {
+        status.textContent = "Les mots de passe ne correspondent pas.";
+        status.className = "error";
+        return;
+    }
+
+    const result = await ipcRenderer.invoke('change-admin-password', { oldPassword: oldPwd, newPassword: newPwd });
+    if (result.success) {
+        status.textContent = "Mot de passe administrateur changé avec succès !";
+        status.className = "success";
+        this.reset();
+    } else {
+        status.textContent = result.message || "Échec du changement de mot de passe.";
+        status.className = "error";
+    }
+});

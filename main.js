@@ -24,8 +24,11 @@ const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 const User = require('./src/code/js/mainprocess/User.js');
 
 
-// Password for admin authentication
-const ADMIN_PASSWORD = "yourStrongAdminPassword"; // Change this to your real password
+// On first run, set a default password if not set
+if (!store.get('adminPassword')) {
+    const defaultPassword = 'Admin2025';
+    store.set('adminPassword', defaultPassword);
+}
 
 
 
@@ -574,6 +577,21 @@ function createWindow() {
 
 
         }
+
+
+
+
+
+        // Change password handler
+        ipcMain.handle('change-admin-password', (event, { oldPassword, newPassword }) => {
+            if (oldPassword === store.get('adminPassword')) {
+                store.set('adminPassword', newPassword);
+                return { success: true };
+            } else {
+                return { success: false, message: "Ancien mot de passe incorrect." };
+            }
+        });
+
     }
 
 
@@ -858,9 +876,9 @@ function createWindow() {
 
 
 
-        // Handle password check requests from renderer
+        // Check password handler
         ipcMain.handle('check-admin-password', (event, password) => {
-            return password === ADMIN_PASSWORD;
+            return password === store.get('adminPassword');
         });
     }
     
