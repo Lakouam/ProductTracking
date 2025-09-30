@@ -24,6 +24,10 @@ const Gamme = require('./src/code/js/mainprocess/Gamme.js');
 const User = require('./src/code/js/mainprocess/User.js');
 
 
+// Password for admin authentication
+const ADMIN_PASSWORD = "yourStrongAdminPassword"; // Change this to your real password
+
+
 
 // Gets the path of the icon to use in the taskbar
 const iconPath = path.join(__dirname, "src", "icons", "applogo2.ico");
@@ -844,17 +848,22 @@ function createWindow() {
 
 
 
-    // Listen for successful authentication from renderer
-    ipcMain.on('admin-auth-success', () => {
-        // Close the auth window
-        BrowserWindow.getAllWindows().forEach(win => {
-            if (win.getTitle() === "Authentification administrateur") {
-                win.close();
-            }
+    // adminauth.js
+    {
+        // Listen for successful authentication from renderer
+        ipcMain.on('admin-auth-success', () => {
+            // open the settings window
+            openSettingsWindow(win);
         });
-        // open the settings window
-        openSettingsWindow(win);
-    });
+
+
+
+        // Handle password check requests from renderer
+        ipcMain.handle('check-admin-password', (event, password) => {
+            return password === ADMIN_PASSWORD;
+        });
+    }
+    
 
 
 

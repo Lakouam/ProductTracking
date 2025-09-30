@@ -1,13 +1,29 @@
 const { ipcRenderer } = require('electron');
 
 
-document.getElementById('adminAuthBtn').addEventListener('click', () => {
-    const entered = document.getElementById('adminPassword').value;
-    // Replace with your secure password check
-    if (entered === "yourStrongAdminPassword") {
+
+
+const adminAuthBtn = document.getElementById('adminAuthBtn');
+const adminPasswordInput = document.getElementById('adminPassword');
+
+
+
+adminAuthBtn.addEventListener('click', async () => {
+    const entered = adminPasswordInput.value;
+    const isValid = await ipcRenderer.invoke('check-admin-password', entered);
+
+    if (isValid) {
         ipcRenderer.send('admin-auth-success');
+        window.close(); // Close the auth window
     } else {
         document.getElementById('adminAuthStatus').textContent = "Mot de passe incorrect.";
-        document.getElementById('adminPassword').value = '';
+        adminPasswordInput.value = '';
     }
+});
+
+
+
+// Optionally, allow pressing Enter to submit
+adminPasswordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') adminAuthBtn.click();
 });
