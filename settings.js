@@ -80,7 +80,7 @@ document.getElementById('changeAdminPwdForm').addEventListener('submit', async f
 
     const result = await ipcRenderer.invoke('change-admin-password', { oldPassword: oldPwd, newPassword: newPwd });
     if (result.success) {
-        status.textContent = "Mot de passe administrateur changé avec succès !";
+        status.textContent = "Mot de passe administrateur changé avec succès!";
         status.className = "success";
         this.reset();
     } else {
