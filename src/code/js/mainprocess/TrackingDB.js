@@ -598,16 +598,50 @@ class TrackingDB {
                 sql = `SELECT nom, matricule, role FROM user WHERE role != 'Admin' ORDER BY nom ASC`;
         }
 
-        if (who === 'user-detail') // get data (the total quantity) from scan_carte for a specific user, grouped by day, nof, num_ope
+        if (who === 'user-detail') // get data (the total quantity and total time) from scan_carte for a specific user, grouped by day, nof, num_ope
             sql = `
                 SELECT
-                    DATE(temps_fin) AS date,
+                    date,
                     nof,
                     num_ope,
-                    COUNT(*) AS qte_total
-                FROM scan_carte
-                WHERE nom = ? AND matricule = ? AND scan_count = 2 AND temps_fin IS NOT NULL
-                GROUP BY DATE(temps_fin), nof, num_ope
+                    SUM(completed) AS qte_total,
+                    SUM(
+                        CASE
+                            WHEN nof = prev_nof AND num_ope = prev_num_ope THEN TIMESTAMPDIFF(SECOND, prev_temps, temps)
+                            ELSE 0
+                        END
+                    ) AS temps_total
+                FROM (
+                    SELECT
+                        DATE(temps) AS date,
+                        nof,
+                        num_ope,
+                        temps,
+                        LAG(temps) OVER (PARTITION BY DATE(temps) ORDER BY temps) AS prev_temps,
+                        LAG(nof) OVER (PARTITION BY DATE(temps) ORDER BY temps) AS prev_nof,
+                        LAG(num_ope) OVER (PARTITION BY DATE(temps) ORDER BY temps) AS prev_num_ope,
+                        CASE WHEN source = 'fin' THEN 1 ELSE 0 END AS completed
+                    FROM (
+                        SELECT
+                            nof,
+                            num_ope,
+                            temps_debut AS temps,
+                            'debut' AS source
+                        FROM scan_carte
+                        WHERE nom = ? AND matricule = ? AND scan_count IN (1,2) AND temps_debut IS NOT NULL
+
+                        UNION ALL
+
+                        SELECT
+                            nof,
+                            num_ope,
+                            temps_fin AS temps,
+                            'fin' AS source
+                        FROM scan_carte
+                        WHERE nom = ? AND matricule = ? AND scan_count = 2 AND temps_fin IS NOT NULL
+                    ) AS combined
+                ) AS diffs
+                GROUP BY date, nof, num_ope
                 ORDER BY date DESC, nof, num_ope DESC
             `;
         

@@ -40,7 +40,7 @@ let fullData = null;
 // receiving Table Data columns and rows
 {
 
-    ipcRenderer.invoke('Table Data', 'user-detail', [nom, matricule]).then(data => {
+    ipcRenderer.invoke('Table Data', 'user-detail', [nom, matricule, nom, matricule]).then(data => {
 
         // store data in the page
         fullData = data;

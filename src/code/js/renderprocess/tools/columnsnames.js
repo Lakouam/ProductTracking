@@ -47,6 +47,8 @@ function columnName(name) {
             return 'Quantité totale dont';
         case 'date':
             return 'Date';
+        case 'temps_total':
+            return 'Temps (heures)';
         default:
             return name;
     }
