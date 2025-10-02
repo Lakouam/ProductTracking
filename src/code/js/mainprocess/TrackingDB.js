@@ -605,11 +605,13 @@ class TrackingDB {
                     nof,
                     num_ope,
                     SUM(completed) AS qte_total,
-                    SUM(
-                        CASE
-                            WHEN nof = prev_nof AND num_ope = prev_num_ope THEN TIMESTAMPDIFF(SECOND, prev_temps, temps)
-                            ELSE 0
-                        END
+                    ROUND(
+                        SUM(
+                            CASE
+                                WHEN nof = prev_nof AND num_ope = prev_num_ope THEN TIMESTAMPDIFF(SECOND, prev_temps, temps)
+                                ELSE 0
+                            END
+                        ) / 3600, 2
                     ) AS temps_total
                 FROM (
                     SELECT
