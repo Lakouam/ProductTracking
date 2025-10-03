@@ -133,8 +133,10 @@ function createWindow() {
                     {
                         label: 'En savoir plus',
                         click: async () => {
+                            /*
                             const { shell } = require('electron');
                             await shell.openExternal('https://github.com/Lakouam/ProductTracking'); // app's site or repo
+                            */
                         }
                     },
                     {
@@ -160,8 +162,8 @@ function createWindow() {
             {label: 'Copier', role: 'copy'},
             {label: 'Coller', role: 'paste'},
             {type: 'separator'},
-            {label: 'Recharger', role: 'reload', id: 'reload'},
-            {label: 'Outils de développement', role: 'toggleDevTools', id: 'toggleDevTools'}
+            {label: 'Recharger', role: 'reload', id: 'reload'}//,
+            //{label: 'Outils de développement', role: 'toggleDevTools', id: 'toggleDevTools'}
         ];
         contextMenuRightClick = Menu.buildFromTemplate(templateRightClick);
 
