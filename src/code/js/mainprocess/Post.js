@@ -126,9 +126,6 @@ class Post {
         set scanCount(value) {
             this._scanCount = value;
         }
-        isSecondScan() {
-            return (this._scanCount % 2 === 1) // true: number of scans is odd
-        }
 
         // getter and setter for tempsDernierScan
         get tempsDernierScan() {
@@ -179,8 +176,8 @@ class Post {
         }
 
         // update setter for qa
-        qaUpdate() {
-            if (!this.isQaCompleted() && !this.isSecondScan()) { // if the qa is less than the qt, and we are in the initial scan, update it
+        qaUpdate(isnserieinitial) {
+            if (!this.isQaCompleted() && isnserieinitial) { // if the qa is less than the qt, and we are in the initial scan, update it
                 this.qa = this.qa + 1;
             }
         }
@@ -221,14 +218,14 @@ class Post {
         }
 
         // update setter for all
-        allUpdate(scan) {
+        allUpdate(scan, isnserieinitial) {
             this.moytempspasserUpdate(scan.tempsActuel);
             this.etatUpdate(scan.etat);
             this.commentaireUpdate(scan.commentaire);
             this.nSerieUpdate(scan.n_serie);
 
             this.scanCountUpdate();
-            this.qaUpdate();
+            this.qaUpdate(isnserieinitial);
 
             this.tempsFinUpdate(scan.tempsActuel);
             this.tempsDernierScanUpdate(scan.tempsActuel);
@@ -296,12 +293,13 @@ class Post {
         this.fillFromDB(data); // fill the post with the data from the database
         console.log("Post nof: " + this.nof);
 
+        let isnserieinitial = await TrackingDB.isNserieInitial(scan.nof, scan.n_serie); // check if the last operation (with scan_count > 0) of the n_serie is initial (scan_count = 1)
 
 
         if(!this.isEmpty()) { // if the post is not empty
             if (this.isSameMarque(scan)) { // check if the scan has the same marque fix (nof, refProduit, qt) as the row
                 if (!this.isQaCompleted()) { // if the qa is less than the qt
-                    this.allUpdate(scan); // update all the variables (that can be updated)
+                    this.allUpdate(scan, isnserieinitial); // update all the variables (that can be updated)
                     const ScanUpdated = await TrackingDB.updateScan(this, num_ope, user); // update the scan in the database
 
                     if (ScanUpdated.is) {// if the scan is updated in the database
@@ -310,7 +308,7 @@ class Post {
                     }
                     else { // error messages
                         if (ScanUpdated.why === "There is an active carte on this operation") // updateCarte function
-                            errorMessage = "Une carte « " + ScanUpdated.carte + " » est déjà active sur cette opération.";
+                            errorMessage = "Une carte « " + ScanUpdated.carte + " » est déjà active sur cette opération."; // error removed, it should not happen
                         else if (ScanUpdated.why === "Carte not completed yet") // updateCarte function
                             errorMessage = "La carte n’est pas encore terminée pour l’opération « " + ScanUpdated.ope + " ».";
                         else if (ScanUpdated.why === "Next operation does not match current num_ope") // updateCarte function

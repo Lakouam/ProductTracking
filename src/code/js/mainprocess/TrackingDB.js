@@ -1005,7 +1005,8 @@ class TrackingDB {
             }
 
 
-            // chech if is there an active carte on this operation (num_ope), if so, and this carte is not the same as the current one, return false
+            /*
+            // check if is there an active carte on this operation (num_ope), if so, and this carte is not the same as the current one, return false
             {
                 let sqlCheckActiveCarte = `
                     SELECT n_serie FROM scan_carte WHERE nof = ? AND num_ope = ? AND n_serie != ? AND scan_count = 1
@@ -1016,6 +1017,7 @@ class TrackingDB {
                     return {is: false, why: "There is an active carte on this operation", carte: activeCarteRows[0].n_serie};
                 }
             }
+            */
 
 
             // update the carte
@@ -1422,6 +1424,27 @@ class TrackingDB {
             await this.runQueryWithRetry(sqlInsert, [valuesToInsert]);
             console.log("Inserted missing scan rows for NOF:", nof, "up to num_ope:", num_ope);
         }
+
+    }
+
+
+
+    // check if the last operation (with scan_count > 0) of the n_serie is initial (scan_count = 1)
+    static async isNserieInitial(nof, n_serie) {
+
+        // Get the last operation (highest num_ope) with scan_count > 0 for this nof and n_serie
+        let sql = `
+            SELECT scan_count
+            FROM scan_carte
+            WHERE nof = ? AND n_serie = ? AND scan_count > 0
+            ORDER BY num_ope DESC
+            LIMIT 1
+        `;
+        let [rows] = await this.runQueryWithRetry(sql, [nof, n_serie]);
+        if (rows.length && rows[0].scan_count === 1) {
+            return true;
+        }
+        return false;
 
     }
 

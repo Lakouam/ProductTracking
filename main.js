@@ -395,14 +395,10 @@ function createWindow() {
                     scanRejected = false // initialize scanRejected
                     errorMessage = ""; // initialize errorMessage
 
-                    if (!post.isSecondScan()) {
-                        if (isRejected) return {message: "Scan Initial a été rejeté" + noteMessage, errorMessage: errorMsg};
-                        else return {message: "Scan Initial" + noteMessage, errorMessage: ""};
-                    }
-                    else {
-                        if (isRejected) return {message: "Scan Finale a été rejeté" + noteMessage, errorMessage: errorMsg};
-                        else return {message: "Scan Finale" + noteMessage, errorMessage: ""};
-                    }
+                    
+                    if (isRejected) return {errorMessage: errorMsg};
+                    else return {errorMessage: ""};
+                    
                 });
             }
             
