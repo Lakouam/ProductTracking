@@ -535,12 +535,14 @@ class TrackingDB {
                 ORDER BY m.nof, o.num_ope
             `;
 
-        if (who === 'scanner') // get data (nof, ref_gamme, num_ope, post_machine, qa, qt, scan_count) where post_machine = value && qt > qa
+        if (who === 'scanner') // get data (nof, ref_gamme, num_ope, post_machine, qa, qt, n_serie, scan_count(dial n_serie)) where post_machine = value && qt > qa
             sql = `
-                SELECT m.nof, m.ref_gamme, o.num_ope, o.poste_machine, s.qa, m.qt, s.scan_count
+                SELECT m.nof, m.ref_gamme, o.num_ope, o.poste_machine, s.qa, m.qt, sc.n_serie, sc.scan_count
                 FROM scan s
                 INNER JOIN marque m ON s.nof = m.nof
                 INNER JOIN operation o ON s.num_ope = o.num_ope AND m.ref_gamme = o.ref_gamme
+                LEFT JOIN scan_carte sc
+                    ON sc.nof = m.nof AND sc.num_ope = o.num_ope AND sc.n_serie = ?
                 WHERE o.poste_machine = ? AND m.qt > s.qa AND o.num_ope >= ? AND s.nof = ?
             `;
 

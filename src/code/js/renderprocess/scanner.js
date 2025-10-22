@@ -80,23 +80,26 @@
             if (saved === undefined) // if saved is undefined, initialize it
                 saved = {};
             
-            // get last num_ope and nof from saved, if not defined, set them to 0 and null respectively
+            // get last num_ope, nof and n_serie from saved, if not defined, set them to 0 and null respectively
             let lastNumOpe = saved.ope;
             if (lastNumOpe === undefined)
                 lastNumOpe = 0;
             let lastNof = saved.nof;
             if (lastNof === undefined)
                 lastNof = null;
+            let lastNSerie = saved.n_serie;
+            if (lastNSerie === undefined)
+                lastNSerie = null;
 
-            console.log("Last num_ope for post " + postActuel.name + ": " + lastNumOpe + ", nof: " + lastNof);
+            console.log("Last num_ope for post " + postActuel.name + ": " + lastNumOpe + ", nof: " + lastNof + ", n_serie: " + lastNSerie);
         
-            ipcRenderer.invoke('Table Data', 'scanner', [postActuel.name, lastNumOpe, lastNof]).then(data => {
+            ipcRenderer.invoke('Table Data', 'scanner', [lastNSerie, postActuel.name, lastNumOpe, lastNof]).then(data => {
 
                 if (data.rows[0] !== undefined) {
                     document.getElementById("scan-product-nof").textContent = data.rows[0].nof;
                     document.getElementById("scan-product-gamme").textContent = data.rows[0].ref_gamme;
                     document.getElementById("scan-product-operation").textContent = data.rows[0].num_ope;
-                    //document.getElementById("scan-product-poste").textContent = data.rows[0].poste_machine;
+                    document.getElementById("scan-product-nserie").textContent = data.rows[0].n_serie;
                     document.getElementById("scan-progress-qa").textContent = data.rows[0].qa;
                     document.getElementById("scan-progress-qt").textContent = data.rows[0].qt;
 
@@ -109,13 +112,20 @@
                         progressBarFill.style.width = percentage + '%';
                     }
 
-                    // if scan_count is odd, , add class scan-step-value-complet to scanInitialValue and remove class scan-step-value-attente and set the text to "Complet"
-                    if (data.rows[0].scan_count % 2 === 1) {
+                    // update the scan steps based on scan_count of the n_serie
+                    if (data.rows[0].scan_count === 1 || data.rows[0].scan_count === 2) {
                         document.getElementById("scanInitialValue").classList.add("scan-step-value-complet");
                         document.getElementById("scanInitialValue").classList.remove("scan-step-value-attente");
                         document.getElementById("scanInitialValue").textContent = "Complet";
                         document.getElementById("scanInitialCircle").classList.add("scan-step-complet");
-                    } 
+
+                        if (data.rows[0].scan_count === 2) {
+                            document.getElementById("scanFinalValue").classList.add("scan-step-value-complet");
+                            document.getElementById("scanFinalValue").classList.remove("scan-step-value-attente");
+                            document.getElementById("scanFinalValue").textContent = "Complet";
+                            document.getElementById("scanFinalCircle").classList.add("scan-step-complet");
+                        }
+                    }
                 }
                     
             });

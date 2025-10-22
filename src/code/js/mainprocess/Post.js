@@ -304,7 +304,7 @@ class Post {
 
                     if (ScanUpdated.is) {// if the scan is updated in the database
                         scanRejected = false;
-                        store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
+                        store.set(this.postActuel, {ope: num_ope, nof: this.nof, n_serie: scan.n_serie}); // save the current num_ope, nof and n_serie in store
                     }
                     else { // error messages
                         if (ScanUpdated.why === "There is an active carte on this operation") // updateCarte function
@@ -343,7 +343,7 @@ class Post {
 
                     if (ScanInserted.is) { // if the scan is inserted in the database
                         scanRejected = false;
-                        store.set(this.postActuel, {ope: num_ope, nof: this.nof}); // save the current num_ope and nof in store
+                        store.set(this.postActuel, {ope: num_ope, nof: this.nof, n_serie: scan.n_serie}); // save the current num_ope, nof and n_serie in store
                     }
                     else {
 
